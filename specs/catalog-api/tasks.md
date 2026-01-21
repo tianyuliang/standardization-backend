@@ -282,7 +282,7 @@
 
 ### Implementation + Test
 
-- [ ] T024 [US5] 实现 `api/internal/logic/catalog/deletelogic.go`
+- [x] T024 [US5] 实现 `api/internal/logic/catalog/deletelogic.go`
   - 校验目录存在
   - 校验不是根目录（level <= 1 不允许删除）
   - 递归获取所有子目录 ID
@@ -309,7 +309,7 @@
 
 ### Implementation + Test
 
-- [ ] T026 [US6] 实现 `api/internal/logic/catalog/querywithfilelogic.go`
+- [x] T026 [US6] 实现 `api/internal/logic/catalog/querywithfilelogic.go`
   - 模糊查询目录名称
   - 查询文件列表（当前阶段返回空列表，待文件模块实现）
   - 组装 CatalogListByFileVo 响应
