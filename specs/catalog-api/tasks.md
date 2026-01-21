@@ -253,7 +253,7 @@
 
 ### Implementation + Test
 
-- [ ] T022 [US4] 实现 `api/internal/logic/catalog/updatelogic.go`
+- [x] T022 [US4] 实现 `api/internal/logic/catalog/updatelogic.go`
   - 校验目录存在
   - 校验不是根目录（level <= 1 不允许修改）
   - 校验新父目录存在且 level < 255
