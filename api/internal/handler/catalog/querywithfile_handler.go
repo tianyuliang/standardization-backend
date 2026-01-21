@@ -21,8 +21,8 @@ func QuerywithfileHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := catalog.NewQuerywithfileLogic(r.Context(), svcCtx)
-		resp, err := l.Querywithfile(&req)
+		l := catalog.NewQueryWithFileLogic(r.Context(), svcCtx)
+		resp, err := l.QueryWithFile(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {
