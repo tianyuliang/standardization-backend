@@ -201,7 +201,7 @@
 
 ### Implementation + Test
 
-- [ ] T018 [US2] 实现 `api/internal/logic/catalog/querylogic.go`
+- [x] T018 [US2] 实现 `api/internal/logic/catalog/querylogic.go`
   - 校验 type 参数
   - 目录名称 SQL 特殊字符转义
   - 模糊查询：`WHERE f_catalog_name LIKE %name%` (小写不敏感)
