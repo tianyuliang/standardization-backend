@@ -106,11 +106,11 @@
 
 **目的**: 必须完成后才能开始 User Story 实现
 
-- [ ] T004 确认 base.api 已定义通用类型
+- [x] T004 确认 base.api 已定义通用类型
   - 验证 `api/doc/base.api` 文件存在
   - 验证 PageBaseInfo, PageInfo 等类型已定义
 
-- [ ] T005 确认数据库连接配置
+- [x] T005 确认数据库连接配置
   - 验证 `api/etc/api.yaml` 数据库配置已设置
   - 确认数据库表 `t_de_catalog_info` 已存在
 
