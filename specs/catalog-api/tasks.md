@@ -126,19 +126,19 @@
 
 ### Step 1: 定义 API 文件
 
-- [ ] T006 [US1] 创建 `api/doc/catalog/catalog.api`
+- [x] T006 [US1] 创建 `api/doc/catalog/catalog.api`
   - 定义所有 6 个接口的 Request/Response 类型
   - 定义 CatalogTreeNodeVo, CatalogInfoVo, CatalogListByFileVo 等类型
   - 定义服务配置 (@server prefix: /api/v1/catalog)
 
-- [ ] T007 [US1] 在 `api/doc/api.api` 入口文件中 import 目录管理模块
+- [x] T007 [US1] 在 `api/doc/api.api` 入口文件中 import 目录管理模块
   ```api
   import "catalog/catalog.api"
   ```
 
 ### Step 2: 生成代码
 
-- [ ] T008 [US1] 运行 `goctl api go` 生成 Handler/Types
+- [x] T008 [US1] 运行 `goctl api go` 生成 Handler/Types
   ```bash
   goctl api go -api api/doc/api.api -dir api/ --style=go_zero --type-group
   ```
@@ -150,23 +150,23 @@
 
 ### Step 3: 实现 Model 层
 
-- [ ] T010 [P] [US1] 创建 `model/catalog/catalog/interface.go`
+- [x] T010 [P] [US1] 创建 `model/catalog/catalog/interface.go`
   - 定义 CatalogModel 接口
   - 定义 Insert, FindOne, FindByParent, FindByType, FindByName, Update, Delete, DeleteBatch 方法签名
 
-- [ ] T011 [P] [US1] 创建 `model/catalog/catalog/types.go`
+- [x] T011 [P] [US1] 创建 `model/catalog/catalog/types.go`
   - 定义 Catalog 实体结构
   - 定义 GORM 标签和 JSON 标签
 
-- [ ] T012 [P] [US1] 创建 `model/catalog/catalog/vars.go`
+- [x] T012 [P] [US1] 创建 `model/catalog/catalog/vars.go`
   - 定义目录名称正则: `^[\u4e00-\u9fa5a-zA-Z0-9][\u4e00-\u9fa5a-zA-Z0-9_-]{0,19}$`
   - 定义目录类型常量
 
-- [ ] T013 [P] [US1] 创建 `model/catalog/catalog/factory.go`
+- [x] T013 [P] [US1] 创建 `model/catalog/catalog/factory.go`
   - 定义 NewCatalogModel 工厂函数
   - 支持 GORM 和 SQLx 双 ORM
 
-- [ ] T014 [US1] 实现 `model/catalog/catalog/gorm_dao.go`
+- [x] T014 [US1] 实现 `model/catalog/catalog/gorm_dao.go`
   - 实现 CatalogModel 接口的所有方法
   - 使用 GORM 进行数据库操作
 
@@ -176,7 +176,7 @@
 
 ### Step 4: 实现 Logic 层
 
-- [ ] T016 [US1] 实现 `api/internal/logic/catalog/querytreelogic.go`
+- [x] T016 [US1] 实现 `api/internal/logic/catalog/querytreelogic.go`
   - 校验 type 参数在 [1,2,3,4] 范围内
   - 如果提供 id，查询该目录并返回其子树
   - 如果未提供 id，查询该类型所有目录，构建完整树

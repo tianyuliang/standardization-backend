@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(speckit.tasks)",
+      "Bash(powershell.exe:*)",
+      "Bash(dir:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(goctl api go:*)"
+    ]
+  }
+}

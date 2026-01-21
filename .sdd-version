@@ -1,0 +1,12 @@
+{
+  "version": "0.6.0",
+  "installed_at": "2026-01-21T02:25:10Z",
+  "services": ["api","rpc","job","consumer"],
+  "project_name": "standardization-backend",
+  "go_module": "github.com/tianyuliang/standardization-backend",
+  "db_config": {
+    "host": "localhost",
+    "port": 3306,
+    "database": "idrm"
+  }
+}

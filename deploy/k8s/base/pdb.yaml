@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: standardization-backend-api-pdb
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: standardization-backend
+      component: api
