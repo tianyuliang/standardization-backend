@@ -225,7 +225,7 @@
 
 ### Implementation + Test
 
-- [ ] T020 [US3] 实现 `api/internal/logic/catalog/createlogic.go`
+- [x] T020 [US3] 实现 `api/internal/logic/catalog/createlogic.go`
   - 校验目录名称格式：正则 `^[\u4e00-\u9fa5a-zA-Z0-9][\u4e00-\u9fa5a-zA-Z0-9_-]{0,19}$`
   - 校验父目录存在且 level < 255
   - 继承父目录的 type，设置 level = 父目录 level + 1
