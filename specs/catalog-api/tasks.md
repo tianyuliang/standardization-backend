@@ -410,8 +410,101 @@ Test{Function}_{Scenario}_{ExpectedResult}
 
 ---
 
+## 实现问题记录
+
+### 问题 1: CatalogModel 未初始化
+
+**现象**: Logic 层调用 `svcCtx.CatalogModel.Insert()` 时，CatalogModel 为 nil
+
+**原因**:
+- `service_context.go` 中 `CatalogModel` 设置为 `nil`
+- 没有在 `NewServiceContext` 中初始化
+- 缺少 `main.go` 入口文件
+
+**解决方案**:
+1. 更新 `config/config.go` 添加 `DB *gorm.DB` 字段
+2. 创建 `api/main.go` 初始化数据库连接
+3. 在 `NewServiceContext` 中调用 `catalog.NewCatalogModel()` 初始化
+
+**相关提交**: `121fdf0` - fix(catalog-api): initialize CatalogModel in ServiceContext
+
+---
+
+### 问题 2: goctl 生成代码风格问题
+
+**现象**:
+- goctl 使用 `--style=go_zero` 生成 `querytreelogic.go` (驼峰合并)
+- Handler 调用 `l.Querytree()` (小写方法名)
+- 与 Go 命名规范不一致
+
+**原因**: `--style=go_zero` 风格不适合大型项目
+
+**解决方案**:
+1. 使用 `--style=default` 生成带下划线的文件名
+2. 保留 goctl 生成的 `_logic.go` 文件结构（含 `logx.Logger`）
+3. 在 goctl 生成的文件中直接实现业务逻辑
+4. 不要创建额外的 `xxxlogic.go` 文件
+
+**正确结构**:
+```
+goctl 生成: querytree_logic.go (模板，含 logx.Logger)
+开发者实现: 在 querytree_logic.go 中添加业务逻辑
+Handler 调用: NewQuerytreeLogic(ctx, svcCtx).Querytree(&req)
+```
+
+**相关提交**: `e91d459` - fix(catalog-api): move logic from incorrectly named files
+
+---
+
+### 问题 3: Handler 方法名与 Logic 层不匹配
+
+**现象**: Handler 调用 `QueryTree()` 但 Logic 定义的是 `Querytree()`
+
+**原因**: 手动修改了 Handler 的方法名为驼峰，但 goctl 生成的是小写
+
+**解决方案**:
+- 保持 goctl 生成的方法名不变 (`Querytree` 而不是 `QueryTree`)
+- Go-Zero 的命名风格是方法名小写开头 (如 `Querytree`, `Create`, `Update`)
+
+**相关提交**: `542e470` - fix(catalog-api): fix handler method naming
+
+---
+
+### 问题 4: ValidateCatalogName 引用不存在的变量
+
+**现象**: 代码引用 `catalog.CatalogNamePatternRegexp.MatchString()` 但变量不存在
+
+**原因**: `vars.go` 只定义了字符串常量，没有定义 regexp 对象
+
+**解决方案**:
+- 简化为直接校验首字符规则
+- 或在 `vars.go` 中初始化 `regexp.MustCompile(catalog.CatalogNamePattern)`
+
+---
+
+### 经验总结
+
+1. **goctl 使用建议**:
+   - 始终使用 `--style=default` 生成带下划线的文件名
+   - 在 goctl 生成的文件中直接实现业务逻辑
+   - 不要创建额外的文件
+
+2. **初始化顺序**:
+   - Config (数据库配置)
+   - ServiceContext (初始化 Model)
+   - Logic (调用 Model)
+   - Handler (调用 Logic)
+
+3. **命名规范**:
+   - goctl 生成的文件名: `xxx_logic.go`, `xxx_handler.go`
+   - goctl 生成的方法名: `Querytree`, `Create`, `Update` (首字母大写，内部小写)
+   - 不要修改 goctl 生成的方法签名
+
+---
+
 ## Revision History
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2025-01-21 | - | 初始版本 - Java 目录管理 API 转写任务拆分 |
+| 1.1 | 2025-01-21 | - | 添加实现问题记录和经验总结 |
