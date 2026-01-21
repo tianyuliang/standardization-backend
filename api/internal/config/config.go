@@ -3,8 +3,12 @@
 
 package config
 
-import "github.com/zeromicro/go-zero/rest"
+import (
+	"github.com/zeromicro/go-zero/rest"
+	"gorm.io/gorm"
+)
 
 type Config struct {
 	rest.RestConf
+	DB *gorm.DB `json:",optional"` // 数据库连接
 }

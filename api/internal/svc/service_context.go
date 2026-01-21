@@ -17,9 +17,15 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	// 初始化 CatalogModel
+	var catalogModel catalog.CatalogModel
+	if c.DB != nil {
+		catalogModel = catalog.NewCatalogModel(catalog.ModelConfig{DB: c.DB})
+	}
+
 	return &ServiceContext{
 		Config:       c,
 		Validator:    middleware.NewValidatorMiddleware().Handle,
-		CatalogModel: nil, // TODO: 初始化 CatalogModel，在 main.go 中注入
+		CatalogModel: catalogModel,
 	}
 }
