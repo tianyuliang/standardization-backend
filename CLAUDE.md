@@ -1,4 +1,12 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # standardization-backend
+
+> **项目状态**: Java → Go-Zero 迁移中 (Migration in Progress)
+>
+> 当前代码库包含 **Java Spring Boot** 源代码和 **Go-Zero** 目标架构的规范文档。新功能开发应遵循 SDD 流程，最终实现为 Go 代码。
 
 基于 Go-Zero 微服务架构的项目，采用 AI 辅助的规范驱动开发 (SDD) 模式。
 
@@ -54,6 +62,17 @@
 
 ## 技术栈
 
+### 当前 (Java Spring Boot)
+- **语言**: Java 1.8
+- **框架**: Spring Boot 2.7.5
+- **数据库**: MariaDB / 达梦数据库 (DM8)
+- **ORM**: MyBatis Plus 3.5.2
+- **服务器**: Undertow
+- **API 文档**: Swagger 3.0 + Knife4j
+- **消息队列**: Kafka + NSQ
+- **缓存**: Redis + Redisson (分布式锁)
+
+### 目标 (Go-Zero)
 - **语言**: Go 1.24+
 - **框架**: Go-Zero v1.9+
 - **数据库**: MySQL 8.0
@@ -99,6 +118,33 @@ Id string `gorm:"primaryKey;size:36"`  // UUID v7
 
 ## 项目结构
 
+### 当前 (Java Spring Boot)
+```
+standardization-backend/
+├── src/main/java/com/dsg/standardization/
+│   ├── controller/           # REST 控制器 (6个)
+│   ├── service/              # 业务逻辑层
+│   ├── mapper/               # MyBatis 数据访问层
+│   ├── entity/               # JPA 实体类
+│   ├── dto/                  # 数据传输对象
+│   ├── vo/                   # 视图对象
+│   ├── common/               # 公共组件
+│   │   ├── annotation/       # @AuditLog 等注解
+│   │   ├── constant/         # 常量定义
+│   │   ├── enums/            # 枚举类
+│   │   ├── exception/        # 异常处理
+│   │   └── util/             # 工具类
+│   ├── aspect/               # AOP 切面
+│   └── config/               # 配置类
+├── src/main/resources/
+│   └── application.yml       # Spring Boot 配置
+├── pom.xml                   # Maven 依赖
+├── docker/                   # Docker 配置
+├── helm/                     # Kubernetes Helm Chart
+└── migrations/               # DDL 迁移脚本
+```
+
+### 目标 (Go-Zero - 待实现)
 ```
 standardization-backend/
 ├── api/                      # API 服务
@@ -110,26 +156,47 @@ standardization-backend/
 │       ├── svc/              # 服务上下文
 │       └── types/            # 类型定义
 ├── model/                    # 数据模型
+├── pkg/                      # 公共包
+│   ├── mq/                   # 消息队列 (Kafka/NSQ)
+│   ├── cache/                # Redis 缓存
+│   └── excel/                # Excel 处理
 ├── migrations/               # DDL 迁移
 ├── specs/                    # SDD 规格文档
-├── deploy/                   # 部署配置
 └── .specify/                 # Spec Kit 配置
 ```
 
 ## 快速命令
 
-以下命令可直接使用:
+### Java (当前代码库)
+
+```bash
+# 构建
+mvn clean package                # 编译打包
+mvn clean package -DskipTests    # 跳过测试打包
+
+# 运行
+java -jar target/standardization-web-0.0.1-SNAPSHOT.jar
+
+# 测试
+mvn test                         # 运行测试
+
+# API 文档
+# Swagger: http://localhost:8888/swagger-ui/
+# Knife4j: http://localhost:8888/doc.html
+```
+
+### Go (目标架构 - 待实现)
 
 ```bash
 # 开发
-make api           # 生成 API 代码
-make swagger       # 生成 Swagger 文档
-make run           # 运行服务
-make test          # 运行测试
+goctl api go -api api/doc/api.api -dir api/ --style=go_zero  # 生成 API 代码
+goctl api plugin -plugin goctl-swagger="swagger -filename api.json" -api api/doc/api.api -dir .  # 生成 Swagger
+go run api/main.go                                                         # 运行服务
+go test ./...                                                              # 运行测试
 
 # 部署
-make docker-build  # 构建镜像
-make k8s-deploy    # 部署到 K8s
+docker build -t standardization-backend:latest -f docker/Dockerfile .      # 构建镜像
+helm upgrade --install standardization ./helm/standardization               # 部署到 K8s
 ```
 
 ## SDD 工作流程
@@ -232,9 +299,15 @@ logx.WithContext(ctx).Infof("user login: %s", phone)
 
 ## 相关文档
 
+### SDD 规范
 - 项目宪法: `.specify/memory/constitution.md`
 - SDD 模板: `.specify/templates/`
-- Spec Kit 命令: `.cursor/commands/` 或 `.claude/commands/`
+- Spec Kit 命令: `.claude/commands/speckit.*.md`
+
+### 迁移文档
+- Java → Go 迁移规格: `specs/java-to-go-migration/spec.md`
+- 迁移技术方案: `specs/java-to-go-migration/plan.md`
+- 迁移任务清单: `specs/java-to-go-migration/tasks.md`
 
 ## 常见操作
 
@@ -254,9 +327,22 @@ logx.WithContext(ctx).Infof("user login: %s", phone)
 
 ### 部署服务
 
+#### Java (当前)
 ```bash
-make docker-build    # 构建镜像
-make docker-push     # 推送镜像
-make k8s-deploy      # 部署到 K8s
-make k8s-status      # 查看状态
+# Docker
+docker build -t standardization-backend:latest -f docker/Dockerfile .
+
+# Kubernetes
+helm install standardization ./helm/standardization
+helm upgrade standardization ./helm/standardization
+helm status standardization
+```
+
+#### Go (目标 - 待实现)
+```bash
+# Docker
+docker build -t standardization-backend:latest -f docker/Dockerfile .
+
+# Kubernetes
+helm upgrade --install standardization ./helm/standardization
 ```
