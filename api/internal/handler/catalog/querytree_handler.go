@@ -21,8 +21,8 @@ func QuerytreeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := catalog.NewQueryTreeLogic(r.Context(), svcCtx)
-		resp, err := l.QueryTree(&req)
+		l := catalog.NewQuerytreeLogic(r.Context(), svcCtx)
+		resp, err := l.Querytree(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {
