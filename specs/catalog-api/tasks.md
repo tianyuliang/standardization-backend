@@ -482,6 +482,58 @@ Handler 调用: NewQuerytreeLogic(ctx, svcCtx).Querytree(&req)
 
 ---
 
+### 问题 5: 更新接口与 Java 版本不一致
+
+**现象**: 在一致性检查时发现 2 处差异
+
+**差异 1: 目录名称校验不完整**
+- **Java**: 使用完整正则表达式 `^(?!_)(?!-)[\\u4E00-\\u9FA5\\uF900-\\uFA2D\\w-]{1,20}$`
+- **Go (修复前)**: 仅检查长度和首字符
+- **影响**: Go 会通过不合法的目录名称（如 `"abc$__def__"`）
+
+**差异 2: 缺少父目录空值校验**
+- **Java**: 在 `checkPost()` 中校验 `parentId == null` (lines 631-634)
+- **Go (修复前)**: 未实现此校验
+- **影响**: 空 parentId 会绕过校验直接进入数据库查询
+
+**解决方案**:
+1. **增强 ValidateCatalogName 函数** (`querytree_logic.go:176-185`):
+   ```go
+   func ValidateCatalogName(name string) error {
+       if !catalog.CatalogNameRegexp.MatchString(name) {
+           return fmt.Errorf("目录名称格式不正确，必须由1-20个字符组成，首字符不能为下划线或中划线")
+       }
+       return nil
+   }
+   ```
+
+2. **更新 vars.go** 添加编译后的正则表达式:
+   ```go
+   import "regexp"
+
+   const (
+       // 对应 Java: Constants.getRegexENOrCNVarL(1, 20)
+       CatalogNamePattern = `^(?!_)(?!-)[\x{4e00}-\x{9fa5}\x{f900}-\x{fa2d}\w-]{1,20}$`
+   )
+
+   var CatalogNameRegexp = regexp.MustCompile(CatalogNamePattern)
+   ```
+
+3. **在 create_logic.go 和 update_logic.go 中添加父目录空值校验**:
+   ```go
+   // 1. 校验父目录 ID 不为空（对应 Java lines 631-634）
+   if req.ParentId == "" {
+       return &types.CreateResp{
+           Code:        errorx.NewWithCode(errorx.ErrInvalidParam).Code(),
+           Description: "父目录ID不能为空",
+       }, nil
+   }
+   ```
+
+**相关提交**: 待提交
+
+---
+
 ### 经验总结
 
 1. **goctl 使用建议**:
@@ -508,3 +560,4 @@ Handler 调用: NewQuerytreeLogic(ctx, svcCtx).Querytree(&req)
 |---------|------|--------|---------|
 | 1.0 | 2025-01-21 | - | 初始版本 - Java 目录管理 API 转写任务拆分 |
 | 1.1 | 2025-01-21 | - | 添加实现问题记录和经验总结 |
+| 1.2 | 2025-01-21 | - | 修复更新接口与 Java 版本的 2 处不一致问题 |

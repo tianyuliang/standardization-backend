@@ -1,9 +1,13 @@
 package catalog
 
+import "regexp"
+
 const (
 	// CatalogNamePattern 目录名称正则表达式
 	// 规则：1-20字符，中文/英文/数字/符号_-, 且_-不能作为首字符
-	CatalogNamePattern = `^[\u4e00-\u9fa5a-zA-Z0-9][\u4e00-\u9fa5a-zA-Z0-9_-]{0,19}$`
+	// 对应 Java: Constants.getRegexENOrCNVarL(1, 20)
+	// Java 正则: ^(?!_)(?!-)[\u4E00-\u9FA5\uF900-\uFA2D\w-]{1,20}$
+	CatalogNamePattern = `^(?!_)(?!-)[\x{4e00}-\x{9fa5}\x{f900}-\x{fa2d}\w-]{1,20}$`
 
 	// CatalogNameMaxLength 目录名称最大长度
 	CatalogNameMaxLength = 20
@@ -45,3 +49,6 @@ func GetCatalogTypeText(catalogType int32) string {
 	}
 	return "未知"
 }
+
+// CatalogNameRegexp 编译后的目录名称正则表达式（包级别变量，避免重复编译）
+var CatalogNameRegexp = regexp.MustCompile(CatalogNamePattern)

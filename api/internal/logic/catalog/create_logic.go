@@ -31,7 +31,15 @@ func NewCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateLogi
 }
 
 func (l *CreateLogic) Create(req *types.CreateReq) (resp *types.CreateResp, err error) {
-	// 1. 校验目录名称格式
+	// 1. 校验父目录 ID 不为空（对应 Java lines 631-634）
+	if req.ParentId == "" {
+		return &types.CreateResp{
+			Code:        errorx.NewWithCode(errorx.ErrInvalidParam).Code(),
+			Description: "父目录ID不能为空",
+		}, nil
+	}
+
+	// 2. 校验目录名称格式
 	if err := ValidateCatalogName(req.CatalogName); err != nil {
 		return &types.CreateResp{
 			Code:        errorx.NewWithCode(errorx.ErrInvalidParam).Code(),
@@ -39,7 +47,7 @@ func (l *CreateLogic) Create(req *types.CreateReq) (resp *types.CreateResp, err 
 		}, nil
 	}
 
-	// 2. 校验父目录存在
+	// 3. 校验父目录存在
 	parentCatalog, err := l.svcCtx.CatalogModel.FindOne(l.ctx, req.ParentId)
 	if err != nil {
 		return &types.CreateResp{
@@ -54,7 +62,7 @@ func (l *CreateLogic) Create(req *types.CreateReq) (resp *types.CreateResp, err 
 		}, nil
 	}
 
-	// 3. 校验父目录级别 < 255
+	// 4. 校验父目录级别 < 255
 	if parentCatalog.Level >= catalog.CatalogMaxLevel {
 		return &types.CreateResp{
 			Code:        errorx.NewWithCode(errorx.ErrOutOfRange).Code(),
@@ -62,11 +70,11 @@ func (l *CreateLogic) Create(req *types.CreateReq) (resp *types.CreateResp, err 
 		}, nil
 	}
 
-	// 4. 继承父目录的 type，设置 level = 父目录 level + 1
+	// 5. 继承父目录的 type，设置 level = 父目录 level + 1
 	catalogType := parentCatalog.Type
 	newLevel := parentCatalog.Level + 1
 
-	// 5. 检查同级目录名称唯一性
+	// 6. 检查同级目录名称唯一性
 	isUnique, err := l.svcCtx.CatalogModel.CheckUniqueName(l.ctx, req.ParentId, catalogType, req.CatalogName, "")
 	if err != nil {
 		return &types.CreateResp{
@@ -81,7 +89,7 @@ func (l *CreateLogic) Create(req *types.CreateReq) (resp *types.CreateResp, err 
 		}, nil
 	}
 
-	// 6. 构建目录实体
+	// 7. 构建目录实体
 	newCatalog := &catalog.Catalog{
 		Id:          generateCatalogId(), // 使用雪花算法生成ID
 		CatalogName: req.CatalogName,
@@ -92,7 +100,7 @@ func (l *CreateLogic) Create(req *types.CreateReq) (resp *types.CreateResp, err 
 		AuthorityId: nil,
 	}
 
-	// 7. 插入数据库
+	// 8. 插入数据库
 	_, err = l.svcCtx.CatalogModel.Insert(l.ctx, newCatalog)
 	if err != nil {
 		return &types.CreateResp{

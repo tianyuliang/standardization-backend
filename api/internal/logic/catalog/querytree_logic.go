@@ -174,19 +174,12 @@ func (l *QuerytreeLogic) buildTree(catalogs []*catalog.Catalog, rootId *int64) *
 }
 
 // ValidateCatalogName 校验目录名称格式
+// 对应 Java: Constants.getRegexENOrCNVarL(1, 20)
+// 正则: ^(?!_)(?!-)[\u4E00-\u9FA5\uF900-\uFA2D\w-]{1,20}$
 func ValidateCatalogName(name string) error {
-	if len(name) < catalog.CatalogNameMinLength || len(name) > catalog.CatalogNameMaxLength {
-		return fmt.Errorf("目录名称长度必须在 %d-%d 之间", catalog.CatalogNameMinLength, catalog.CatalogNameMaxLength)
+	// 使用完整的正则表达式校验
+	if !catalog.CatalogNameRegexp.MatchString(name) {
+		return fmt.Errorf("目录名称格式不正确，必须由1-20个字符组成，首字符不能为下划线或中划线")
 	}
-
-	// 简单校验：首字符必须是中文/英文/数字
-	firstChar := name[0]
-	if !((firstChar >= 0x4e00 && firstChar <= 0x9fa5) || // 中文
-		(firstChar >= 'a' && firstChar <= 'z') ||
-		(firstChar >= 'A' && firstChar <= 'Z') ||
-		(firstChar >= '0' && firstChar <= '9')) {
-		return fmt.Errorf("目录名称首字符必须是中文、字母或数字")
-	}
-
 	return nil
 }

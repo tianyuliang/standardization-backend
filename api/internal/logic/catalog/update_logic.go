@@ -31,7 +31,15 @@ func NewUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateLogi
 }
 
 func (l *UpdateLogic) Update(req *types.UpdateReq) (resp *types.UpdateResp, err error) {
-	// 1. 校验目录名称格式
+	// 1. 校验父目录 ID 不为空（对应 Java lines 631-634）
+	if req.ParentId == "" {
+		return &types.UpdateResp{
+			Code:        errorx.NewWithCode(errorx.ErrInvalidParam).Code(),
+			Description: "父目录ID不能为空",
+		}, nil
+	}
+
+	// 2. 校验目录名称格式
 	if err := ValidateCatalogName(req.CatalogName); err != nil {
 		return &types.UpdateResp{
 			Code:        errorx.NewWithCode(errorx.ErrInvalidParam).Code(),
@@ -39,7 +47,7 @@ func (l *UpdateLogic) Update(req *types.UpdateReq) (resp *types.UpdateResp, err 
 		}, nil
 	}
 
-	// 2. 校验目录存在
+	// 3. 校验目录存在
 	currentCatalog, err := l.svcCtx.CatalogModel.FindOne(l.ctx, req.Id)
 	if err != nil {
 		return &types.UpdateResp{
@@ -54,7 +62,7 @@ func (l *UpdateLogic) Update(req *types.UpdateReq) (resp *types.UpdateResp, err 
 		}, nil
 	}
 
-	// 3. 校验不是根目录（level <= 1 不允许修改）
+	// 4. 校验不是根目录（level <= 1 不允许修改）
 	if currentCatalog.Level <= catalog.CatalogRootLevel {
 		return &types.UpdateResp{
 			Code:        errorx.NewWithCode(errorx.ErrInvalidParam).Code(),
@@ -62,7 +70,7 @@ func (l *UpdateLogic) Update(req *types.UpdateReq) (resp *types.UpdateResp, err 
 		}, nil
 	}
 
-	// 4. 校验新父目录存在
+	// 5. 校验新父目录存在
 	newParentCatalog, err := l.svcCtx.CatalogModel.FindOne(l.ctx, req.ParentId)
 	if err != nil {
 		return &types.UpdateResp{
@@ -77,7 +85,7 @@ func (l *UpdateLogic) Update(req *types.UpdateReq) (resp *types.UpdateResp, err 
 		}, nil
 	}
 
-	// 5. 校验新父目录级别 < 255
+	// 6. 校验新父目录级别 < 255
 	if newParentCatalog.Level >= catalog.CatalogMaxLevel {
 		return &types.UpdateResp{
 			Code:        errorx.NewWithCode(errorx.ErrOutOfRange).Code(),
@@ -85,7 +93,7 @@ func (l *UpdateLogic) Update(req *types.UpdateReq) (resp *types.UpdateResp, err 
 		}, nil
 	}
 
-	// 6. 循环检测：新父目录不能是自身子目录
+	// 7. 循环检测：新父目录不能是自身子目录
 	isDescendant, err := l.svcCtx.CatalogModel.IsDescendant(l.ctx, req.Id, req.ParentId)
 	if err != nil {
 		return &types.UpdateResp{
@@ -100,7 +108,7 @@ func (l *UpdateLogic) Update(req *types.UpdateReq) (resp *types.UpdateResp, err 
 		}, nil
 	}
 
-	// 7. 类型一致性：新父目录 type 必须与当前目录一致
+	// 8. 类型一致性：新父目录 type 必须与当前目录一致
 	if newParentCatalog.Type != currentCatalog.Type {
 		return &types.UpdateResp{
 			Code: errorx.NewWithCode(errorx.ErrInvalidParam).Code(),
@@ -110,7 +118,7 @@ func (l *UpdateLogic) Update(req *types.UpdateReq) (resp *types.UpdateResp, err 
 		}, nil
 	}
 
-	// 8. 检查同级名称唯一性（排除自身）
+	// 9. 检查同级名称唯一性（排除自身）
 	isUnique, err := l.svcCtx.CatalogModel.CheckUniqueName(l.ctx, req.ParentId, currentCatalog.Type, req.CatalogName, req.Id)
 	if err != nil {
 		return &types.UpdateResp{
@@ -125,7 +133,7 @@ func (l *UpdateLogic) Update(req *types.UpdateReq) (resp *types.UpdateResp, err 
 		}, nil
 	}
 
-	// 9. 更新目录信息
+	// 10. 更新目录信息
 	currentCatalog.CatalogName = req.CatalogName
 	currentCatalog.ParentId = req.ParentId
 	currentCatalog.Description = req.Description
