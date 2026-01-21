@@ -1,0 +1,545 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "title": "standardization-backend API",
+    "version": "v1"
+  },
+  "basePath": "/",
+  "paths": {
+    "/api/v1/catalog": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "创建目录",
+        "operationId": "catalogCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "catalogName",
+                "parentId"
+              ],
+              "properties": {
+                "catalogName": {
+                  "description": "目录名称（1-20字符）",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "目录说明（可选）",
+                  "type": "string"
+                },
+                "parentId": {
+                  "description": "父目录ID",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/catalog/query": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "按名称检索目录",
+        "operationId": "catalogQuery",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "目录类型",
+            "name": "type",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "目录名称（模糊查询）",
+            "name": "catalog_name",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "catalogName",
+                      "description",
+                      "level",
+                      "parentId",
+                      "type",
+                      "authorityId",
+                      "count"
+                    ],
+                    "properties": {
+                      "authorityId": {
+                        "type": "string"
+                      },
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "count": {
+                        "type": "integer"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "level": {
+                        "type": "integer"
+                      },
+                      "parentId": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/catalog/query/with_file": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "查询目录与文件树列表",
+        "operationId": "catalogQuerywithfile",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "目录名称（模糊查询）",
+            "name": "catalog_name",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "catalogs",
+                    "files"
+                  ],
+                  "properties": {
+                    "catalogs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "catalogName",
+                          "description",
+                          "level",
+                          "parentId",
+                          "type",
+                          "authorityId"
+                        ],
+                        "properties": {
+                          "authorityId": {
+                            "type": "string"
+                          },
+                          "catalogName": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "integer"
+                          },
+                          "parentId": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "files": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "fileId",
+                          "fileName",
+                          "catalogId"
+                        ],
+                        "properties": {
+                          "catalogId": {
+                            "type": "string"
+                          },
+                          "fileId": {
+                            "type": "string"
+                          },
+                          "fileName": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/catalog/query_tree": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "查询目录树",
+        "operationId": "catalogQuerytree",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "目录类型 1=数据元, 2=码表, 3=编码规则, 4=文件",
+            "name": "type",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "目录ID（可选，指定时返回该节点子树）",
+            "name": "id",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "catalogName",
+                    "description",
+                    "level",
+                    "parentId",
+                    "type",
+                    "authorityId",
+                    "count",
+                    "children",
+                    "haveChildren"
+                  ],
+                  "properties": {
+                    "authorityId": {
+                      "type": "string"
+                    },
+                    "catalogName": {
+                      "type": "string"
+                    },
+                    "children": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "catalogName",
+                          "description",
+                          "level",
+                          "parentId",
+                          "type",
+                          "authorityId",
+                          "count",
+                          "children",
+                          "haveChildren"
+                        ],
+                        "properties": {
+                          "authorityId": {
+                            "type": "string"
+                          },
+                          "catalogName": {
+                            "type": "string"
+                          },
+                          "children": {
+                            "type": "array",
+                            "items": {
+                              "type": "object"
+                            }
+                          },
+                          "count": {
+                            "type": "integer"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "haveChildren": {
+                            "type": "boolean"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "integer"
+                          },
+                          "parentId": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "haveChildren": {
+                      "type": "boolean"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "level": {
+                      "type": "integer"
+                    },
+                    "parentId": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/catalog/{id}": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "修改目录",
+        "operationId": "catalogUpdate",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "目录ID（路径参数）",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "catalogName",
+                "parentId"
+              ],
+              "properties": {
+                "catalogName": {
+                  "description": "目录名称",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "目录说明（可选）",
+                  "type": "string"
+                },
+                "parentId": {
+                  "description": "父目录ID",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "删除目录",
+        "operationId": "catalogDelete",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "目录ID（路径参数）",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "HealthCheck",
+        "operationId": "healthCheck",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-date": "2026-01-21 17:36:04",
+  "x-description": "This is a goctl generated swagger file.",
+  "x-github": "https://github.com/zeromicro/go-zero",
+  "x-go-zero-doc": "https://go-zero.dev/",
+  "x-goctl-version": "1.9.2"
+}

@@ -143,7 +143,7 @@
   goctl api go -api api/doc/api.api -dir api/ --style=go_zero --type-group
   ```
 
-- [ ] T009 [US1] [P] 运行 `goctl api swagger` 生成 Swagger 文档
+- [x] T009 [US1] [P] 运行 `goctl api swagger` 生成 Swagger 文档
   ```bash
   make swagger
   ```
