@@ -20,12 +20,12 @@ const (
 
 // CatalogType 目录类型枚举
 const (
-	CatalogTypeDataElement    = 1 // 数据元
-	CatalogTypeDict           = 2 // 码表
-	CatalogTypeEncodingRule   = 3 // 编码规则
-	CatalogTypeFile           = 4 // 文件
-	CatalogTypeRoot           = 0 // 根目录(保留)
-	CatalogTypeOther          = 99 // 其他(保留)
+	CatalogTypeDataElement  = 1  // 数据元
+	CatalogTypeDict         = 2  // 码表
+	CatalogTypeEncodingRule = 3  // 编码规则
+	CatalogTypeFile         = 4  // 文件
+	CatalogTypeRoot         = 0  // 根目录(保留)
+	CatalogTypeOther        = 99 // 其他(保留)
 )
 
 // CatalogTypeText 目录类型文本映射

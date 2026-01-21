@@ -103,7 +103,7 @@ func (l *UpdateLogic) Update(req *types.UpdateReq) (resp *types.UpdateResp, err 
 	// 7. 类型一致性：新父目录 type 必须与当前目录一致
 	if newParentCatalog.Type != currentCatalog.Type {
 		return &types.UpdateResp{
-			Code:        errorx.NewWithCode(errorx.ErrInvalidParam).Code(),
+			Code: errorx.NewWithCode(errorx.ErrInvalidParam).Code(),
 			Description: fmt.Sprintf("目录类型不一致，当前: %s, 新父目录: %s",
 				catalog.GetCatalogTypeText(currentCatalog.Type),
 				catalog.GetCatalogTypeText(newParentCatalog.Type)),

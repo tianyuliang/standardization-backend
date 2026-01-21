@@ -328,24 +328,24 @@
 
 **目的**: 收尾工作和质量保证
 
-- [ ] T028 [P] 代码清理和格式化
+- [x] T028 [P] 代码清理和格式化
   ```bash
   gofmt -w .
   goimports -w .
   ```
 
-- [ ] T029 [P] 运行 golangci-lint 代码检查
+- [x] T029 [P] 运行 golangci-lint 代码检查
   ```bash
   make lint
   ```
 
-- [ ] T030 **确认测试覆盖率 > 80%**
+- [x] T030 **确认测试覆盖率 > 80%**
   ```bash
   go test ./... -coverprofile=coverage.out
   go tool cover -func=coverage.out | grep -E "(total|model/catalog|logic/catalog)"
   ```
 
-- [ ] T031 验证 API 与 Java 版本契约一致性
+- [x] T031 验证 API 与 Java 版本契约一致性
   - 对比响应 JSON 结构
   - 验证错误码映射
   - 验证业务规则一致性

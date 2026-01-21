@@ -35,7 +35,7 @@ func (l *QueryLogic) Query(req *types.QueryReq) (resp *types.QueryResp, err erro
 	// 1. 校验 type 参数
 	if req.Type < catalog.CatalogTypeDataElement || req.Type > catalog.CatalogTypeFile {
 		return &types.QueryResp{
-			Code:        errorx.NewWithCode(errorx.ErrInvalidParam).Code(),
+			Code: errorx.NewWithCode(errorx.ErrInvalidParam).Code(),
 			Description: fmt.Sprintf("目录类型无效，有效值为: %d=%s, %d=%s, %d=%s, %d=%s",
 				catalog.CatalogTypeDataElement, catalog.GetCatalogTypeText(catalog.CatalogTypeDataElement),
 				catalog.CatalogTypeDict, catalog.GetCatalogTypeText(catalog.CatalogTypeDict),
