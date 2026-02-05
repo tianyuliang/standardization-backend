@@ -83,15 +83,15 @@
 
 ### 1.1 API 定义
 
-- [ ] T006 创建 `api/doc/rule/rule.api`
-  - [ ] 定义基础类型: CreateRuleReq, UpdateRuleReq, RuleResp, RuleListResp
-  - [ ] 定义 RuleCustom 自定义配置类型
-  - [ ] 定义 5 个 API 端点
-  - [ ] 配置路由: `@server(prefix: /v1, group: rule)`
+- [x] T006 创建 `api/doc/rule/rule.api`
+  - [x] 定义基础类型: CreateRuleReq, UpdateRuleReq, RuleResp, RuleListResp
+  - [x] 定义 RuleCustom 自定义配置类型
+  - [x] 定义 5 个 API 端点
+  - [x] 配置路由: `@server(prefix: /v1, group: rule)`
 
-- [ ] T007 在 `api/doc/api.api` 中 import rule 模块
+- [x] T007 在 `api/doc/api.api` 中 import rule 模块
 
-- [ ] T008 运行 `goctl api go` 生成 Handler/Types
+- [x] T008 运行 `goctl api go` 生成 Handler/Types
   ```bash
   goctl api go -api api/doc/api.api -dir api/ --style=go_zero --type-group
   ```
@@ -100,24 +100,24 @@
 
 ### 1.2 DDL 定义
 
-- [ ] T010 [P] 创建 `migrations/rule/raw/t_rule.sql`
-- [ ] T011 [P] 创建 `migrations/rule/raw/t_relation_rule_file.sql`
+- [x] T010 [P] 创建 `migrations/rule/raw/t_rule.sql`
+- [x] T011 [P] 创建 `migrations/rule/raw/t_relation_rule_file.sql`
 
 ### 1.3 Model 层
 
-- [ ] T012 创建 `model/rule/rule/` 目录结构
-  - [ ] `interface.go` - RuleModel 接口
-  - [ ] `types.go` - Rule、RelationRuleFile、RuleVo、RuleCustom
-  - [ ] `vars.go` - 枚举常量、错误码
-  - [ ] `factory.go` - 工厂函数
+- [x] T012 创建 `model/rule/rule/` 目录结构
+  - [x] `interface.go` - RuleModel 接口
+  - [x] `types.go` - Rule、RelationRuleFile、RuleVo、RuleCustom
+  - [x] `vars.go` - 枚举常量、错误码
+  - [x] `factory.go` - 工厂函数
 
-- [ ] T013 实现 `model/rule/rule/gorm_dao.go`
-  - [ ] Insert, FindOne, Update, Delete
-  - [ ] FindByIds, FindByNameAndOrgType
-  - [ ] FindByCatalogIds (分页)
-  - [ ] FindDataExists
+- [x] T013 实现 `model/rule/rule/sql_model.go`
+  - [x] Insert, FindOne, Update, Delete
+  - [x] FindByIds, FindByNameAndOrgType
+  - [x] FindByCatalogIds (分页)
+  - [x] FindDataExists
 
-- [ ] T014 实现 `model/rule/relation_file/gorm_dao.go`
+- [ ] T014 实现 `model/rule/relation_file/sql_model.go`
   - [ ] InsertBatch, DeleteByRuleId, FindByRuleId
 
 - [ ] T015 **[TEST]** `model/rule/rule/gorm_dao_test.go`
@@ -253,8 +253,10 @@
 - [ ] T027 更新 `api/internal/svc/service_context.go`
   ```go
   type ServiceContext struct {
-      RuleModel     model.RuleModel
-      KafkaProducer *kafka.Producer
+      RuleModel         model.RuleModel
+      RelationRuleFileModel model.RelationRuleFileModel
+      KafkaProducer     *kafka.Producer
+      DB                *sqlx.Conn
       // TODO: 后续补充 RPC 客户端
       // CatalogRpc    catalogclient.Catalog
       // DataElementRpc dataelementclient.DataElement

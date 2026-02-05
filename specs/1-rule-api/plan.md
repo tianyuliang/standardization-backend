@@ -14,7 +14,7 @@
 1. **主键兼容性**：使用 Long 类型 BIGINT 主键（与Java保持一致，这是项目宪章例外情况）
 2. **表结构保持**：完全复用 Java 表结构（f_ 前缀字段）
 3. **接口兼容**：18个API路径、参数、响应格式、错误码100%一致
-4. **双ORM策略**：GORM处理复杂查询（多表JOIN），SQLx处理简单CRUD
+4. **纯 SQLx 策略**：所有数据库操作使用 SQLx，手工编写 SQL 查询
 
 ---
 
@@ -44,7 +44,7 @@
 | **Framework** | Go-Zero v1.9+ |
 | **Storage** | MySQL 8.0 (复用Java表结构) |
 | **Cache** | Redis 7.0 |
-| **ORM** | GORM / SQLx |
+| **DB Access** | SQLx (纯 SQL) |
 | **Testing** | go test |
 | **Common Lib** | idrm-go-base v0.1.0+ |
 | **Migration From** | Java Spring Boot + MyBatis |
@@ -119,8 +119,7 @@ goctl api go -api api/doc/api.api -dir api/ --style=go_zero --type-group
 | 3 | Model 接口 | AI 手写 | `model/rule/rule/interface.go` |
 | 4 | Model 类型 | AI 手写 | `model/rule/rule/types.go` |
 | 5 | Model 常量 | AI 手写 | `model/rule/rule/vars.go` |
-| 6 | GORM 实现 | AI 手写 | `model/rule/rule/gorm_dao.go` |
-| 7 | SQLx 实现 | AI 手写 | `model/rule/rule/sqlx_model.go` |
+| 6 | SQLx 实现 | AI 手写 | `model/rule/rule/sql_model.go` |
 | 8 | Handler | goctl 生成 | `api/internal/handler/rule/` |
 | 9 | Types | goctl 生成 | `api/internal/types/types.go` |
 | 10 | Logic | AI 实现 | `api/internal/logic/rule/` |
@@ -178,9 +177,8 @@ model/rule/rule/
 ├── interface.go                           # Model 接口定义
 ├── types.go                               # 数据结构（Rule、RelationRuleFile）
 ├── vars.go                                # 常量/错误定义
-├── factory.go                             # ORM 工厂函数
-├── gorm_dao.go                            # GORM 实现（复杂查询）
-└── sqlx_model.go                          # SQLx 实现（简单CRUD）
+├── factory.go                             # SQLx 工厂函数
+└── sql_model.go                           # SQLx 实现（所有查询）
 ```
 
 ---
@@ -247,9 +245,8 @@ type RuleModel interface {
     RemoveCatalog(ctx context.Context, ids []int64, catalogId int64, updateUser string) error
     UpdateVersionByIds(ctx context.Context, ids []int64, updateUser string) error
 
-    // 事务支持
-    WithTx(tx *gorm.DB) RuleModel
-    Trans(ctx context.Context, fn func(ctx context.Context, model RuleModel) error) error
+    // 批量操作
+    DeleteByIds(ctx context.Context, ids []int64) error
 }
 
 type FindOptions struct {
@@ -273,7 +270,7 @@ type RelationRuleFileModel interface {
     DeleteByRuleId(ctx context.Context, ruleId int64) error
     DeleteByFileId(ctx context.Context, fileId int64) error
     FindByRuleId(ctx context.Context, ruleId int64) ([]*RelationRuleFile, error)
-    FindByFileId(ctx context.Context, fileId int64) ([]*RelationRuleFile, error)
+    DeleteByRuleIds(ctx context.Context, ruleIds []int64) error
 }
 ```
 
@@ -323,24 +320,24 @@ CREATE TABLE `t_relation_rule_file` (
 ```go
 // Rule 编码规则
 type Rule struct {
-    Id             int64     `gorm:"column:f_id;primaryKey" json:"id"`
-    Name           string    `gorm:"column:f_name;size:128;notNull" json:"name"`
-    CatalogId      int64     `gorm:"column:f_catalog_id;notNull" json:"catalogId"`
-    OrgType        int32     `gorm:"column:f_org_type;notNull" json:"orgType"`
-    Description    string    `gorm:"column:f_description;size:300" json:"description"`
-    RuleType       int32     `gorm:"column:f_rule_type;notNull;default:0" json:"ruleType"`
-    Version        int32     `gorm:"column:f_version;notNull;default:1" json:"version"`
-    Expression     string    `gorm:"column:f_expression;size:1024;notNull" json:"-"`
-    State          int32     `gorm:"column:f_state;notNull;default:1" json:"state"`
-    DisableReason  string    `gorm:"column:f_disable_reason;size:1024" json:"disableReason"`
-    AuthorityId    string    `gorm:"column:f_authority_id;size:100" json:"authorityId"`
-    DepartmentIds  string    `gorm:"column:f_department_ids;size:350" json:"departmentIds"`
-    ThirdDeptId    string    `gorm:"column:f_third_dept_id;size:36" json:"thirdDeptId"`
-    CreateTime     time.Time `gorm:"column:f_create_time" json:"createTime"`
-    CreateUser     string    `gorm:"column:f_create_user;size:128" json:"createUser"`
-    UpdateTime     time.Time `gorm:"column:f_update_time" json:"updateTime"`
-    UpdateUser     string    `gorm:"column:f_update_user;size:128" json:"updateUser"`
-    Deleted        int64     `gorm:"column:f_deleted;notNull;default:0" json:"deleted"`
+    Id             int64     `db:"f_id" json:"id"`
+    Name           string    `db:"f_name" json:"name"`
+    CatalogId      int64     `db:"f_catalog_id" json:"catalogId"`
+    OrgType        int32     `db:"f_org_type" json:"orgType"`
+    Description    string    `db:"f_description" json:"description"`
+    RuleType       int32     `db:"f_rule_type" json:"ruleType"`
+    Version        int32     `db:"f_version" json:"version"`
+    Expression     string    `db:"f_expression" json:"-"`
+    State          int32     `db:"f_state" json:"state"`
+    DisableReason  string    `db:"f_disable_reason" json:"disableReason"`
+    AuthorityId    string    `db:"f_authority_id" json:"authorityId"`
+    DepartmentIds  string    `db:"f_department_ids" json:"departmentIds"`
+    ThirdDeptId    string    `db:"f_third_dept_id" json:"thirdDeptId"`
+    CreateTime     time.Time `db:"f_create_time" json:"createTime"`
+    CreateUser     string    `db:"f_create_user" json:"createUser"`
+    UpdateTime     time.Time `db:"f_update_time" json:"updateTime"`
+    UpdateUser     string    `db:"f_update_user" json:"updateUser"`
+    Deleted        int64     `db:"f_deleted" json:"deleted"`
 }
 
 // RuleCustom 自定义规则配置
@@ -367,9 +364,9 @@ type RuleVo struct {
 
 // RelationRuleFile 规则-文件关系
 type RelationRuleFile struct {
-    Id     int64 `gorm:"column:f_id;primaryKey" json:"id"`
-    RuleId int64 `gorm:"column:f_rule_id;notNull" json:"ruleId"`
-    FileId int64 `gorm:"column:f_file_id;notNull" json:"fileId"`
+    Id     int64 `db:"f_id" json:"id"`
+    RuleId int64 `db:"f_rule_id" json:"ruleId"`
+    FileId int64 `db:"f_file_id" json:"fileId"`
 }
 ```
 
