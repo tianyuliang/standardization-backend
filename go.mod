@@ -1,4 +1,4 @@
-module github.com/tianyuliang/standardization-backend
+module github.com/kweaver-ai/dsg/services/apps/standardization-backend
 
 go 1.24
 

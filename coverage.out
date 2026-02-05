@@ -1,8 +1,0 @@
-mode: set
-github.com/tianyuliang/standardization-backend/api/internal/middleware/validator_middleware.go:11.52,13.2 1 0
-github.com/tianyuliang/standardization-backend/api/internal/middleware/validator_middleware.go:15.78,16.54 1 0
-github.com/tianyuliang/standardization-backend/api/internal/middleware/validator_middleware.go:16.54,21.3 1 0
-github.com/tianyuliang/standardization-backend/model/catalog/stub/external_checker.go:16.101,18.2 1 0
-github.com/tianyuliang/standardization-backend/model/catalog/stub/external_checker.go:20.94,22.2 1 0
-github.com/tianyuliang/standardization-backend/model/catalog/stub/external_checker.go:24.94,26.2 1 0
-github.com/tianyuliang/standardization-backend/model/catalog/stub/external_checker.go:28.94,30.2 1 0

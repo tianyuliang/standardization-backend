@@ -1,66 +1,32 @@
 syntax = "v1"
 
 info (
-	title:   "standardization-backend API"
-	desc:    "standardization-backend API 服务"
-	version: "v1"
+    title:   "standardization-backend API"
+    desc:    "standardization-backend API 服务"
+    version: "v1"
 )
 
 // 引入通用类型
 import "base.api"
+
 // ============================================
 // 在此处引入各模块 API 文件
 // 示例: import "user/user.api"
 // ============================================
-import "catalog/catalog.api"
+import "rule/rule.api"
 
 // 定义 service 名称为 "api"
 // goctl 会生成: api.go + etc/api.yaml
 @server (
-	prefix: /api/v1
+    prefix: /api/v1
 )
 service api {
-	// 健康检查 (示例)
-	@handler HealthCheck
-	get /health returns (HealthResp)
-}
-
-// ============================================
-// 目录管理 API 服务定义
-// ============================================
-@server (
-	prefix:     /api/v1/catalog
-	group:      catalog
-	middleware: Validator
-)
-service api {
-	@doc "查询目录树"
-	@handler querytree
-	get /query_tree (QueryTreeReq) returns (QueryTreeResp)
-
-	@doc "按名称检索目录"
-	@handler query
-	get /query (QueryReq) returns (QueryResp)
-
-	@doc "创建目录"
-	@handler create
-	post / (CreateReq) returns (CreateResp)
-
-	@doc "修改目录"
-	@handler update
-	put /:id (UpdateReq) returns (UpdateResp)
-
-	@doc "删除目录"
-	@handler delete
-	delete /:id (DeleteReq) returns (DeleteResp)
-
-	@doc "查询目录与文件树列表"
-	@handler querywithfile
-	get /query/with_file (QueryWithFileReq) returns (QueryWithFileResp)
+    // 健康检查 (示例)
+    @handler HealthCheck
+    get /health returns (HealthResp)
 }
 
 // 健康检查响应
 type HealthResp {
-	Status string `json:"status"`
+    Status string `json:"status"`
 }
-
