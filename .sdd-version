@@ -1,9 +1,9 @@
 {
-  "version": "0.6.0",
-  "installed_at": "2026-01-21T02:25:10Z",
-  "services": ["api","rpc","job","consumer"],
+  "version": "0.8.3",
+  "installed_at": "2026-02-05T06:46:09Z",
+  "services": ["api","consumer"],
   "project_name": "standardization-backend",
-  "go_module": "github.com/tianyuliang/standardization-backend",
+  "go_module": "github.com/kweaver-ai/dsg/services/apps/standardization-backend",
   "db_config": {
     "host": "localhost",
     "port": 3306,

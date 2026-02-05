@@ -213,11 +213,19 @@ logx.WithContext(ctx).Infof("user login: %s", phone)
 - ❌ 硬编码配置值
 - ❌ 使用 fmt.Println 替代 logx
 
-## 相关文档
+## Active Technologies
 
-- 项目宪法: `.specify/memory/constitution.md`
-- SDD 模板: `.specify/templates/`
-- Spec Kit 命令: `.cursor/commands/` 或 `.claude/commands/`
+- Go 1.24+ (1-rule-api: 编码规则管理模块)
+- Go-Zero v1.9+ (1-rule-api: 编码规则管理模块)
+- MySQL 8.0 (1-rule-api: 复用Java表结构)
+- Kafka 3.0 (1-rule-api: MQ消息)
+
+## Recent Changes
+
+- 1-rule-api: Added Go 1.24+ + Go-Zero v1.9+ (编码规则管理模块)
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->
 
 ## 常见操作
 

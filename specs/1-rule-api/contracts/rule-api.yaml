@@ -1,0 +1,781 @@
+openapi: 3.0.0
+info:
+  title: 编码规则管理 API
+  version: 1.0.0
+  description: 从 Java 迁移的编码规则管理接口，18个API端点
+
+servers:
+  - url: /api/standardization/v1
+    description: 外部API基路径
+  - url: /v1/rule
+    description: 内部API基路径
+
+tags:
+  - name: open
+    description: 外部可访问的API
+  - name: internal
+    description: 内部服务调用的API
+
+paths:
+  /rule:
+    post:
+      tags: [open]
+      summary: 新增编码规则
+      operationId: createRule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRuleReq'
+      responses:
+        '200':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleResp'
+
+    put:
+      tags: [open]
+      summary: 根据ID修改编码规则
+      operationId: updateRule
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRuleReq'
+      responses:
+        '200':
+          description: 修改成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleResp'
+
+    get:
+      tags: [open]
+      summary: 编码规则-列表查询
+      operationId: listRule
+      parameters:
+        - $ref: '#/components/parameters/CatalogId'
+        - $ref: '#/components/parameters/Keyword'
+        - $ref: '#/components/parameters/OrgType'
+        - $ref: '#/components/parameters/State'
+        - $ref: '#/components/parameters/RuleType'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Direction'
+        - $ref: '#/components/parameters/DepartmentId'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleListResp'
+
+  /rule/{id}:
+    get:
+      tags: [open]
+      summary: 编码规则-详情查看
+      operationId: getRule
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleResp'
+
+    delete:
+      tags: [internal]
+      summary: 编码规则-删除&批量删除
+      operationId: deleteRule
+      parameters:
+        - name: ids
+          in: path
+          required: true
+          schema:
+            type: string
+          description: 多个ID用逗号分隔
+      responses:
+        '200':
+          description: 删除成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResp'
+
+  /rule/state/{id}:
+    put:
+      tags: [open]
+      summary: 根据编码规则id停用/启用
+      operationId: updateRuleState
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRuleStateReq'
+      responses:
+        '200':
+          description: 状态更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResp'
+
+  /rule/catalog/remove:
+    post:
+      tags: [internal]
+      summary: 编码规则-移动到指定目录
+      operationId: removeRuleCatalog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemoveCatalogReq'
+      responses:
+        '200':
+          description: 移动成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResp'
+
+  /rule/queryByIds:
+    post:
+      tags: [open]
+      summary: 根据id列表查询
+      operationId: queryRuleByIds
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryByIdsReq'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleListResp'
+
+  /rule/queryByStdFileCatalog:
+    get:
+      tags: [open]
+      summary: 编码规则-根据标准文件目录结构分页查询
+      operationId: queryRuleByStdFileCatalog
+      parameters:
+        - $ref: '#/components/parameters/CatalogId'
+        - $ref: '#/components/parameters/Keyword'
+        - $ref: '#/components/parameters/OrgType'
+        - $ref: '#/components/parameters/State'
+        - $ref: '#/components/parameters/RuleType'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Direction'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleListResp'
+
+  /rule/queryByStdFile:
+    get:
+      tags: [open]
+      summary: 编码规则-根据标准文件分页查询
+      operationId: queryRuleByStdFile
+      parameters:
+        - $ref: '#/components/parameters/FileId'
+        - $ref: '#/components/parameters/Keyword'
+        - $ref: '#/components/parameters/OrgType'
+        - $ref: '#/components/parameters/State'
+        - $ref: '#/components/parameters/RuleType'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Direction'
+        - $ref: '#/components/parameters/DepartmentId'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleListResp'
+
+  /rule/queryDataExists:
+    get:
+      tags: [internal]
+      summary: 编码规则-查询数据是否存在
+      operationId: queryDataExists
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: filter_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: department_ids
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResp'
+                  - type: object
+                    properties:
+                      data:
+                        type: boolean
+
+  /rule/relation/stdfile/{id}:
+    get:
+      tags: [open]
+      summary: 编码规则-根据文件ID分页查询编码规则关联的标准文件
+      operationId: queryStdFilesByRule
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  description:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/StdFileResp'
+                  totalCount:
+                    type: integer
+
+  /rule/relation/de/{id}:
+    get:
+      tags: [internal]
+      summary: 编码规则-分页查询引用编码规则的标准数据元列表
+      operationId: queryRuleUsedDataElement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  description:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DataElementResp'
+                  totalCount:
+                    type: integer
+
+  /rule/getCustomDateFormat:
+    get:
+      tags: [internal]
+      summary: 编码规则-获取自定义规则日期格式化字符串
+      operationId: getCustomDateFormat
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomDateFormatResp'
+
+  /internal/getId/{id}:
+    get:
+      tags: [internal]
+      summary: 编码规则-根据ID查看详情（内部）
+      operationId: getRuleInternal
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleResp'
+
+  /internal/getDetailByDataId/{dataId}:
+    get:
+      tags: [internal]
+      summary: 编码规则-根据数据元ID查看详情（内部）
+      operationId: getRuleByDataId
+      parameters:
+        - name: dataId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleResp'
+
+  /internal/getDetailByDataCode/{dataCode}:
+    get:
+      tags: [internal]
+      summary: 编码规则-根据数据元编码查看详情（内部）
+      operationId: getRuleByDataCode
+      parameters:
+        - name: dataCode
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleResp'
+
+  /internal/queryByIds:
+    post:
+      tags: [internal]
+      summary: 根据id列表查询（内部接口）
+      operationId: queryRuleByIdsInternal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryByIdsReq'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleListResp'
+
+components:
+  parameters:
+    CatalogId:
+      name: catalog_id
+      in: query
+      schema:
+        type: integer
+        format: int64
+      description: 目录ID
+
+    Keyword:
+      name: keyword
+      in: query
+      schema:
+        type: string
+      description: 搜索关键字
+
+    OrgType:
+      name: org_type
+      in: query
+      schema:
+        type: integer
+        enum: [0, 1, 2, 3, 4, 5, 6, 99]
+      description: 标准分类
+
+    State:
+      name: state
+      in: query
+      schema:
+        type: string
+        enum: [enable, disable]
+      description: 启用停用
+
+    RuleType:
+      name: rule_type
+      in: query
+      schema:
+        type: string
+        enum: [REGEX, CUSTOM]
+      description: 编码规则类型
+
+    Offset:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        default: 1
+      description: 分页页码
+
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 20
+      description: 条数
+
+    Sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        default: create_time
+      description: 排序字段
+
+    Direction:
+      name: direction
+      in: query
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: desc
+      description: 排序方向
+
+    DepartmentId:
+      name: department_id
+      in: query
+      schema:
+        type: string
+      description: 部门ID
+
+    FileId:
+      name: file_id
+      in: query
+      required: true
+      schema:
+        type: integer
+        format: int64
+      description: 标准文件ID
+
+  schemas:
+    CreateRuleReq:
+      type: object
+      required:
+        - name
+        - orgType
+        - ruleType
+      properties:
+        name:
+          type: string
+          maxLength: 128
+          description: 规则名称
+        orgType:
+          type: integer
+          enum: [0, 1, 2, 3, 4, 5, 6, 99]
+          description: 标准分类
+        ruleType:
+          type: string
+          enum: [REGEX, CUSTOM]
+          description: 规则类型
+        regex:
+          type: string
+          description: 正则表达式（ruleType=REGEX时必填）
+        custom:
+          type: array
+          items:
+            $ref: '#/schemas/RuleCustom'
+          description: 自定义配置（ruleType=CUSTOM时必填）
+        description:
+          type: string
+          maxLength: 300
+          description: 规则说明
+        catalogId:
+          type: integer
+          format: int64
+          default: 33
+          description: 所属目录ID
+        stdFiles:
+          type: array
+          maxItems: 10
+          items:
+            type: integer
+            format: int64
+          description: 关联的标准文件ID数组
+        state:
+          type: string
+          enum: [enable, disable]
+          description: 启用停用
+        departmentIds:
+          type: string
+          description: 部门ID
+
+    UpdateRuleReq:
+      type: object
+      required:
+        - name
+        - orgType
+        - ruleType
+      properties:
+        name:
+          type: string
+          maxLength: 128
+        orgType:
+          type: integer
+          enum: [0, 1, 2, 3, 4, 5, 6, 99]
+        ruleType:
+          type: string
+          enum: [REGEX, CUSTOM]
+        regex:
+          type: string
+        custom:
+          type: array
+          items:
+            $ref: '#/schemas/RuleCustom'
+        description:
+          type: string
+          maxLength: 300
+        catalogId:
+          type: integer
+          format: int64
+          default: 33
+        stdFiles:
+          type: array
+          maxItems: 10
+          items:
+            type: integer
+            format: int64
+        state:
+          type: string
+          enum: [enable, disable]
+        departmentIds:
+          type: string
+
+    UpdateRuleStateReq:
+      type: object
+      required:
+        - state
+      properties:
+        state:
+          type: string
+          enum: [enable, disable]
+        reason:
+          type: string
+          maxLength: 800
+          description: 停用原因（state=disable时必填）
+
+    RemoveCatalogReq:
+      type: object
+      required:
+        - ids
+        - catalogId
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+        catalogId:
+          type: integer
+          format: int64
+
+    QueryByIdsReq:
+      type: object
+      required:
+        - ids
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+
+    RuleCustom:
+      type: object
+      required:
+        - segment_length
+        - type
+        - value
+      properties:
+        segment_length:
+          type: integer
+          description: 分段长度
+        name:
+          type: string
+          description: 名称
+        type:
+          type: string
+          enum: [dict, number, english_letters, chinese_characters, any_characters, date, split_str]
+          description: 自定义规则类型
+        value:
+          type: string
+          description: 值
+
+    RuleResp:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        catalogId:
+          type: integer
+          format: int64
+        catalogName:
+          type: string
+        fullCatalogName:
+          type: string
+        orgType:
+          type: integer
+        description:
+          type: string
+        ruleType:
+          type: string
+        version:
+          type: integer
+        regex:
+          type: string
+        custom:
+          type: array
+          items:
+            $ref: '#/schemas/RuleCustom'
+        state:
+          type: string
+        disableReason:
+          type: string
+        stdFiles:
+          type: array
+          items:
+            type: integer
+            format: int64
+        usedFlag:
+          type: boolean
+        departmentId:
+          type: string
+        departmentName:
+          type: string
+        departmentPathNames:
+          type: string
+        createTime:
+          type: string
+          format: date-time
+        createUser:
+          type: string
+        updateTime:
+          type: string
+          format: date-time
+        updateUser:
+          type: string
+
+    RuleListResp:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/schemas/RuleResp'
+        totalCount:
+          type: integer
+          format: int64
+
+    BaseResp:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+
+    DataElementResp:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        dataCode:
+          type: string
+        dataName:
+          type: string
+
+    StdFileResp:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        fileName:
+          type: string
+
+    CustomDateFormatResp:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        data:
+          type: array
+          items:
+            type: string
