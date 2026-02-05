@@ -1,0 +1,137 @@
+syntax = "v1"
+
+info (
+    title:   "编码规则管理"
+    desc:    "编码规则管理模块 - 支持正则表达式和自定义配置两种规则类型"
+    version: "v1"
+)
+
+// ============================================
+// 导入基础类型
+// ============================================
+import "../base.api"
+
+// ============================================
+// 请求类型定义
+// ============================================
+
+// CreateRuleReq 新增编码规则请求
+type CreateRuleReq {
+    Name           string       `json:"name"`
+    CatalogId      int64        `json:"catalogId"`
+    OrgType        int32        `json:"orgType"`
+    Description    string       `json:"description,optional"`
+    RuleType       string       `json:"ruleType"`
+    Regex          string       `json:"regex,optional"`
+    Custom         []RuleCustom `json:"custom,optional"`
+    StdFileIds     []int64      `json:"stdFileIds,optional"`
+    DepartmentIds  string       `json:"departmentIds,optional"`
+}
+
+// UpdateRuleReq 修改编码规则请求
+type UpdateRuleReq {
+    Name           string       `json:"name"`
+    CatalogId      int64        `json:"catalogId"`
+    OrgType        int32        `json:"orgType"`
+    Description    string       `json:"description,optional"`
+    RuleType       string       `json:"ruleType"`
+    Regex          string       `json:"regex,optional"`
+    Custom         []RuleCustom `json:"custom,optional"`
+    StdFileIds     []int64      `json:"stdFileIds,optional"`
+    DepartmentIds  string       `json:"departmentIds,optional"`
+}
+
+// RuleListQuery 规则列表查询
+type RuleListQuery {
+    Keyword    string `form:"keyword,optional"`
+    CatalogId  int64  `form:"catalogId,optional"`
+    OrgType    int32  `form:"orgType,optional,default=-1"`
+    State      int32  `form:"state,optional,default=-1"`
+    RuleType   string `form:"ruleType,optional"`
+    Offset     int    `form:"offset,default=1,range=[1:]"`
+    Limit      int    `form:"limit,default=10,range=[0:2000]"`
+}
+
+// UpdateRuleStateReq 更新规则状态请求
+type UpdateRuleStateReq {
+    State  string `json:"state"`
+    Reason string `json:"reason,optional"`
+}
+
+// RemoveCatalogReq 目录移动请求
+type RemoveCatalogReq {
+    Ids       []int64 `json:"ids"`
+    CatalogId int64   `json:"catalogId"`
+}
+
+// ============================================
+// 响应类型定义
+// ============================================
+
+// RuleResp 规则详情响应
+type RuleResp {
+    Id             int64       `json:"id"`
+    Name           string      `json:"name"`
+    CatalogId      int64       `json:"catalogId"`
+    CatalogName    string      `json:"catalogName"`
+    OrgType        int32       `json:"orgType"`
+    Description    string      `json:"description"`
+    RuleType       string      `json:"ruleType"`
+    Version        int32       `json:"version"`
+    Expression     string      `json:"expression"`
+    State          int32       `json:"state"`
+    DisableReason  string      `json:"disableReason"`
+    AuthorityId    string      `json:"authorityId"`
+    DepartmentIds  string      `json:"departmentIds"`
+    ThirdDeptId    string      `json:"thirdDeptId"`
+    CreateTime     string      `json:"createTime"`
+    CreateUser     string      `json:"createUser"`
+    UpdateTime     string      `json:"updateTime"`
+    UpdateUser     string      `json:"updateUser"`
+    StdFileIds     []int64     `json:"stdFileIds"`
+    Used           bool        `json:"used"`
+}
+
+// RuleListResp 规则列表响应
+type RuleListResp {
+    Entries    []RuleResp `json:"entries"`
+    TotalCount int64      `json:"total_count"`
+}
+
+// RuleCustom 自定义配置
+type RuleCustom {
+    Type          string `json:"type"`
+    Value         string `json:"value"`
+    SegmentLength int    `json:"segmentLength"`
+    Count         int    `json:"count"`
+}
+
+// ============================================
+// API 定义 - 基础 CRUD
+// ============================================
+
+@server(
+    prefix: /v1
+    group: rule
+)
+service api {
+    @doc "新增编码规则"
+    @handler CreateRule
+    post /rule (CreateRuleReq) returns (RuleResp)
+
+    @doc "根据ID修改编码规则"
+    @handler UpdateRule
+    put /rule/:id (UpdateRuleReq) returns (RuleResp)
+
+    @doc "编码规则详情查看"
+    @handler GetRule
+    get /rule/:id returns (RuleResp)
+
+    @doc "编码规则列表查询"
+    @handler ListRule
+    get /rule (RuleListQuery) returns (RuleListResp)
+
+    @doc "编码规则删除&批量删除"
+    @handler DeleteRule
+    delete /rule/:ids returns (EmptyResp)
+}
