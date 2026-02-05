@@ -14,8 +14,11 @@ import (
 // 编码规则删除&批量删除
 func DeleteRuleHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// 提取路径参数 :ids (多个ID用英文逗号分隔)
+		ids := r.URL.Query().Get(":ids")
+
 		l := rule.NewDeleteRuleLogic(r.Context(), svcCtx)
-		resp, err := l.DeleteRule()
+		resp, err := l.DeleteRule(ids)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

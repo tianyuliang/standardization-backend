@@ -3,9 +3,12 @@ module github.com/kweaver-ai/dsg/services/apps/standardization-backend
 go 1.24.11
 
 require (
+	github.com/go-sql-driver/mysql v1.9.0
 	github.com/jinguoxing/idrm-go-base v0.2.1
 	github.com/zeromicro/go-zero v1.9.4
 )
+
+require filippo.io/edwards25519 v1.1.0 // indirect
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect

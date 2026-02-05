@@ -5,6 +5,7 @@ package rule
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/logic/rule"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
@@ -15,6 +16,14 @@ import (
 // 根据ID修改编码规则
 func UpdateRuleHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// 提取路径参数 :id
+		idStr := r.URL.Query().Get(":id")
+		id, err := strconv.ParseInt(idStr, 10, 64)
+		if err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+			return
+		}
+
 		var req types.UpdateRuleReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
@@ -22,7 +31,7 @@ func UpdateRuleHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := rule.NewUpdateRuleLogic(r.Context(), svcCtx)
-		resp, err := l.UpdateRule(&req)
+		resp, err := l.UpdateRule(id, &req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

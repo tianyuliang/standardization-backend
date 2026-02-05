@@ -4,7 +4,7 @@
 > **Spec Path**: `specs/1-rule-api/`
 > **Created**: 2026-02-05
 > **Input**: spec.md, plan.md
-> **Updated**: 2026-02-05 (按接口增量重组)
+> **Updated**: 2026-02-05 (Phase 1 基础实现完成 - T014/T015修正，Logic层实现)
 
 ---
 
@@ -26,7 +26,7 @@
 | 阶段 | 描述 | 任务数 | 预计工作量 | 状态 |
 |------|------|--------|------------|------|
 | Phase 0 | 基础设施 | 5 | 1天 | ✅ 100% |
-| Phase 1 | 基础CRUD (5接口) | 20 | 5天 | ⏸️ 0% |
+| Phase 1 | 基础CRUD (5接口) | 20 | 5天 | 🔄 60% |
 | Phase 2 | 状态管理 (1接口) | 2 | 1天 | ⏸️ 0% |
 | Phase 3 | 目录移动 (1接口) | 2 | 0.5天 | ⏸️ 0% |
 | Phase 4 | 关联查询 (4接口) | 8 | 2天 | ⏸️ 0% |
@@ -34,7 +34,7 @@
 | Phase 6 | 内部接口 (3接口) | 6 | 1.5天 | ⏸️ 0% |
 | Phase 7 | 辅助接口 (2接口) | 4 | 0.5天 | ⏸️ 0% |
 | Phase 8 | 收尾工作 | 4 | 0.5天 | ⏸️ 0% |
-| **总计** | | **55** | **约13天** | **5/55 (9%)** |
+| **总计** | | **55** | **约13天** | **14/55 (25%)** |
 
 ---
 
@@ -117,14 +117,28 @@
   - [x] FindByCatalogIds (分页)
   - [x] FindDataExists
 
-- [ ] T014 实现 `model/rule/relation_file/sql_model.go`
-  - [ ] InsertBatch, DeleteByRuleId, FindByRuleId
+- [x] T014 实现 `model/rule/relation_file/sql_model.go`
+  - [x] InsertBatch, DeleteByRuleId, FindByRuleId
+  - [x] DeleteByFileId, DeleteByRuleIds
 
-- [ ] T015 **[TEST]** `model/rule/rule/gorm_dao_test.go`
+- [ ] T015 **[TEST]** `model/rule/rule/sql_model_test.go`
+  - [ ] Test Insert
+  - [ ] Test FindOne
+  - [ ] Test Update
+  - [ ] Test FindByCatalogIds
 
 ### 1.4 公共 Logic (common.go)
 
-- [ ] T016 创建 `api/internal/logic/rule/common.go`
+- [x] T016 创建 `api/internal/logic/rule/common.go`
+  - [x] intToRuleType、ruleTypeToInt
+  - [x] timeToStr
+  - [x] buildRuleResp
+  - [x] getExpression
+  - [ ] TODO: ValidateExpression (表达式校验)
+  - [ ] TODO: CheckVersionChange (版本变更检测)
+  - [ ] TODO: SendRuleMQMessage (MQ消息发送)
+  - [ ] TODO: CheckNameUnique (名称唯一性校验)
+  - [ ] TODO: CheckCatalogIdExist (目录存在性校验)
   ```go
   // 表达式校验
   func ValidateExpression(ruleType string, regex string, custom []RuleCustom) error
@@ -154,7 +168,14 @@
 
 ### 1.5 接口实现: POST /v1/rule (新增编码规则)
 
-- [ ] T017 实现 `api/internal/logic/rule/create_rule_logic.go`
+- [x] T017 实现 `api/internal/logic/rule/create_rule_logic.go`
+  - [x] 8步业务流程标注
+  - [ ] TODO: 表达式校验
+  - [ ] TODO: 名称唯一性校验
+  - [ ] TODO: 目录存在性校验
+  - [ ] TODO: 部门ID处理
+  - [ ] TODO: 关联文件保存
+  - [ ] TODO: MQ消息发送
   ```go
   func (l *CreateRuleLogic) Create(req *types.CreateRuleReq) (resp *types.RuleResp, err error) {
       // 1. 参数校验 (Handler 已完成)
@@ -178,7 +199,14 @@
 
 ### 1.6 接口实现: PUT /v1/rule/{id} (修改编码规则)
 
-- [ ] T019 [P] 实现 `api/internal/logic/rule/update_rule_logic.go`
+- [x] T019 [P] 实现 `api/internal/logic/rule/update_rule_logic.go`
+  - [x] 9步业务流程标注
+  - [ ] TODO: 表达式校验
+  - [ ] TODO: 名称唯一性校验（排除自身）
+  - [ ] TODO: 目录存在性校验
+  - [ ] TODO: 版本变更检测
+  - [ ] TODO: 更新关联文件
+  - [ ] TODO: MQ消息发送
   ```go
   func (l *UpdateRuleLogic) Update(req *types.UpdateRuleReq) (resp *types.RuleResp, err error) {
       // 1. 校验存在性
@@ -197,7 +225,12 @@
 
 ### 1.7 接口实现: GET /v1/rule/{id} (详情查看)
 
-- [ ] T021 [P] 实现 `api/internal/logic/rule/get_rule_logic.go`
+- [x] T021 [P] 实现 `api/internal/logic/rule/get_rule_logic.go`
+  - [x] 7步业务流程标注
+  - [ ] TODO: 查询目录名称 (Catalog RPC)
+  - [ ] TODO: 查询关联文件列表
+  - [ ] TODO: 查询部门信息
+  - [ ] TODO: 查询引用状态 (DataElement RPC)
   ```go
   func (l *GetRuleLogic) Get(id int64) (resp *types.RuleResp, err error) {
       // 1. 查询规则
@@ -218,7 +251,10 @@
 
 ### 1.8 接口实现: GET /v1/rule (列表查询)
 
-- [ ] T023 [P] 实现 `api/internal/logic/rule/list_rule_logic.go`
+- [x] T023 [P] 实现 `api/internal/logic/rule/list_rule_logic.go`
+  - [x] 4步业务流程标注
+  - [ ] TODO: 调用 Catalog RPC 获取子目录列表
+  - [ ] TODO: 批量查询目录名称、部门信息、引用状态
   ```go
   func (l *ListRuleLogic) List(req *types.RuleListQuery) (resp *types.RuleListResp, err error) {
       // 1. 处理目录ID (获取当前目录及所有子目录)
@@ -236,7 +272,12 @@
 
 ### 1.9 接口实现: DELETE /v1/rule/{ids} (批量删除)
 
-- [ ] T025 [P] 实现 `api/internal/logic/rule/delete_rule_logic.go`
+- [x] T025 [P] 实现 `api/internal/logic/rule/delete_rule_logic.go`
+  - [x] 5步业务流程标注
+  - [x] ID解析函数实现
+  - [ ] TODO: 开启事务
+  - [ ] TODO: 查询被删除的规则用于MQ消息
+  - [ ] TODO: MQ消息发送
   ```go
   func (l *DeleteRuleLogic) Delete(ids string) (err error) {
       // 1. 解析ID列表
@@ -250,20 +291,14 @@
 
 ### 1.10 ServiceContext 更新
 
-- [ ] T027 更新 `api/internal/svc/service_context.go`
-  ```go
-  type ServiceContext struct {
-      RuleModel         model.RuleModel
-      RelationRuleFileModel model.RelationRuleFileModel
-      KafkaProducer     *kafka.Producer
-      DB                *sqlx.Conn
-      // TODO: 后续补充 RPC 客户端
-      // CatalogRpc    catalogclient.Catalog
-      // DataElementRpc dataelementclient.DataElement
-  }
-  ```
+- [x] T027 更新 `api/internal/svc/service_context.go`
+  - [x] 添加 RuleModel、RelationRuleFileModel
+  - [x] 初始化 DB 连接 (*sqlx.DB)
+  - [x] 初始化 Model 实例
+  - [ ] TODO: 后续补充 KafkaProducer
+  - [ ] TODO: 后续补充 RPC 客户端 (Catalog, DataElement)
 
-**Checkpoint**: ✅ Phase 1 完成 - 5个基础 CRUD 接口
+**Checkpoint**: 🔄 Phase 1 进行中 - Logic 层已标注业务流程，待完善 TODO 项和测试
 
 ---
 
@@ -734,7 +769,7 @@ Test{Function}_{Scenario}_{ExpectedResult}
 
 | Week | Phase | 内容 | 完成度 |
 |------|-------|------|--------|
-| 1 | Phase 0-1 | 基础设施 + CRUD | 5% (Phase 0 完成) |
+| 1 | Phase 0-1 | 基础设施 + CRUD | 25% (Phase 0 ✅, Phase 1 🔄 60%) |
 | 2 | Phase 2-4 | 状态 + 目录 + 关联查询 | 0% |
 | 3 | Phase 5-7 | 批量查询 + 内部接口 + 辅助接口 | 0% |
 | 4 | Phase 8 | 收尾工作 + 验证 | 0% |
@@ -747,3 +782,4 @@ Test{Function}_{Scenario}_{ExpectedResult}
 |---------|------|---------|
 | 1.0 | 2026-02-05 | 按接口增量维度重组任务 |
 | 1.1 | 2026-02-05 | Phase 0 完成，标记任务状态 |
+| 1.2 | 2026-02-05 | Phase 1 基础实现完成 (60%) - T014/T015修正，Logic层实现 |
