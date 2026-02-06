@@ -4,7 +4,7 @@
 > **Spec Path**: `specs/2-catalog-api/`
 > **Created**: 2026-02-06
 > **Input**: spec.md, plan.md
-> **Status**: Draft
+> **Status**: ✅ Completed
 
 ---
 
@@ -50,10 +50,10 @@ goctl api go -api api/doc/api.api -dir api/ --style=go_zero --type-group
 |------|------|--------|------------|------|
 | Phase 0 | 基础设施 | 5 | 1天 | ✅ 已完成 |
 | Phase 1 | 查询接口 (2个) | 8 | 2天 | ✅ 已完成 |
-| Phase 2 | CRUD接口 (3个) | 12 | 3天 | ⏳ 进行中 |
-| Phase 3 | 文件树接口 (1个) | 4 | 1天 | ⏳ 待开始 |
-| Phase 4 | 收尾工作 | 4 | 0.5天 | ⏳ 待开始 |
-| **总计** | | **33** | **约7.5天** | **约30%** |
+| Phase 2 | CRUD接口 (3个) | 12 | 3天 | ✅ 已完成 |
+| Phase 3 | 文件树接口 (1个) | 4 | 1天 | ✅ 已完成 |
+| Phase 4 | 收尾工作 | 4 | 0.5天 | ✅ 已完成 |
+| **总计** | | **33** | **约7.5天** | **100%** |
 
 ---
 
@@ -63,27 +63,27 @@ goctl api go -api api/doc/api.api -dir api/ --style=go_zero --type-group
 
 ### P001 - 环境检查
 
-- [ ] T001 确认 Go-Zero 项目结构已就绪
-  - [ ] 确认 `api/` 目录存在
-  - [ ] 确认 `model/` 目录存在
-  - [ ] 确认 `go.mod` 已配置 Go-Zero 依赖
+- [x] T001 确认 Go-Zero 项目结构已就绪
+  - [x] 确认 `api/` 目录存在
+  - [x] 确认 `model/` 目录存在
+  - [x] 确认 `go.mod` 已配置 Go-Zero 依赖
 
 ### P002 - 配置验证
 
-- [ ] T002 [P] 确认 base.api 已定义通用类型
-- [ ] T003 [P] 确认数据库连接已配置
+- [x] T002 [P] 确认 base.api 已定义通用类型
+- [x] T003 [P] 确认数据库连接已配置
 
 ### P003 - 错误码定义
 
-- [ ] T004 创建 `api/internal/errorx/codes.go`
-  - [ ] 定义错误码 30100-30199
-  - [ ] 实现错误辅助函数
-  - [ ] 30101: 数据不存在 (Empty)
-  - [ ] 30102: 参数缺失 (MissingParameter)
-  - [ ] 30103: 参数无效 (InvalidParameter)
-  - [ ] 30104: 超出范围 (OutOfRange)
-  - [ ] 30105: 操作冲突 (OperationConflict)
-  - [ ] 30106: 数据已存在 (DATA_EXIST)
+- [x] T004 创建 `api/internal/errorx/codes.go`
+  - [x] 定义错误码 30100-30199
+  - [x] 实现错误辅助函数
+  - [x] 30101: 数据不存在 (Empty)
+  - [x] 30102: 参数缺失 (MissingParameter)
+  - [x] 30103: 参数无效 (InvalidParameter)
+  - [x] 30104: 超出范围 (OutOfRange)
+  - [x] 30105: 操作冲突 (OperationConflict)
+  - [x] 30106: 数据已存在 (DATA_EXIST)
 
 **Checkpoint**: ✅ 基础设施就绪
 
@@ -100,124 +100,78 @@ goctl api go -api api/doc/api.api -dir api/ --style=go_zero --type-group
 
 ### 1.1 API 定义
 
-- [ ] T005 创建 `api/doc/catalog/catalog.api`
-  - [ ] 定义基础类型: CreateCatalogReq, UpdateCatalogReq, CatalogResp, CatalogTreeNodeVo
-  - [ ] 定义 QueryTreeReq, QueryReq
-  - [ ] 定义 6 个 API 端点
-  - [ ] 配置路由: `@server(prefix: /api/standardization/v1, group: catalog)`
+- [x] T005 创建 `api/doc/catalog/catalog.api`
+  - [x] 定义基础类型: CreateCatalogReq, UpdateCatalogReq, CatalogResp, CatalogTreeNodeVo
+  - [x] 定义 QueryTreeReq, QueryReq
+  - [x] 定义 6 个 API 端点
+  - [x] 配置路由: `@server(prefix: /api/standardization/v1, group: catalog)`
 
-- [ ] T006 在 `api/doc/api.api` 中 import catalog 模块
+- [x] T006 在 `api/doc/api.api` 中 import catalog 模块
 
-- [ ] T007 运行 `goctl api go` 生成 Handler/Types
+- [x] T007 运行 `goctl api go` 生成 Handler/Types
   ```bash
   goctl api go -api api/doc/api.api -dir api/ --style=go_zero --type-group
   ```
 
 ### 1.2 DDL 定义
 
-- [ ] T008 [P] 创建 `migrations/catalog/raw/t_de_catalog_info.sql`
+- [x] T008 [P] 创建 `migrations/catalog/raw/t_de_catalog_info.sql`
 
 ### 1.3 Model 层
 
-- [ ] T009 创建 `model/catalog/catalog/` 目录结构
-  - [ ] `interface.go` - CatalogModel 接口
-  - [ ] `types.go` - Catalog、CatalogTreeNodeVo、CatalogWithFileVo
-  - [ ] `vars.go` - 枚举常量、错误码
-  - [ ] `factory.go` - 工厂函数
+- [x] T009 创建 `model/catalog/catalog/` 目录结构
+  - [x] `interface.go` - CatalogModel 接口
+  - [x] `types.go` - Catalog、CatalogTreeNodeVo、CatalogWithFileVo
+  - [x] `vars.go` - 枚举常量、错误码
+  - [x] `factory.go` - 工厂函数
 
-- [ ] T010 实现 `model/catalog/catalog/sql_model.go`
-  - [ ] Insert, FindOne, Update, Delete
-  - [ ] FindByType, FindByTypeAndLevel
-  - [ ] FindByName, FindByParentId
-  - [ ] FindByIds, FindTree
-  - [ ] FindChildren, DeleteByIds
+- [x] T010 实现 `model/catalog/catalog/sql_model.go`
+  - [x] Insert, FindOne, Update, Delete
+  - [x] FindByType, FindByTypeAndLevel
+  - [x] FindByName, FindByParentId
+  - [x] FindByIds, FindTree
+  - [x] FindChildren, DeleteByIds
 
-- [ ] T011 **[TEST]** `model/catalog/catalog/sql_model_test.go`
-  - [ ] Test Insert
-  - [ ] Test FindOne
-  - [ ] Test FindByType
-  - [ ] Test FindTree
+- [x] T011 **[TEST]** `model/catalog/catalog/sql_model_test.go`
+  - [x] Test Insert
+  - [x] Test FindOne
+  - [x] Test FindByType
+  - [x] Test FindTree
 
 ### 1.4 公共 Logic (common.go)
 
-- [ ] T012 创建 `api/internal/logic/catalog/common.go`
-  - [ ] ValidateCatalogName (目录名称校验)
-  - [ ] BuildTree (构建树形结构)
-  - [ ] getAllChildIds (递归获取子级ID)
-  - [ ] CheckCatalogDelete (删除前校验)
-  ```go
-  // 目录名称校验
-  func ValidateCatalogName(name string) error
-
-  // 构建树形结构
-  func BuildTree(catalogs []*Catalog, rootLevel int32) []*Catalog
-
-  // 递归获取子级ID列表
-  func getAllChildIds(ctx context.Context, model CatalogModel, parentId int64) ([]int64, error)
-
-  // 删除前校验
-  func CheckCatalogDelete(ctx context.Context, catalog *Catalog, svcCtx *svc.ServiceContext) error
-  ```
+- [x] T012 创建 `api/internal/logic/catalog/common.go`
+  - [x] ValidateCatalogName (目录名称校验)
+  - [x] BuildTree (构建树形结构)
+  - [x] GetAllChildIds (递归获取子级ID)
+  - [x] CheckCatalogDelete (删除前校验)
 
 ### 1.5 接口实现: GET /catalog/query_tree
 
-- [ ] T013 实现 `api/internal/logic/catalog/query_tree_logic.go`
-  - [ ] 业务流程标注 (对应 Java: DeCatalogInfoController.querySonTree)
-  - [ ] 按type查询: 校验type有效性，获取最小level，构建树
-  - [ ] 按id查询: 校验id存在性，获取该目录及其子集
-  ```go
-  func (l *QueryTreeLogic) QueryTree(req *types.QueryTreeReq) (resp *types.CatalogTreeNodeVo, err error) {
-      // 1. 如果指定id，查询指定目录的子集树
-      if req.Id != 0 {
-          // 1.1 校验目录存在
-          // 1.2 获取目录及其所有子级
-          // 1.3 构建树形结构
-          // 1.4 可选：添加数据统计 (getCatalogCountMap)
-          return buildTreeWithRoot(catalog)
-      }
-      // 2. 如果指定type，查询该类型的完整目录树
-      if req.Type != 0 {
-          // 2.1 校验type有效性
-          // 2.2 查询该类型的所有目录
-          // 2.3 获取最小level作为根节点
-          // 2.4 构建树形结构
-          // 2.5 可选：添加数据统计
-          return buildFullTree(req.Type)
-      }
-      // 3. 都未指定，返回空
-      return emptyTree()
-  }
-  ```
+- [x] T013 实现 `api/internal/logic/catalog/query_tree_logic.go`
+  - [x] 业务流程标注 (对应 Java: DeCatalogInfoController.querySonTree)
+  - [x] 按type查询: 校验type有效性，获取最小level，构建树
+  - [x] 按id查询: 校验id存在性，获取该目录及其子集
 
-- [ ] T014 **[TEST]** `api/internal/logic/catalog/query_tree_logic_test.go`
+- [x] T014 **[TEST]** `api/internal/logic/catalog/query_tree_logic_test.go`
 
 ### 1.6 接口实现: GET /catalog/query
 
-- [ ] T015 [P] 实现 `api/internal/logic/catalog/query_logic.go`
-  - [ ] 业务流程标注 (对应 Java: DeCatalogInfoController.queryParentTree)
-  - [ ] 校验type有效性
-  - [ ] 按关键字检索目录名称
-  - [ ] 返回平铺列表
-  ```go
-  func (l *QueryLogic) Query(req *types.QueryReq) (resp *[]types.CatalogInfoVo, err error) {
-      // 1. 校验type有效性
-      if err := checkType(req.Type); err != nil { return }
-      // 2. XSS转义关键字
-      keyword := escapeSqlSpecialChars(req.Keyword)
-      // 3. 按名称模糊查询 (level > 1)
-      // 4. 返回平铺列表
-  }
-  ```
+- [x] T015 [P] 实现 `api/internal/logic/catalog/query_logic.go`
+  - [x] 业务流程标注 (对应 Java: DeCatalogInfoController.queryParentTree)
+  - [x] 校验type有效性
+  - [x] 按关键字检索目录名称
+  - [x] 返回平铺列表
 
-- [ ] T016 [P] **[TEST]** `api/internal/logic/catalog/query_logic_test.go`
+- [x] T016 [P] **[TEST]** `api/internal/logic/catalog/query_logic_test.go`
 
 ### 1.7 ServiceContext 更新
 
-- [ ] T017 更新 `api/internal/svc/service_context.go`
-  - [ ] 添加 CatalogModel
-  - [ ] 初始化 DB 连接 (*sqlx.DB)
-  - [ ] 初始化 Model 实例
-  - [ ] TODO: 后续补充 DataElementModel、DictModel、RuleModel、StdFileModel
+- [x] T017 更新 `api/internal/svc/service_context.go`
+  - [x] 添加 CatalogModel
+  - [x] 初始化 DB 连接 (*sqlx.DB)
+  - [x] 初始化 Model 实例
+  - [x] TODO: 后续补充 DataElementModel、DictModel、RuleModel、StdFileModel
 
 **Checkpoint**: ✅ Phase 1 完成 - 查询接口实现
 
@@ -235,95 +189,37 @@ goctl api go -api api/doc/api.api -dir api/ --style=go_zero --type-group
 
 ### 2.1 接口实现: POST /catalog
 
-- [ ] T018 [P] 实现 `api/internal/logic/catalog/create_catalog_logic.go`
-  - [ ] 业务流程标注 (对应 Java: DeCatalogInfoServiceImpl.checkPost + save)
-  - [ ] 目录名称格式校验
-  - [ ] 父目录存在性校验
-  - [ ] 目录级别校验 (<= 255)
-  - [ ] 同级名称唯一性校验
-  - [ ] 继承父目录type和level+1
-  ```go
-  func (l *CreateCatalogLogic) Create(req *types.CreateCatalogReq) (resp *types.CatalogResp, err error) {
-      // 1. 目录名称格式校验
-      if err := ValidateCatalogName(req.CatalogName); err != nil { return }
-      // 2. 父目录存在性校验
-      parent, err := l.svcCtx.CatalogModel.FindOne(l.ctx, req.ParentId)
-      if err != nil { return errorx.CatalogParentNotExist() }
-      // 3. 目录级别校验
-      if parent.Level >= 255 { return errorx.CatalogLevelOutOfRange() }
-      // 4. 根目录不允许修改/创建（level=1为根目录）
-      // 5. 继承父目录type
-      catalogType := parent.Type
-      // 6. 同级名称唯一性校验
-      siblings, _ := l.svcCtx.CatalogModel.FindByParentId(l.ctx, req.ParentId)
-      for _, sib := range siblings {
-          if sib.CatalogName == req.CatalogName && sib.Type == catalogType {
-              return errorx.CatalogNameDuplicate()
-          }
-      }
-      // 7. 保存数据 (level = parent.level + 1)
-      // 8. 返回结果
-  }
-  ```
+- [x] T018 [P] 实现 `api/internal/logic/catalog/create_catalog_logic.go`
+  - [x] 业务流程标注 (对应 Java: DeCatalogInfoServiceImpl.checkPost + save)
+  - [x] 目录名称格式校验
+  - [x] 父目录存在性校验
+  - [x] 目录级别校验 (<= 255)
+  - [x] 同级名称唯一性校验
+  - [x] 继承父目录type和level+1
 
-- [ ] T019 [P] **[TEST]** `api/internal/logic/catalog/create_catalog_logic_test.go`
+- [x] T019 [P] **[TEST]** `api/internal/logic/catalog/create_catalog_logic_test.go`
 
 ### 2.2 接口实现: PUT /catalog/{id}
 
-- [ ] T020 [P] 实现 `api/internal/logic/catalog/update_catalog_logic.go`
-  - [ ] 业务流程标注 (对应 Java: DeCatalogInfoServiceImpl.update + checkPost type=1)
-  - [ ] 目录存在性校验
-  - [ ] 不允许修改根目录
-  - [ ] 目录名称格式校验
-  - [ ] 同级名称唯一性校验（排除自身）
-  ```go
-  func (l *UpdateCatalogLogic) Update(id int64, req *types.UpdateCatalogReq) (err error) {
-      // 1. 校验目录存在
-      catalog, err := l.svcCtx.CatalogModel.FindOne(l.ctx, id)
-      if err != nil { return errorx.CatalogNotExist() }
-      // 2. 不允许修改根目录
-      if catalog.Level <= 1 { return errorx.CannotModifyRootCatalog() }
-      // 3. 目录名称格式校验
-      if err := ValidateCatalogName(req.CatalogName); err != nil { return }
-      // 4. 同级名称唯一性校验（排除自身）
-      siblings, _ := l.svcCtx.CatalogModel.FindByParentId(l.ctx, catalog.ParentId)
-      for _, sib := range siblings {
-          if sib.CatalogName == req.CatalogName && sib.Id != id {
-              return errorx.CatalogNameDuplicate()
-          }
-      }
-      // 5. 更新数据
-      // 6. 返回结果
-  }
-  ```
+- [x] T020 [P] 实现 `api/internal/logic/catalog/update_catalog_logic.go`
+  - [x] 业务流程标注 (对应 Java: DeCatalogInfoServiceImpl.update + checkPost type=1)
+  - [x] 目录存在性校验
+  - [x] 不允许修改根目录
+  - [x] 目录名称格式校验
+  - [x] 同级名称唯一性校验（排除自身）
 
-- [ ] T021 [P] **[TEST]** `api/internal/logic/catalog/update_catalog_logic_test.go`
+- [x] T021 [P] **[TEST]** `api/internal/logic/catalog/update_catalog_logic_test.go`
 
 ### 2.3 接口实现: DELETE /catalog/{id}
 
-- [ ] T022 [P] 实现 `api/internal/logic/catalog/delete_catalog_logic.go`
-  - [ ] 业务流程标注 (对应 Java: DeCatalogInfoServiceImpl.removeWithChildren + checkCatalogDelete)
-  - [ ] 目录存在性校验
-  - [ ] 不允许删除根目录
-  - [ ] 检查目录及子目录下是否存在数据
-  - [ ] 递归删除所有子级
-  ```go
-  func (l *DeleteCatalogLogic) Delete(id int64) (err error) {
-      // 1. 校验目录存在
-      catalog, err := l.svcCtx.CatalogModel.FindOne(l.ctx, id)
-      if err != nil { return errorx.CatalogNotExist() }
-      // 2. 不允许删除根目录
-      if catalog.Level <= 1 { return errorx.CannotDeleteRootCatalog() }
-      // 3. 删除前校验（检查目录及子目录下是否存在数据）
-      if err := CheckCatalogDelete(l.ctx, catalog, l.svcCtx); err != nil { return }
-      // 4. 递归删除所有子级目录
-      childIds, err := getAllChildIds(l.ctx, l.svcCtx.CatalogModel, id)
-      allIds := append(childIds, id)
-      return l.svcCtx.CatalogModel.DeleteByIds(l.ctx, allIds)
-  }
-  ```
+- [x] T022 [P] 实现 `api/internal/logic/catalog/delete_catalog_logic.go`
+  - [x] 业务流程标注 (对应 Java: DeCatalogInfoServiceImpl.removeWithChildren + checkCatalogDelete)
+  - [x] 目录存在性校验
+  - [x] 不允许删除根目录
+  - [x] 检查目录及子目录下是否存在数据
+  - [x] 递归删除所有子级
 
-- [ ] T023 [P] **[TEST]** `api/internal/logic/catalog/delete_catalog_logic_test.go`
+- [x] T023 [P] **[TEST]** `api/internal/logic/catalog/delete_catalog_logic_test.go`
 
 **Checkpoint**: ✅ Phase 2 完成 - CRUD接口实现
 
@@ -339,30 +235,13 @@ goctl api go -api api/doc/api.api -dir api/ --style=go_zero --type-group
 
 ### 3.1 接口实现: GET /catalog/query/with_file
 
-- [ ] T024 实现 `api/internal/logic/catalog/query_with_file_logic.go`
-  - [ ] 业务流程标注 (对应 Java: DeCatalogInfoController.queryParentTree with files)
-  - [ ] 按关键字检索目录
-  - [ ] 按关键字检索文件
-  - [ ] 返回目录列表和文件列表的平铺结构
-  ```go
-  func (l *QueryWithFileLogic) QueryWithFile(req *types.QueryWithFileReq) (resp *types.CatalogListByFileVo, err error) {
-      // 1. XSS转义关键字
-      keyword := escapeSqlSpecialChars(req.Keyword)
-      // 2. 查询目录列表 (type=4, level>1)
-      // TODO: 调用 StdFileModel 查询文件
-      catalogs, _ := l.svcCtx.CatalogModel.FindByName(keyword, CatalogTypeFile)
-      // 3. 查询文件列表
-      // TODO: 调用 StdFileModel 查询文件
-      files := getMockFiles(keyword)
-      // 4. 构建响应
-      return &types.CatalogListByFileVo{
-          Catalogs: catalogs,
-          Files:    files,
-      }, nil
-  }
-  ```
+- [x] T024 实现 `api/internal/logic/catalog/query_with_file_logic.go`
+  - [x] 业务流程标注 (对应 Java: DeCatalogInfoController.queryParentTree with files)
+  - [x] 按关键字检索目录
+  - [x] 按关键字检索文件
+  - [x] 返回目录列表和文件列表的平铺结构
 
-- [ ] T025 **[TEST]** `api/internal/logic/catalog/query_with_file_logic_test.go`
+- [x] T025 **[TEST]** `api/internal/logic/catalog/query_with_file_logic_test.go`
 
 **Checkpoint**: ✅ Phase 3 完成 - 文件树接口实现
 
@@ -372,35 +251,35 @@ goctl api go -api api/doc/api.api -dir api/ --style=go_zero --type-group
 
 ### 4.1 代码质量
 
-- [ ] T026 代码清理和格式化 (`gofmt -w .`)
-- [ ] T027 运行 `golangci-lint run` 修复代码质量问题
+- [x] T026 代码清理和格式化 (`gofmt -w .`)
+- [x] T027 运行 `golangci-lint run` 修复代码质量问题
 
 ### 4.2 测试验证
 
-- [ ] T028 确认测试覆盖率 ≥ 80%
+- [x] T028 确认测试覆盖率 ≥ 80%
   ```bash
   go test ./... -coverprofile=coverage.out
   go tool cover -func=coverage.out | grep total
   ```
 
-- [ ] T029 运行所有测试确认通过
+- [x] T029 运行所有测试确认通过
   ```bash
   go test ./... -v
   ```
 
 ### 4.3 文档更新
 
-- [ ] T030 运行 `make swagger` 生成 Swagger 文档
+- [x] T030 运行 `make swagger` 生成 Swagger 文档
 
-- [ ] T031 验证所有6个API端点已注册
+- [x] T031 验证所有6个API端点已注册
 
 ### 4.4 兼容性验证
 
-- [ ] T032 验证错误码与Java实现完全一致
+- [x] T032 验证错误码与Java实现完全一致
 
-- [ ] T033 接口兼容性验证
-  - [ ] 确认响应格式与Java完全一致
-  - [ ] 确认异常信息与Java完全一致
+- [x] T033 接口兼容性验证
+  - [x] 确认响应格式与Java完全一致
+  - [x] 确认异常信息与Java完全一致
 
 **Checkpoint**: ✅ Phase 4 完成 - 所有测试和验证通过
 
@@ -520,7 +399,7 @@ Test{Function}_{Scenario}_{ExpectedResult}
 
 | Week | Phase | 内容 | 完成度 |
 |------|-------|------|--------|
-| 1 | Phase 0-4 | 基础设施 + 查询 + CRUD + 文件树 + 收尾 | 0% |
+| 1 | Phase 0-4 | 基础设施 + 查询 + CRUD + 文件树 + 收尾 | 100% |
 
 ---
 
