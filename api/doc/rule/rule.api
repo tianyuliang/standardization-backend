@@ -82,6 +82,23 @@ type PageQuery {
     Limit  int `form:"limit,default=10,range=[0:2000]"`
 }
 
+// QueryDataExistsReq 检查数据是否存在请求
+type QueryDataExistsReq {
+    FilterId     int64  `form:"filterId,optional"` // 排除的规则ID
+    Name         string `form:"name"`
+    DepartmentIds string `form:"departmentIds,optional"`
+}
+
+// DataExistsResp 数据存在响应
+type DataExistsResp {
+    Exists bool `json:"exists"`
+}
+
+// CustomDateFormatResp 日期格式列表响应
+type CustomDateFormatResp {
+    Data []string `json:"data"`
+}
+
 // ============================================
 // 响应类型定义
 // ============================================
@@ -209,4 +226,34 @@ service api {
     @doc "批量查询规则"
     @handler QueryRuleByIds
     post /rule/queryByIds (QueryByIdsReq) returns (RuleListResp)
+
+    @doc "检查数据是否存在"
+    @handler QueryDataExists
+    get /rule/queryDataExists (QueryDataExistsReq) returns (DataExistsResp)
+
+    @doc "获取自定义日期格式列表"
+    @handler GetCustomDateFormat
+    get /rule/getCustomDateFormat returns (CustomDateFormatResp)
+}
+
+// ============================================
+// API 定义 - 内部接口
+// ============================================
+
+@server(
+    prefix: /v1/rule/internal
+    group: rule
+)
+service api {
+    @doc "内部-根据ID查看规则详情"
+    @handler GetRuleInternal
+    get /getId/:id returns (RuleResp)
+
+    @doc "内部-根据数据元ID查看规则详情"
+    @handler GetRuleDetailByDataId
+    get /getDetailByDataId/:dataId returns (RuleResp)
+
+    @doc "内部-根据数据元编码查看规则详情"
+    @handler GetRuleDetailByDataCode
+    get /getDetailByDataCode/:dataCode returns (RuleResp)
 }

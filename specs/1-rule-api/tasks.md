@@ -495,16 +495,16 @@
 
 ### 6.1 接口实现: GET /v1/rule/internal/getId/{id}
 
-- [ ] T044 [P] 实现 `api/internal/logic/rule/get_rule_id_logic.go`
+- [x] T044 [P] 实现 `api/internal/logic/rule/get_rule_internal_logic.go`
   ```go
   // 与 GET /v1/rule/{id} 实现相同，仅路由不同
   ```
 
-- [ ] T045 [P] **[TEST]** `api/internal/logic/rule/get_rule_id_logic_test.go`
+- [ ] T045 [P] **[TEST]** `api/internal/logic/rule/get_rule_internal_logic_test.go`
 
 ### 6.2 接口实现: GET /v1/rule/internal/getDetailByDataId/{dataId}
 
-- [ ] T046 [P] 实现 `api/internal/logic/rule/get_rule_detail_by_data_id_logic.go`
+- [x] T046 [P] 实现 `api/internal/logic/rule/get_rule_detail_by_data_id_logic.go`
   ```go
   func (l *GetRuleDetailByDataIdLogic) GetByDataId(dataId int64) (resp *types.RuleResp, err error) {
       // 1. 根据数据元ID查询规则ID
@@ -522,7 +522,7 @@
 
 ### 6.3 接口实现: GET /v1/rule/internal/getDetailByDataCode/{dataCode}
 
-- [ ] T048 [P] 实现 `api/internal/logic/rule/get_rule_detail_by_data_code_logic.go`
+- [x] T048 [P] 实现 `api/internal/logic/rule/get_rule_detail_by_data_code_logic.go`
   ```go
   func (l *GetRuleDetailByDataCodeLogic) GetByDataCode(dataCode string) (resp *types.RuleResp, err error) {
       // 1. 根据数据元编码查询规则ID
@@ -553,7 +553,7 @@
 
 ### 7.1 接口实现: GET /v1/rule/queryDataExists
 
-- [ ] T050 [P] 实现 `api/internal/logic/rule/query_data_exists_logic.go`
+- [x] T050 [P] 实现 `api/internal/logic/rule/query_data_exists_logic.go`
   ```go
   func (l *QueryDataExistsLogic) QueryDataExists(req *types.QueryDataExistsReq) (resp *types.BaseResp, err error) {
       // 1. 部门ID路径处理
@@ -569,7 +569,7 @@
 
 ### 7.2 接口实现: GET /v1/rule/getCustomDateFormat
 
-- [ ] T052 [P] 实现 `api/internal/logic/rule/get_custom_date_format_logic.go`
+- [x] T052 [P] 实现 `api/internal/logic/rule/get_custom_date_format_logic.go`
   ```go
   func (l *GetCustomDateFormatLogic) GetCustomDateFormat() (resp *types.CustomDateFormatResp, err error) {
       // 返回预定义的日期格式列表
@@ -769,9 +769,8 @@ Test{Function}_{Scenario}_{ExpectedResult}
 
 | Week | Phase | 内容 | 完成度 |
 |------|-------|------|--------|
-| 1 | Phase 0-5 | 基础设施 + CRUD + 状态 + 目录 + 关联 + 批量 | 60% (Phase 0-5 ✅) |
-| 2 | Phase 6-7 | 内部接口 + 辅助接口 | 0% |
-| 3 | Phase 8 | 收尾工作 + 验证 | 0% |
+| 1 | Phase 0-7 | 基础设施 + CRUD + 状态 + 目录 + 关联 + 批量 + 内部 + 辅助 | 90% (Phase 0-7 ✅) |
+| 2 | Phase 8 | 收尾工作 + 验证 | 0% |
 
 ---
 
@@ -785,3 +784,4 @@ Test{Function}_{Scenario}_{ExpectedResult}
 | 1.3 | 2026-02-06 | Phase 2 完成 - 状态管理接口实现 |
 | 1.4 | 2026-02-06 | Phase 3 完成 - 目录移动接口实现 |
 | 1.5 | 2026-02-06 | Phase 4-5 完成 - 关联查询 + 批量查询接口实现 |
+| 1.6 | 2026-02-06 | Phase 6-7 完成 - 内部接口 + 辅助接口实现 |

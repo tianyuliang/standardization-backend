@@ -63,6 +63,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: rule.RemoveRuleCatalogHandler(serverCtx),
 			},
 			{
+				// 获取自定义日期格式列表
+				Method:  http.MethodGet,
+				Path:    "/rule/getCustomDateFormat",
+				Handler: rule.GetCustomDateFormatHandler(serverCtx),
+			},
+			{
 				// 批量查询规则
 				Method:  http.MethodPost,
 				Path:    "/rule/queryByIds",
@@ -79,6 +85,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/rule/queryByStdFileCatalog",
 				Handler: rule.QueryRuleByStdFileCatalogHandler(serverCtx),
+			},
+			{
+				// 检查数据是否存在
+				Method:  http.MethodGet,
+				Path:    "/rule/queryDataExists",
+				Handler: rule.QueryDataExistsHandler(serverCtx),
 			},
 			{
 				// 查询引用规则的数据元
@@ -100,5 +112,29 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithPrefix("/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 内部-根据数据元编码查看规则详情
+				Method:  http.MethodGet,
+				Path:    "/getDetailByDataCode/:dataCode",
+				Handler: rule.GetRuleDetailByDataCodeHandler(serverCtx),
+			},
+			{
+				// 内部-根据数据元ID查看规则详情
+				Method:  http.MethodGet,
+				Path:    "/getDetailByDataId/:dataId",
+				Handler: rule.GetRuleDetailByDataIdHandler(serverCtx),
+			},
+			{
+				// 内部-根据ID查看规则详情
+				Method:  http.MethodGet,
+				Path:    "/getId/:id",
+				Handler: rule.GetRuleInternalHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/v1/rule/internal"),
 	)
 }

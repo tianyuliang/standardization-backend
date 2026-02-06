@@ -15,9 +15,17 @@ type CreateRuleReq struct {
 	DepartmentIds string       `json:"departmentIds,optional"`
 }
 
+type CustomDateFormatResp struct {
+	Data []string `json:"data"`
+}
+
 type DataElementListResp struct {
 	Entries    []DataElementResp `json:"entries"`
 	TotalCount int64             `json:"total_count"`
+}
+
+type DataExistsResp struct {
+	Exists bool `json:"exists"`
 }
 
 type EmptyResp struct {
@@ -36,6 +44,12 @@ type QueryByStdFileCatalogReq struct {
 	CatalogId int64 `form:"catalogId,optional"`
 	Offset    int   `form:"offset,default=1,range=[1:]"`
 	Limit     int   `form:"limit,default=10,range=[0:2000]"`
+}
+
+type QueryDataExistsReq struct {
+	FilterId      int64  `form:"filterId,optional"` // 排除的规则ID
+	Name          string `form:"name"`
+	DepartmentIds string `form:"departmentIds,optional"`
 }
 
 type RemoveCatalogReq struct {
