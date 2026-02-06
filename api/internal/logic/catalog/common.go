@@ -1,5 +1,5 @@
-//go:build !mock_logic_off
-// +build !mock_logic_off
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.9.2
 
 package catalog
 
@@ -10,24 +10,9 @@ import (
 	"time"
 
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/errorx"
-	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/logic/catalog/mock"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/types"
 	catalogmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/catalog/catalog"
-)
-
-// Mock functions wrapper for easy access
-// These functions are defined in the mock package with build tags
-var (
-	DataElementGetPageList = mock.DataElementGetPageList
-	DataElementGetCountMap  = mock.DataElementGetCountMapGroupByCatalog
-	DictQueryList           = mock.DictQueryList
-	DictGetCountMap         = mock.DictGetCountMapGroupByCatalog
-	RuleQueryList           = mock.RuleQueryList
-	RuleGetCountMap         = mock.RuleGetCountMapGroupByCatalog
-	StdFileQueryList        = mock.StdFileQueryList
-	StdFileGetByName        = mock.StdFileGetByName
-	StdFileGetCountMap      = mock.StdFileGetCountMapGroupByCatalog
 )
 
 // ============================================
@@ -254,95 +239,6 @@ func modelToResp(c *catalogmodel.Catalog) *types.CatalogResp {
 		Children:     nil,
 		HaveChildren: false,
 	}
-}
-
-// ============================================
-// 删除前校验
-// 对应 Java: DeCatalogInfoServiceImpl.checkCatalogDelete()
-// ============================================
-
-// CheckCatalogDelete 校验目录是否可以删除
-// 对应 Java: DeCatalogInfoServiceImpl.checkCatalogDelete()
-func CheckCatalogDelete(ctx context.Context, catalog *catalogmodel.Catalog, svcCtx *svc.ServiceContext) error {
-	// 1. 根目录不允许删除
-	if catalog.Level <= 1 {
-		return errorx.CatalogCannotDeleteRoot()
-	}
-
-	// 2. 根据类型校验是否存在数据
-	// 对应 Java: checkCatalogDelete() line 500-527
-	switch catalog.Type {
-	case catalogmodel.CatalogTypeDataElement:
-		// 数据元校验：目录或子目录下已存在数据元，不允许删除
-		// 对应 Java: dataelementInfoService.getPageList(id, ...)
-		if hasData := DataElementGetPageList(ctx, svcCtx, catalog.Id); hasData {
-			return errorx.CatalogHasData()
-		}
-	case catalogmodel.CatalogTypeDict:
-		// 码表校验：目录或子目录下已存在码表，不允许删除
-		// 对应 Java: dictService.queryList(id, ...)
-		if hasData := DictQueryList(ctx, svcCtx, catalog.Id); hasData {
-			return errorx.CatalogHasData()
-		}
-	case catalogmodel.CatalogTypeValueRule:
-		// 编码规则校验：目录或子目录下已存在编码规则，不允许删除
-		// 对应 Java: ruleService.queryList(id, ...)
-		if hasData := RuleQueryList(ctx, svcCtx, catalog.Id); hasData {
-			return errorx.CatalogHasData()
-		}
-	case catalogmodel.CatalogTypeFile:
-		// 文件校验：目录或子目录下已存在文件，不允许删除
-		// 对应 Java: stdFileMgrService.queryList(id, ...)
-		if hasData := StdFileQueryList(ctx, svcCtx, catalog.Id); hasData {
-			return errorx.CatalogHasData()
-		}
-	}
-
-	return nil
-}
-
-// ============================================
-// MOCK 函数（后续补充 RPC）
-// ============================================
-
-// getMockDataElementByCatalog 检查目录下是否存在数据元
-// 对应 Java: dataelementInfoService.getPageList()
-func getMockDataElementByCatalog(catalogId int64) bool {
-	// TODO: 调用 DataElement RPC 检查
-	// 当前返回false表示无数据
-	return false
-}
-
-// getMockDictByCatalog 检查目录下是否存在码表
-// 对应 Java: dictService.queryList()
-func getMockDictByCatalog(catalogId int64) bool {
-	// TODO: 调用 Dict RPC 检查
-	// 当前返回false表示无数据
-	return false
-}
-
-// getMockRuleByCatalog 检查目录下是否存在规则
-// 对应 Java: ruleService.queryList()
-func getMockRuleByCatalog(catalogId int64) bool {
-	// TODO: 调用 Rule RPC 检查
-	// 当前返回false表示无数据
-	return false
-}
-
-// getMockStdFileByCatalog 检查目录下是否存在文件
-// 对应 Java: stdFileMgrService.queryList()
-func getMockStdFileByCatalog(catalogId int64) bool {
-	// TODO: 调用 StdFile RPC 检查
-	// 当前返回false表示无数据
-	return false
-}
-
-// getMockFiles 按关键字查询文件
-// 对应 Java: stdFileMgrService.getByName()
-func getMockFiles(keyword string) []*types.FileCountVo {
-	// TODO: 调用 StdFile RPC 查询
-	// 当前返回空列表
-	return []*types.FileCountVo{}
 }
 
 // ============================================

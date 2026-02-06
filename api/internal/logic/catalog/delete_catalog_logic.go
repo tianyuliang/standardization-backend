@@ -8,6 +8,7 @@ import (
 
 	baseerrorx "github.com/jinguoxing/idrm-go-base/errorx"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/errorx"
+	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/logic/catalog/mock"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/types"
 
@@ -45,9 +46,29 @@ func (l *DeleteCatalogLogic) DeleteCatalog(id int64) (resp *types.EmptyResp, err
 	}
 
 	// Step 3: 删除前校验（检查目录及子目录下是否存在数据）
-	// 对应 Java: DeCatalogInfoServiceImpl.checkCatalogDelete()
-	if err := CheckCatalogDelete(l.ctx, catalog, l.svcCtx); err != nil {
-		return nil, err
+	// 对应 Java: DeCatalogInfoServiceImpl.checkCatalogDelete() line 500-527
+	// MOCK: mock.DataElementGetPageList() / mock.DictQueryList() / mock.RuleQueryList() / mock.StdFileQueryList()
+	switch catalog.Type {
+	case 1: // CatalogTypeDataElement
+		// 数据元校验：目录或子目录下已存在数据元，不允许删除
+		if hasData := mock.DataElementGetPageList(l.ctx, l.svcCtx, catalog.Id); hasData {
+			return nil, errorx.CatalogHasData()
+		}
+	case 2: // CatalogTypeDict
+		// 码表校验：目录或子目录下已存在码表，不允许删除
+		if hasData := mock.DictQueryList(l.ctx, l.svcCtx, catalog.Id); hasData {
+			return nil, errorx.CatalogHasData()
+		}
+	case 3: // CatalogTypeValueRule
+		// 编码规则校验：目录或子目录下已存在编码规则，不允许删除
+		if hasData := mock.RuleQueryList(l.ctx, l.svcCtx, catalog.Id); hasData {
+			return nil, errorx.CatalogHasData()
+		}
+	case 4: // CatalogTypeFile
+		// 文件校验：目录或子目录下已存在文件，不允许删除
+		if hasData := mock.StdFileQueryList(l.ctx, l.svcCtx, catalog.Id); hasData {
+			return nil, errorx.CatalogHasData()
+		}
 	}
 
 	// Step 4: 递归获取所有子级目录ID

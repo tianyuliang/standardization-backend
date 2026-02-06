@@ -8,6 +8,7 @@ import (
 
 	baseerrorx "github.com/jinguoxing/idrm-go-base/errorx"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/errorx"
+	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/logic/catalog/mock"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/types"
 	catalogmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/catalog/catalog"
@@ -77,7 +78,8 @@ func (l *QueryWithFileLogic) QueryWithFile(req *types.QueryWithFileReq) (resp *t
 
 	// Step 3: 获取文件列表
 	// 对应 Java: StdFileMgrService.getByName(keyword)
-	files := StdFileGetByName(l.ctx, l.svcCtx, keyword)
+	// MOCK: mock.StdFileGetByName() - 按名称搜索标准文件
+	files := mock.StdFileGetByName(l.ctx, l.svcCtx, keyword)
 
 	// Step 4: 组装响应
 	// 对应 Java: 返回 CatalogListByFileResp
