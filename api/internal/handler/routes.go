@@ -57,6 +57,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: rule.DeleteRuleHandler(serverCtx),
 			},
 			{
+				// 编码规则目录移动
+				Method:  http.MethodPost,
+				Path:    "/rule/catalog/remove",
+				Handler: rule.RemoveRuleCatalogHandler(serverCtx),
+			},
+			{
 				// 停用/启用编码规则
 				Method:  http.MethodPut,
 				Path:    "/rule/state/:id",

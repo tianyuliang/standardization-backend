@@ -138,4 +138,8 @@ service api {
     @doc "停用/启用编码规则"
     @handler UpdateRuleState
     put /rule/state/:id (UpdateRuleStateReq) returns (EmptyResp)
+
+    @doc "编码规则目录移动"
+    @handler RemoveRuleCatalog
+    post /rule/catalog/remove (RemoveCatalogReq) returns (EmptyResp)
 }

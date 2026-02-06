@@ -345,7 +345,7 @@
 
 ### 3.1 接口实现: POST /v1/rule/catalog/remove
 
-- [ ] T030 实现 `api/internal/logic/rule/remove_rule_catalog_logic.go`
+- [x] T030 实现 `api/internal/logic/rule/remove_rule_catalog_logic.go`
   ```go
   func (l *RemoveRuleCatalogLogic) RemoveCatalog(req *types.RemoveCatalogReq) error {
       // 1. 校验目录存在性
@@ -769,8 +769,8 @@ Test{Function}_{Scenario}_{ExpectedResult}
 
 | Week | Phase | 内容 | 完成度 |
 |------|-------|------|--------|
-| 1 | Phase 0-2 | 基础设施 + CRUD + 状态管理 | 35% (Phase 0 ✅, Phase 1 ✅, Phase 2 ✅) |
-| 2 | Phase 3-4 | 目录移动 + 关联查询 | 0% |
+| 1 | Phase 0-3 | 基础设施 + CRUD + 状态 + 目录 | 40% (Phase 0-3 ✅) |
+| 2 | Phase 4 | 关联查询 | 0% |
 | 3 | Phase 5-7 | 批量查询 + 内部接口 + 辅助接口 | 0% |
 | 4 | Phase 8 | 收尾工作 + 验证 | 0% |
 
@@ -784,3 +784,4 @@ Test{Function}_{Scenario}_{ExpectedResult}
 | 1.1 | 2026-02-05 | Phase 0 完成，标记任务状态 |
 | 1.2 | 2026-02-05 | Phase 1 基础实现完成 (60%) - T014/T015修正，Logic层实现 |
 | 1.3 | 2026-02-06 | Phase 2 完成 - 状态管理接口实现 |
+| 1.4 | 2026-02-06 | Phase 3 完成 - 目录移动接口实现 |

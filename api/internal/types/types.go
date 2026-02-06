@@ -40,11 +40,6 @@ type PageResp struct {
 	TotalCount int64       `json:"total_count"` // 总记录数
 }
 
-type RemoveCatalogReq struct {
-	Ids       []int64 `json:"ids"`
-	CatalogId int64   `json:"catalogId"`
-}
-
 type RuleCustom struct {
 	Type          string `json:"type"`
 	Value         string `json:"value"`

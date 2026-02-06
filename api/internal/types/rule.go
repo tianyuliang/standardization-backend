@@ -18,6 +18,11 @@ type CreateRuleReq struct {
 type EmptyResp struct {
 }
 
+type RemoveCatalogReq struct {
+	Ids       []int64 `json:"ids"`
+	CatalogId int64   `json:"catalogId"`
+}
+
 type RuleListQuery struct {
 	Keyword   string `form:"keyword,optional"`
 	CatalogId int64  `form:"catalogId,optional"`
