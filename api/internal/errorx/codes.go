@@ -108,3 +108,93 @@ func RuleDataNotExist() error {
 func RuleRecordNotExist() error {
 	return errorx.NewWithMsg(ErrCodeRuleDataNotExist, "记录不存在")
 }
+
+// ========== catalog-api 错误码定义 (30100-30199) ==========
+
+const (
+	// 通用错误 (30100-30109)
+	ErrCodeCatalogError       = 30100 // CatalogServiceError - 目录服务错误
+	ErrCodeCatalogEmpty       = 30101 // Empty - 数据不存在
+	ErrCodeCatalogMissingParam = 30102 // MissingParameter - 参数缺失
+	ErrCodeCatalogInvalidParam = 30103 // InvalidParameter - 参数无效
+	ErrCodeCatalogOutOfRange    = 30104 // OutOfRange - 超出范围
+	ErrCodeCatalogConflict      = 30105 // OperationConflict - 操作冲突
+	ErrCodeCatalogDataExist     = 30106 // DATA_EXIST - 数据已存在
+)
+
+// ========== catalog-api 辅助函数 ==========
+
+// CatalogNameEmpty 目录名称为空
+func CatalogNameEmpty() error {
+	return errorx.NewWithMsg(ErrCodeCatalogInvalidParam, "目录名称不能为空")
+}
+
+// CatalogNameTooLong 目录名称过长
+func CatalogNameTooLong() error {
+	return errorx.NewWithMsg(ErrCodeCatalogInvalidParam, "目录名称长度不能超过20个字符")
+}
+
+// CatalogNameInvalidFormat 目录名称格式错误
+func CatalogNameInvalidFormat() error {
+	return errorx.NewWithMsg(ErrCodeCatalogInvalidParam, "目录名称只能由中英文、数字、下划线、中划线组成")
+}
+
+// CatalogNameInvalidPrefix 目录名称前缀无效
+func CatalogNameInvalidPrefix() error {
+	return errorx.NewWithMsg(ErrCodeCatalogInvalidParam, "目录名称不能以下划线和中划线开头")
+}
+
+// CatalogParentNotExist 父目录不存在
+func CatalogParentNotExist() error {
+	return errorx.NewWithMsg(ErrCodeCatalogEmpty, "无法找到对应的父目录")
+}
+
+// CatalogLevelOutOfRange 目录级别超出范围
+func CatalogLevelOutOfRange() error {
+	return errorx.NewWithMsg(ErrCodeCatalogOutOfRange, "目录级别取值范围(1-255)")
+}
+
+// CatalogNameDuplicate 同级目录名称重复
+func CatalogNameDuplicate() error {
+	return errorx.NewWithMsg(ErrCodeCatalogConflict, "同级目录名称不能重复")
+}
+
+// CatalogCannotDeleteRoot 不允许删除根目录
+func CatalogCannotDeleteRoot() error {
+	return errorx.NewWithMsg(ErrCodeCatalogInvalidParam, "不允许删除根目录")
+}
+
+// CatalogCannotModifyRoot 不允许修改根目录
+func CatalogCannotModifyRoot() error {
+	return errorx.NewWithMsg(ErrCodeCatalogInvalidParam, "不能修改根目录")
+}
+
+// CatalogHasData 目录下存在数据，不允许删除
+func CatalogHasData() error {
+	return errorx.NewWithMsg(ErrCodeCatalogDataExist, "目录或子目录下已存在数据，不允许删除")
+}
+
+// CatalogTypeEmpty 目录类型为空
+func CatalogTypeEmpty() error {
+	return errorx.NewWithMsg(ErrCodeCatalogMissingParam, "类型不能为空")
+}
+
+// CatalogTypeInvalid 目录类型无效
+func CatalogTypeInvalid() error {
+	return errorx.NewWithMsg(ErrCodeCatalogInvalidParam, "此类型不在有效值范围内")
+}
+
+// CatalogNewParentIsChild 新父目录不能是自身及其子目录
+func CatalogNewParentIsChild() error {
+	return errorx.NewWithMsg(ErrCodeCatalogInvalidParam, "新的父目录不能是自身及其子目录")
+}
+
+// CatalogTypeMismatch 目录类型不匹配
+func CatalogTypeMismatch() error {
+	return errorx.NewWithMsg(ErrCodeCatalogInvalidParam, "新的父目录类型不能与当前目录不一致")
+}
+
+// CatalogNotExist 目录不存在
+func CatalogNotExist() error {
+	return errorx.NewWithMsg(ErrCodeCatalogEmpty, "目录id对应的目录不存在")
+}

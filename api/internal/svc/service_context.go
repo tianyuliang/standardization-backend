@@ -5,45 +5,42 @@ package svc
 
 import (
 	"context"
-	"time"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/config"
+	catalogmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/catalog/catalog"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/relation_file"
 	rulemodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/rule"
 )
 
 type ServiceContext struct {
-	Config                config.Config
-	DB                    *sqlx.DB
-	RuleModel             rulemodel.RuleModel
-	RelationRuleFileModel relation_file.RelationRuleFileModel
-	// TODO: 后续添加 Kafka Producer
-	// KafkaProducer *kafka.Producer
+	Config                 config.Config
+	db                     *sqlx.DB
+	RuleModel              rulemodel.RuleModel
+	CatalogModel           catalogmodel.CatalogModel
+	RelationRuleFileModel  relation_file.RelationRuleFileModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	// 初始化数据库连接
-	db, err := sqlx.Connect("mysql", c.DB.Default.DataSource())
+	// 使用MySQL驱动
+	driver := "mysql"
+	dataSource := c.DB.Default.DataSource()
+
+	db, err := sqlx.Connect(driver, dataSource)
 	if err != nil {
 		panic(err)
 	}
-	db.SetMaxOpenConns(c.DB.Default.MaxOpenConns)
-	db.SetMaxIdleConns(c.DB.Default.MaxIdleConns)
-	db.SetConnMaxLifetime(time.Duration(c.DB.Default.ConnMaxLifetime) * time.Second)
-	db.SetConnMaxIdleTime(time.Duration(c.DB.Default.ConnMaxIdleTime) * time.Second)
 
-	// 获取底层连接用于 Model (使用 Conn 而非 DB 以支持事务)
 	conn, err := db.Connx(context.Background())
 	if err != nil {
 		panic(err)
 	}
 
 	return &ServiceContext{
-		Config:                c,
-		DB:                    db,
-		RuleModel:             rulemodel.NewRuleModel(conn),
-		RelationRuleFileModel: relation_file.NewRelationRuleFileModel(conn),
+		Config:                 c,
+		db:                     db,
+		RuleModel:              rulemodel.NewRuleModel(conn),
+		CatalogModel:           catalogmodel.NewCatalogModel(conn),
+		RelationRuleFileModel:  relation_file.NewRelationRuleFileModel(conn),
 	}
 }

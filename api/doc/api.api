@@ -13,6 +13,7 @@ import "base.api"
 // 示例: import "user/user.api"
 // ============================================
 import "rule/rule.api"
+import "catalog/catalog.api"
 
 // 定义 service 名称为 "api"
 // goctl 会生成: api.go + etc/api.yaml

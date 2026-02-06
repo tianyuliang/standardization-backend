@@ -6,6 +6,7 @@ package handler
 import (
 	"net/http"
 
+	catalog "github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/handler/catalog"
 	rule "github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/handler/rule"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
 
@@ -22,6 +23,48 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithPrefix("/api/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 创建目录
+				Method:  http.MethodPost,
+				Path:    "/catalog",
+				Handler: catalog.CreateCatalogHandler(serverCtx),
+			},
+			{
+				// 修改目录
+				Method:  http.MethodPut,
+				Path:    "/catalog/:id",
+				Handler: catalog.UpdateCatalogHandler(serverCtx),
+			},
+			{
+				// 删除目录
+				Method:  http.MethodDelete,
+				Path:    "/catalog/:id",
+				Handler: catalog.DeleteCatalogHandler(serverCtx),
+			},
+			{
+				// 检索目录
+				Method:  http.MethodGet,
+				Path:    "/catalog/query",
+				Handler: catalog.QueryHandler(serverCtx),
+			},
+			{
+				// 查询目录及文件树
+				Method:  http.MethodGet,
+				Path:    "/catalog/query/with_file",
+				Handler: catalog.QueryWithFileHandler(serverCtx),
+			},
+			{
+				// 查询目录树
+				Method:  http.MethodGet,
+				Path:    "/catalog/query_tree",
+				Handler: catalog.QueryTreeHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/standardization/v1"),
 	)
 
 	server.AddRoutes(

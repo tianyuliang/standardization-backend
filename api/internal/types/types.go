@@ -3,12 +3,32 @@
 
 package types
 
+type CatalogWithFileResp struct {
+	Id           int64                  `json:"id"`
+	CatalogName  string                 `json:"catalogName"`
+	Level        int32                  `json:"level"`
+	ParentId     int64                  `json:"parentId"`
+	Type         int32                  `json:"type"`
+	Children     []*CatalogWithFileResp `json:"children,omitempty"`
+	Files        []*FileCountVo         `json:"files,omitempty"`
+	HaveChildren bool                   `json:"haveChildren"`
+}
+
 type DataElementResp struct {
 	Id       int64  `json:"id"`
 	Name     string `json:"name"`
 	Code     string `json:"code"`
 	RuleId   int64  `json:"ruleId"`
 	RuleName string `json:"ruleName"`
+}
+
+type EmptyResp struct {
+}
+
+type FileCountVo struct {
+	FileId    int64  `json:"fileId"`
+	FileName  string `json:"fileName"`
+	CatalogId int64  `json:"catalogId"`
 }
 
 type HealthResp struct {
