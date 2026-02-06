@@ -1,0 +1,3796 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "title": "standardization-backend API",
+    "version": "v1"
+  },
+  "basePath": "/",
+  "paths": {
+    "/api/standardization/v1/catalog": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "创建目录",
+        "operationId": "catalogCreateCatalog",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "catalogName",
+                "parentId",
+                "type"
+              ],
+              "properties": {
+                "catalogName": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "parentId": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "catalogName": {
+                  "type": "string"
+                },
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "catalogName",
+                      "description",
+                      "level",
+                      "parentId",
+                      "type",
+                      "children",
+                      "count",
+                      "haveChildren"
+                    ],
+                    "properties": {
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "children": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "catalogName",
+                            "description",
+                            "level",
+                            "parentId",
+                            "type",
+                            "children",
+                            "count",
+                            "haveChildren"
+                          ],
+                          "properties": {
+                            "catalogName": {
+                              "type": "string"
+                            },
+                            "children": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              }
+                            },
+                            "count": {
+                              "type": "integer"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "haveChildren": {
+                              "type": "boolean"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "level": {
+                              "type": "integer"
+                            },
+                            "parentId": {
+                              "type": "integer"
+                            },
+                            "type": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      },
+                      "count": {
+                        "type": "integer"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "haveChildren": {
+                        "type": "boolean"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "level": {
+                        "type": "integer"
+                      },
+                      "parentId": {
+                        "type": "integer"
+                      },
+                      "type": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "count": {
+                  "type": "integer"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "haveChildren": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "level": {
+                  "type": "integer"
+                },
+                "parentId": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/catalog/query": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "检索目录",
+        "operationId": "catalogQuery",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "type",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "keyword",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "catalogName",
+                  "level",
+                  "parentId",
+                  "type"
+                ],
+                "properties": {
+                  "catalogName": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "integer"
+                  },
+                  "level": {
+                    "type": "integer"
+                  },
+                  "parentId": {
+                    "type": "integer"
+                  },
+                  "type": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "properties": {
+                "catalogName": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "level": {
+                  "type": "integer"
+                },
+                "parentId": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/catalog/query/with_file": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "查询目录及文件树",
+        "operationId": "catalogQueryWithFile",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "keyword",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "catalogs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "catalogName",
+                      "level",
+                      "parentId",
+                      "type"
+                    ],
+                    "properties": {
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "level": {
+                        "type": "integer"
+                      },
+                      "parentId": {
+                        "type": "integer"
+                      },
+                      "type": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "fileId",
+                      "fileName",
+                      "catalogId"
+                    ],
+                    "properties": {
+                      "catalogId": {
+                        "type": "integer"
+                      },
+                      "fileId": {
+                        "type": "integer"
+                      },
+                      "fileName": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/catalog/query_tree": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "查询目录树",
+        "operationId": "catalogQueryTree",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "type",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "catalogName": {
+                  "type": "string"
+                },
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "catalogName",
+                      "description",
+                      "level",
+                      "parentId",
+                      "type",
+                      "children",
+                      "count",
+                      "haveChildren"
+                    ],
+                    "properties": {
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "children": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "catalogName",
+                            "description",
+                            "level",
+                            "parentId",
+                            "type",
+                            "children",
+                            "count",
+                            "haveChildren"
+                          ],
+                          "properties": {
+                            "catalogName": {
+                              "type": "string"
+                            },
+                            "children": {
+                              "type": "array",
+                              "items": {
+                                "type": "object"
+                              }
+                            },
+                            "count": {
+                              "type": "integer"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "haveChildren": {
+                              "type": "boolean"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "level": {
+                              "type": "integer"
+                            },
+                            "parentId": {
+                              "type": "integer"
+                            },
+                            "type": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      },
+                      "count": {
+                        "type": "integer"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "haveChildren": {
+                        "type": "boolean"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "level": {
+                        "type": "integer"
+                      },
+                      "parentId": {
+                        "type": "integer"
+                      },
+                      "type": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "count": {
+                  "type": "integer"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "haveChildren": {
+                  "type": "boolean"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "level": {
+                  "type": "integer"
+                },
+                "parentId": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/catalog/{id}": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "修改目录",
+        "operationId": "catalogUpdateCatalog",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "catalogName"
+              ],
+              "properties": {
+                "catalogName": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "删除目录",
+        "operationId": "catalogDeleteCatalog",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/rule": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "编码规则列表查询",
+        "operationId": "ruleListRule",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "keyword",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "catalogId",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "default": -1,
+            "name": "orgType",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "default": -1,
+            "name": "state",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "ruleType",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "name": "offset",
+            "in": "query",
+            "required": true
+          },
+          {
+            "maximum": 2000,
+            "minimum": 0,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "catalogId",
+                      "catalogName",
+                      "orgType",
+                      "description",
+                      "ruleType",
+                      "version",
+                      "expression",
+                      "state",
+                      "disableReason",
+                      "authorityId",
+                      "departmentIds",
+                      "thirdDeptId",
+                      "createTime",
+                      "createUser",
+                      "updateTime",
+                      "updateUser",
+                      "stdFileIds",
+                      "used"
+                    ],
+                    "properties": {
+                      "authorityId": {
+                        "type": "string"
+                      },
+                      "catalogId": {
+                        "type": "integer"
+                      },
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "createTime": {
+                        "type": "string"
+                      },
+                      "createUser": {
+                        "type": "string"
+                      },
+                      "departmentIds": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "disableReason": {
+                        "type": "string"
+                      },
+                      "expression": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "orgType": {
+                        "type": "integer"
+                      },
+                      "ruleType": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "integer"
+                      },
+                      "stdFileIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        }
+                      },
+                      "thirdDeptId": {
+                        "type": "string"
+                      },
+                      "updateTime": {
+                        "type": "string"
+                      },
+                      "updateUser": {
+                        "type": "string"
+                      },
+                      "used": {
+                        "type": "boolean"
+                      },
+                      "version": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "total_count": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "新增编码规则",
+        "operationId": "ruleCreateRule",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "catalogId",
+                "orgType",
+                "ruleType"
+              ],
+              "properties": {
+                "catalogId": {
+                  "type": "integer"
+                },
+                "custom": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "value",
+                      "segmentLength",
+                      "count"
+                    ],
+                    "properties": {
+                      "count": {
+                        "type": "integer"
+                      },
+                      "segmentLength": {
+                        "type": "integer"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "departmentIds": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "regex": {
+                  "type": "string"
+                },
+                "ruleType": {
+                  "type": "string"
+                },
+                "stdFileIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "authorityId": {
+                  "type": "string"
+                },
+                "catalogId": {
+                  "type": "integer"
+                },
+                "catalogName": {
+                  "type": "string"
+                },
+                "createTime": {
+                  "type": "string"
+                },
+                "createUser": {
+                  "type": "string"
+                },
+                "departmentIds": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "disableReason": {
+                  "type": "string"
+                },
+                "expression": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "ruleType": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "integer"
+                },
+                "stdFileIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "thirdDeptId": {
+                  "type": "string"
+                },
+                "updateTime": {
+                  "type": "string"
+                },
+                "updateUser": {
+                  "type": "string"
+                },
+                "used": {
+                  "type": "boolean"
+                },
+                "version": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/rule/catalog/remove": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "编码规则目录移动",
+        "operationId": "ruleRemoveRuleCatalog",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "catalogId": {
+                  "type": "integer"
+                },
+                "ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/rule/getCustomDateFormat": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取自定义日期格式列表",
+        "operationId": "ruleGetCustomDateFormat",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/rule/internal/getDetailByDataCode/{dataCode}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "内部-根据数据元编码查看规则详情",
+        "operationId": "ruleGetRuleDetailByDataCode",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "authorityId": {
+                  "type": "string"
+                },
+                "catalogId": {
+                  "type": "integer"
+                },
+                "catalogName": {
+                  "type": "string"
+                },
+                "createTime": {
+                  "type": "string"
+                },
+                "createUser": {
+                  "type": "string"
+                },
+                "departmentIds": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "disableReason": {
+                  "type": "string"
+                },
+                "expression": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "ruleType": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "integer"
+                },
+                "stdFileIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "thirdDeptId": {
+                  "type": "string"
+                },
+                "updateTime": {
+                  "type": "string"
+                },
+                "updateUser": {
+                  "type": "string"
+                },
+                "used": {
+                  "type": "boolean"
+                },
+                "version": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/rule/internal/getDetailByDataId/{dataId}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "内部-根据数据元ID查看规则详情",
+        "operationId": "ruleGetRuleDetailByDataId",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "authorityId": {
+                  "type": "string"
+                },
+                "catalogId": {
+                  "type": "integer"
+                },
+                "catalogName": {
+                  "type": "string"
+                },
+                "createTime": {
+                  "type": "string"
+                },
+                "createUser": {
+                  "type": "string"
+                },
+                "departmentIds": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "disableReason": {
+                  "type": "string"
+                },
+                "expression": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "ruleType": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "integer"
+                },
+                "stdFileIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "thirdDeptId": {
+                  "type": "string"
+                },
+                "updateTime": {
+                  "type": "string"
+                },
+                "updateUser": {
+                  "type": "string"
+                },
+                "used": {
+                  "type": "boolean"
+                },
+                "version": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/rule/internal/getId/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "内部-根据ID查看规则详情",
+        "operationId": "ruleGetRuleInternal",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "authorityId": {
+                  "type": "string"
+                },
+                "catalogId": {
+                  "type": "integer"
+                },
+                "catalogName": {
+                  "type": "string"
+                },
+                "createTime": {
+                  "type": "string"
+                },
+                "createUser": {
+                  "type": "string"
+                },
+                "departmentIds": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "disableReason": {
+                  "type": "string"
+                },
+                "expression": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "ruleType": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "integer"
+                },
+                "stdFileIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "thirdDeptId": {
+                  "type": "string"
+                },
+                "updateTime": {
+                  "type": "string"
+                },
+                "updateUser": {
+                  "type": "string"
+                },
+                "used": {
+                  "type": "boolean"
+                },
+                "version": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/rule/queryByIds": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "批量查询规则",
+        "operationId": "ruleQueryRuleByIds",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "catalogId",
+                      "catalogName",
+                      "orgType",
+                      "description",
+                      "ruleType",
+                      "version",
+                      "expression",
+                      "state",
+                      "disableReason",
+                      "authorityId",
+                      "departmentIds",
+                      "thirdDeptId",
+                      "createTime",
+                      "createUser",
+                      "updateTime",
+                      "updateUser",
+                      "stdFileIds",
+                      "used"
+                    ],
+                    "properties": {
+                      "authorityId": {
+                        "type": "string"
+                      },
+                      "catalogId": {
+                        "type": "integer"
+                      },
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "createTime": {
+                        "type": "string"
+                      },
+                      "createUser": {
+                        "type": "string"
+                      },
+                      "departmentIds": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "disableReason": {
+                        "type": "string"
+                      },
+                      "expression": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "orgType": {
+                        "type": "integer"
+                      },
+                      "ruleType": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "integer"
+                      },
+                      "stdFileIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        }
+                      },
+                      "thirdDeptId": {
+                        "type": "string"
+                      },
+                      "updateTime": {
+                        "type": "string"
+                      },
+                      "updateUser": {
+                        "type": "string"
+                      },
+                      "used": {
+                        "type": "boolean"
+                      },
+                      "version": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "total_count": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/rule/queryByStdFile": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "根据标准文件查询规则",
+        "operationId": "ruleQueryRuleByStdFile",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "keyword",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "catalogId",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "default": -1,
+            "name": "orgType",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "default": -1,
+            "name": "state",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "ruleType",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "name": "offset",
+            "in": "query",
+            "required": true
+          },
+          {
+            "maximum": 2000,
+            "minimum": 0,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "catalogId",
+                      "catalogName",
+                      "orgType",
+                      "description",
+                      "ruleType",
+                      "version",
+                      "expression",
+                      "state",
+                      "disableReason",
+                      "authorityId",
+                      "departmentIds",
+                      "thirdDeptId",
+                      "createTime",
+                      "createUser",
+                      "updateTime",
+                      "updateUser",
+                      "stdFileIds",
+                      "used"
+                    ],
+                    "properties": {
+                      "authorityId": {
+                        "type": "string"
+                      },
+                      "catalogId": {
+                        "type": "integer"
+                      },
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "createTime": {
+                        "type": "string"
+                      },
+                      "createUser": {
+                        "type": "string"
+                      },
+                      "departmentIds": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "disableReason": {
+                        "type": "string"
+                      },
+                      "expression": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "orgType": {
+                        "type": "integer"
+                      },
+                      "ruleType": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "integer"
+                      },
+                      "stdFileIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        }
+                      },
+                      "thirdDeptId": {
+                        "type": "string"
+                      },
+                      "updateTime": {
+                        "type": "string"
+                      },
+                      "updateUser": {
+                        "type": "string"
+                      },
+                      "used": {
+                        "type": "boolean"
+                      },
+                      "version": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "total_count": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/rule/queryByStdFileCatalog": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "根据标准文件目录查询规则",
+        "operationId": "ruleQueryRuleByStdFileCatalog",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "catalogId",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "name": "offset",
+            "in": "query",
+            "required": true
+          },
+          {
+            "maximum": 2000,
+            "minimum": 0,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "catalogId",
+                      "catalogName",
+                      "orgType",
+                      "description",
+                      "ruleType",
+                      "version",
+                      "expression",
+                      "state",
+                      "disableReason",
+                      "authorityId",
+                      "departmentIds",
+                      "thirdDeptId",
+                      "createTime",
+                      "createUser",
+                      "updateTime",
+                      "updateUser",
+                      "stdFileIds",
+                      "used"
+                    ],
+                    "properties": {
+                      "authorityId": {
+                        "type": "string"
+                      },
+                      "catalogId": {
+                        "type": "integer"
+                      },
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "createTime": {
+                        "type": "string"
+                      },
+                      "createUser": {
+                        "type": "string"
+                      },
+                      "departmentIds": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "disableReason": {
+                        "type": "string"
+                      },
+                      "expression": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "orgType": {
+                        "type": "integer"
+                      },
+                      "ruleType": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "integer"
+                      },
+                      "stdFileIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        }
+                      },
+                      "thirdDeptId": {
+                        "type": "string"
+                      },
+                      "updateTime": {
+                        "type": "string"
+                      },
+                      "updateUser": {
+                        "type": "string"
+                      },
+                      "used": {
+                        "type": "boolean"
+                      },
+                      "version": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "total_count": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/rule/queryDataExists": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "检查数据是否存在",
+        "operationId": "ruleQueryDataExists",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "排除的规则ID",
+            "name": "filter_id",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "description": "标准编号",
+            "name": "number",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "description": "组织类型",
+            "name": "org_type",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "description": "规则/文件名称",
+            "name": "name",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "description": "部门IDs",
+            "name": "department_ids",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "exists": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/rule/relation/de/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "查询引用规则的数据元",
+        "operationId": "ruleQueryRuleUsedDataElement",
+        "parameters": [
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "name": "offset",
+            "in": "query",
+            "required": true
+          },
+          {
+            "maximum": 2000,
+            "minimum": 0,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "code",
+                      "ruleId",
+                      "ruleName"
+                    ],
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "ruleId": {
+                        "type": "integer"
+                      },
+                      "ruleName": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "total_count": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/rule/relation/stdfile/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "查询规则关联的标准文件",
+        "operationId": "ruleQueryStdFilesByRule",
+        "parameters": [
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "name": "offset",
+            "in": "query",
+            "required": true
+          },
+          {
+            "maximum": 2000,
+            "minimum": 0,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "catalogId",
+                      "catalogName"
+                    ],
+                    "properties": {
+                      "catalogId": {
+                        "type": "integer"
+                      },
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "total_count": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/rule/state/{id}": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "停用/启用编码规则",
+        "operationId": "ruleUpdateRuleState",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "state"
+              ],
+              "properties": {
+                "reason": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/rule/{ids}": {
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "编码规则删除\u0026批量删除",
+        "operationId": "ruleDeleteRule",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/rule/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "编码规则详情查看",
+        "operationId": "ruleGetRule",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "authorityId": {
+                  "type": "string"
+                },
+                "catalogId": {
+                  "type": "integer"
+                },
+                "catalogName": {
+                  "type": "string"
+                },
+                "createTime": {
+                  "type": "string"
+                },
+                "createUser": {
+                  "type": "string"
+                },
+                "departmentIds": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "disableReason": {
+                  "type": "string"
+                },
+                "expression": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "ruleType": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "integer"
+                },
+                "stdFileIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "thirdDeptId": {
+                  "type": "string"
+                },
+                "updateTime": {
+                  "type": "string"
+                },
+                "updateUser": {
+                  "type": "string"
+                },
+                "used": {
+                  "type": "boolean"
+                },
+                "version": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "根据ID修改编码规则",
+        "operationId": "ruleUpdateRule",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "name",
+                "catalogId",
+                "orgType",
+                "ruleType"
+              ],
+              "properties": {
+                "catalogId": {
+                  "type": "integer"
+                },
+                "custom": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "value",
+                      "segmentLength",
+                      "count"
+                    ],
+                    "properties": {
+                      "count": {
+                        "type": "integer"
+                      },
+                      "segmentLength": {
+                        "type": "integer"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "departmentIds": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "regex": {
+                  "type": "string"
+                },
+                "ruleType": {
+                  "type": "string"
+                },
+                "stdFileIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "authorityId": {
+                  "type": "string"
+                },
+                "catalogId": {
+                  "type": "integer"
+                },
+                "catalogName": {
+                  "type": "string"
+                },
+                "createTime": {
+                  "type": "string"
+                },
+                "createUser": {
+                  "type": "string"
+                },
+                "departmentIds": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "disableReason": {
+                  "type": "string"
+                },
+                "expression": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "ruleType": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "integer"
+                },
+                "stdFileIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "thirdDeptId": {
+                  "type": "string"
+                },
+                "updateTime": {
+                  "type": "string"
+                },
+                "updateUser": {
+                  "type": "string"
+                },
+                "used": {
+                  "type": "boolean"
+                },
+                "version": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/std-file": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "标准文件-列表查询",
+        "operationId": "stdfileListStdFile",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "catalog_id",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "keyword",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "org_type",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "state",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "default": 1,
+            "name": "offset",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "default": "update_time",
+            "name": "sort",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "default": "desc",
+            "name": "direction",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "department_id",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "number",
+                      "name",
+                      "catalogId",
+                      "catalogName",
+                      "actDate",
+                      "publishDate",
+                      "disableDate",
+                      "attachmentType",
+                      "attachmentUrl",
+                      "fileName",
+                      "orgType",
+                      "description",
+                      "state",
+                      "disableReason",
+                      "version",
+                      "departmentId",
+                      "departmentName",
+                      "departmentPathNames",
+                      "createTime",
+                      "createUser",
+                      "updateTime",
+                      "updateUser"
+                    ],
+                    "properties": {
+                      "actDate": {
+                        "type": "string"
+                      },
+                      "attachmentType": {
+                        "type": "string"
+                      },
+                      "attachmentUrl": {
+                        "type": "string"
+                      },
+                      "catalogId": {
+                        "type": "integer"
+                      },
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "createTime": {
+                        "type": "string"
+                      },
+                      "createUser": {
+                        "type": "string"
+                      },
+                      "departmentId": {
+                        "type": "string"
+                      },
+                      "departmentName": {
+                        "type": "string"
+                      },
+                      "departmentPathNames": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "disableDate": {
+                        "type": "string"
+                      },
+                      "disableReason": {
+                        "type": "string"
+                      },
+                      "fileName": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "number": {
+                        "type": "string"
+                      },
+                      "orgType": {
+                        "type": "integer"
+                      },
+                      "publishDate": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "updateTime": {
+                        "type": "string"
+                      },
+                      "updateUser": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "totalCount": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "新增标准文件",
+        "operationId": "stdfileCreateStdFile",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "number",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "name",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "default": 44,
+            "name": "catalog_id",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "org_type",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "act_date",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "publish_date",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "description",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "attachment_type",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "attachment_url",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "state",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "department_ids",
+            "in": "formData",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "actDate": {
+                  "type": "string"
+                },
+                "attachmentType": {
+                  "type": "string"
+                },
+                "attachmentUrl": {
+                  "type": "string"
+                },
+                "catalogId": {
+                  "type": "integer"
+                },
+                "catalogName": {
+                  "type": "string"
+                },
+                "createTime": {
+                  "type": "string"
+                },
+                "createUser": {
+                  "type": "string"
+                },
+                "departmentId": {
+                  "type": "string"
+                },
+                "departmentName": {
+                  "type": "string"
+                },
+                "departmentPathNames": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "disableDate": {
+                  "type": "string"
+                },
+                "disableReason": {
+                  "type": "string"
+                },
+                "fileName": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "number": {
+                  "type": "string"
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "publishDate": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "updateTime": {
+                  "type": "string"
+                },
+                "updateUser": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/std-file/batchState": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "批量启用/停用",
+        "operationId": "stdfileBatchStateStdFile",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/std-file/catalog/remove": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "移动到指定目录-目录移动",
+        "operationId": "stdfileRemoveStdFileCatalog",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "catalogId": {
+                  "type": "integer"
+                },
+                "ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/std-file/delete/{ids}": {
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "标准文件管理-批量删除",
+        "operationId": "stdfileDeleteStdFile",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/std-file/download/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "根据文件ID下载标准文件附件",
+        "operationId": "stdfileDownloadStdFile",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {}
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/std-file/downloadBatch": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "标准文件附件下载（批量）",
+        "operationId": "stdfileDownloadBatchStdFile",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {}
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/std-file/queryByIds": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "根据id列表查询",
+        "operationId": "stdfileQueryStdFileByIds",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "number",
+                      "name",
+                      "catalogId",
+                      "catalogName",
+                      "actDate",
+                      "publishDate",
+                      "disableDate",
+                      "attachmentType",
+                      "attachmentUrl",
+                      "fileName",
+                      "orgType",
+                      "description",
+                      "state",
+                      "disableReason",
+                      "version",
+                      "departmentId",
+                      "departmentName",
+                      "departmentPathNames",
+                      "createTime",
+                      "createUser",
+                      "updateTime",
+                      "updateUser"
+                    ],
+                    "properties": {
+                      "actDate": {
+                        "type": "string"
+                      },
+                      "attachmentType": {
+                        "type": "string"
+                      },
+                      "attachmentUrl": {
+                        "type": "string"
+                      },
+                      "catalogId": {
+                        "type": "integer"
+                      },
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "createTime": {
+                        "type": "string"
+                      },
+                      "createUser": {
+                        "type": "string"
+                      },
+                      "departmentId": {
+                        "type": "string"
+                      },
+                      "departmentName": {
+                        "type": "string"
+                      },
+                      "departmentPathNames": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "disableDate": {
+                        "type": "string"
+                      },
+                      "disableReason": {
+                        "type": "string"
+                      },
+                      "fileName": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "number": {
+                        "type": "string"
+                      },
+                      "orgType": {
+                        "type": "integer"
+                      },
+                      "publishDate": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "updateTime": {
+                        "type": "string"
+                      },
+                      "updateUser": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "totalCount": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/std-file/queryDataExists": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "查询数据是否存在",
+        "operationId": "stdfileQueryDataExists",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "排除的规则ID",
+            "name": "filter_id",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "description": "标准编号",
+            "name": "number",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "description": "组织类型",
+            "name": "org_type",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "description": "规则/文件名称",
+            "name": "name",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "description": "部门IDs",
+            "name": "department_ids",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/std-file/relation/de/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "查询关联数据元",
+        "operationId": "stdfileQueryRelationDe",
+        "parameters": [
+          {
+            "type": "integer",
+            "default": 1,
+            "name": "offset",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "number",
+                      "name",
+                      "catalogId",
+                      "catalogName",
+                      "actDate",
+                      "publishDate",
+                      "disableDate",
+                      "attachmentType",
+                      "attachmentUrl",
+                      "fileName",
+                      "orgType",
+                      "description",
+                      "state",
+                      "disableReason",
+                      "version",
+                      "departmentId",
+                      "departmentName",
+                      "departmentPathNames",
+                      "createTime",
+                      "createUser",
+                      "updateTime",
+                      "updateUser"
+                    ],
+                    "properties": {
+                      "actDate": {
+                        "type": "string"
+                      },
+                      "attachmentType": {
+                        "type": "string"
+                      },
+                      "attachmentUrl": {
+                        "type": "string"
+                      },
+                      "catalogId": {
+                        "type": "integer"
+                      },
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "createTime": {
+                        "type": "string"
+                      },
+                      "createUser": {
+                        "type": "string"
+                      },
+                      "departmentId": {
+                        "type": "string"
+                      },
+                      "departmentName": {
+                        "type": "string"
+                      },
+                      "departmentPathNames": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "disableDate": {
+                        "type": "string"
+                      },
+                      "disableReason": {
+                        "type": "string"
+                      },
+                      "fileName": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "number": {
+                        "type": "string"
+                      },
+                      "orgType": {
+                        "type": "integer"
+                      },
+                      "publishDate": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "updateTime": {
+                        "type": "string"
+                      },
+                      "updateUser": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "totalCount": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/std-file/relation/dict/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "查询关联的码表",
+        "operationId": "stdfileQueryRelationDict",
+        "parameters": [
+          {
+            "type": "integer",
+            "default": 1,
+            "name": "offset",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "number",
+                      "name",
+                      "catalogId",
+                      "catalogName",
+                      "actDate",
+                      "publishDate",
+                      "disableDate",
+                      "attachmentType",
+                      "attachmentUrl",
+                      "fileName",
+                      "orgType",
+                      "description",
+                      "state",
+                      "disableReason",
+                      "version",
+                      "departmentId",
+                      "departmentName",
+                      "departmentPathNames",
+                      "createTime",
+                      "createUser",
+                      "updateTime",
+                      "updateUser"
+                    ],
+                    "properties": {
+                      "actDate": {
+                        "type": "string"
+                      },
+                      "attachmentType": {
+                        "type": "string"
+                      },
+                      "attachmentUrl": {
+                        "type": "string"
+                      },
+                      "catalogId": {
+                        "type": "integer"
+                      },
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "createTime": {
+                        "type": "string"
+                      },
+                      "createUser": {
+                        "type": "string"
+                      },
+                      "departmentId": {
+                        "type": "string"
+                      },
+                      "departmentName": {
+                        "type": "string"
+                      },
+                      "departmentPathNames": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "disableDate": {
+                        "type": "string"
+                      },
+                      "disableReason": {
+                        "type": "string"
+                      },
+                      "fileName": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "number": {
+                        "type": "string"
+                      },
+                      "orgType": {
+                        "type": "integer"
+                      },
+                      "publishDate": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "updateTime": {
+                        "type": "string"
+                      },
+                      "updateUser": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "totalCount": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/std-file/relation/rule/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "查询关联编码规则",
+        "operationId": "stdfileQueryRelationRule",
+        "parameters": [
+          {
+            "type": "integer",
+            "default": 1,
+            "name": "offset",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "name": "limit",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "number",
+                      "name",
+                      "catalogId",
+                      "catalogName",
+                      "actDate",
+                      "publishDate",
+                      "disableDate",
+                      "attachmentType",
+                      "attachmentUrl",
+                      "fileName",
+                      "orgType",
+                      "description",
+                      "state",
+                      "disableReason",
+                      "version",
+                      "departmentId",
+                      "departmentName",
+                      "departmentPathNames",
+                      "createTime",
+                      "createUser",
+                      "updateTime",
+                      "updateUser"
+                    ],
+                    "properties": {
+                      "actDate": {
+                        "type": "string"
+                      },
+                      "attachmentType": {
+                        "type": "string"
+                      },
+                      "attachmentUrl": {
+                        "type": "string"
+                      },
+                      "catalogId": {
+                        "type": "integer"
+                      },
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "createTime": {
+                        "type": "string"
+                      },
+                      "createUser": {
+                        "type": "string"
+                      },
+                      "departmentId": {
+                        "type": "string"
+                      },
+                      "departmentName": {
+                        "type": "string"
+                      },
+                      "departmentPathNames": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "disableDate": {
+                        "type": "string"
+                      },
+                      "disableReason": {
+                        "type": "string"
+                      },
+                      "fileName": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "number": {
+                        "type": "string"
+                      },
+                      "orgType": {
+                        "type": "integer"
+                      },
+                      "publishDate": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "updateTime": {
+                        "type": "string"
+                      },
+                      "updateUser": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "totalCount": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/std-file/relation/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "标准文件关联关系查询",
+        "operationId": "stdfileQueryRelations",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "deIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "dictIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "ruleIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "根据标准文件ID添加关联关系",
+        "operationId": "stdfileAddRelation",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "deIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "dictIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "ruleIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/std-file/state/{id}": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "根据文件ID启用/停用",
+        "operationId": "stdfileUpdateStdFileState",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "reason": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/std-file/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "根据ID查询详情",
+        "operationId": "stdfileGetStdFile",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "actDate": {
+                  "type": "string"
+                },
+                "attachmentType": {
+                  "type": "string"
+                },
+                "attachmentUrl": {
+                  "type": "string"
+                },
+                "catalogId": {
+                  "type": "integer"
+                },
+                "catalogName": {
+                  "type": "string"
+                },
+                "createTime": {
+                  "type": "string"
+                },
+                "createUser": {
+                  "type": "string"
+                },
+                "departmentId": {
+                  "type": "string"
+                },
+                "departmentName": {
+                  "type": "string"
+                },
+                "departmentPathNames": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "disableDate": {
+                  "type": "string"
+                },
+                "disableReason": {
+                  "type": "string"
+                },
+                "fileName": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "number": {
+                  "type": "string"
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "publishDate": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "updateTime": {
+                  "type": "string"
+                },
+                "updateUser": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "根据ID修改标准文件",
+        "operationId": "stdfileUpdateStdFile",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "number",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "name",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "catalog_id",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "org_type",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "act_date",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "publish_date",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "description",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "attachment_type",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "attachment_url",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "state",
+            "in": "formData",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "department_ids",
+            "in": "formData",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "actDate": {
+                  "type": "string"
+                },
+                "attachmentType": {
+                  "type": "string"
+                },
+                "attachmentUrl": {
+                  "type": "string"
+                },
+                "catalogId": {
+                  "type": "integer"
+                },
+                "catalogName": {
+                  "type": "string"
+                },
+                "createTime": {
+                  "type": "string"
+                },
+                "createUser": {
+                  "type": "string"
+                },
+                "departmentId": {
+                  "type": "string"
+                },
+                "departmentName": {
+                  "type": "string"
+                },
+                "departmentPathNames": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "disableDate": {
+                  "type": "string"
+                },
+                "disableReason": {
+                  "type": "string"
+                },
+                "fileName": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "number": {
+                  "type": "string"
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "publishDate": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "updateTime": {
+                  "type": "string"
+                },
+                "updateUser": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "HealthCheck",
+        "operationId": "healthCheck",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-date": "2026-02-06 16:03:08",
+  "x-description": "This is a goctl generated swagger file.",
+  "x-github": "https://github.com/zeromicro/go-zero",
+  "x-go-zero-doc": "https://go-zero.dev/",
+  "x-goctl-version": "1.9.2"
+}

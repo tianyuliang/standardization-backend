@@ -14,6 +14,7 @@ import "base.api"
 // ============================================
 import "rule/rule.api"
 import "catalog/catalog.api"
+import "stdfile/stdfile.api"
 
 // 定义 service 名称为 "api"
 // goctl 会生成: api.go + etc/api.yaml

@@ -48,6 +48,26 @@ type IdsReq {
     Ids []int64 `json:"ids"`
 }
 
+// QueryByIdsReq 批量ID查询请求（各模块通用）
+type QueryByIdsReq {
+    Ids []int64 `json:"ids,optional" validate:"required"`
+}
+
+// RemoveCatalogReq 目录移动请求（各模块通用）
+type RemoveCatalogReq {
+    Ids       []int64 `json:"ids,optional" validate:"required"`
+    CatalogId int64   `json:"catalogId,optional" validate:"required"`
+}
+
+// QueryDataExistsReq 检查数据存在请求（各模块通用）
+type QueryDataExistsReq {
+    FilterId      int64  `form:"filter_id,optional"`      // 排除的规则ID
+    Number        string `form:"number,optional"`         // 标准编号
+    OrgType       int32  `form:"org_type,optional"`       // 组织类型
+    Name          string `form:"name,optional"`           // 规则/文件名称
+    DepartmentIds string `form:"department_ids,optional"` // 部门IDs
+}
+
 // ============================================
 // 通用响应
 // ============================================

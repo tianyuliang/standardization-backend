@@ -33,25 +33,10 @@ type PageQuery struct {
 	Limit  int `form:"limit,default=10,range=[0:2000]"`
 }
 
-type QueryByIdsReq struct {
-	Ids []int64 `json:"ids"`
-}
-
 type QueryByStdFileCatalogReq struct {
 	CatalogId int64 `form:"catalogId,optional"`
 	Offset    int   `form:"offset,default=1,range=[1:]"`
 	Limit     int   `form:"limit,default=10,range=[0:2000]"`
-}
-
-type QueryDataExistsReq struct {
-	FilterId      int64  `form:"filterId,optional"` // 排除的规则ID
-	Name          string `form:"name"`
-	DepartmentIds string `form:"departmentIds,optional"`
-}
-
-type RemoveCatalogReq struct {
-	Ids       []int64 `json:"ids"`
-	CatalogId int64   `json:"catalogId"`
 }
 
 type RuleListQuery struct {

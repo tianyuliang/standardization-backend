@@ -1,0 +1,197 @@
+syntax = "v1"
+
+import "../base.api"
+
+type (
+	// ==================== 请求类型 ====================
+	// CreateStdFileReq 新增标准文件请求
+	CreateStdFileReq {
+		Number         string `form:"number,optional"`
+		Name           string `form:"name,optional" validate:"required,max=300"`
+		CatalogId      int64  `form:"catalog_id,optional,default=44"`
+		OrgType        int32  `form:"org_type,optional" validate:"required"`
+		ActDate        string `form:"act_date,optional"`
+		PublishDate    string `form:"publish_date,optional"`
+		Description    string `form:"description,optional" validate:"max=300"`
+		AttachmentType string `form:"attachment_type,optional" validate:"required,oneof=FILE URL"`
+		AttachmentUrl  string `form:"attachment_url,optional"`
+		State          string `form:"state,optional" validate:"omitempty,oneof=enable disable"`
+		DepartmentIds  string `form:"department_ids,optional"`
+	}
+	// UpdateStdFileReq 修改标准文件请求
+	UpdateStdFileReq {
+		Id             int64  `path:"id"`
+		Number         string `form:"number,optional"`
+		Name           string `form:"name,optional" validate:"required,max=300"`
+		CatalogId      int64  `form:"catalog_id,optional" validate:"required"`
+		OrgType        int32  `form:"org_type,optional" validate:"required"`
+		ActDate        string `form:"act_date,optional"`
+		PublishDate    string `form:"publish_date,optional"`
+		Description    string `form:"description,optional" validate:"max=300"`
+		AttachmentType string `form:"attachment_type,optional" validate:"required,oneof=FILE URL"`
+		AttachmentUrl  string `form:"attachment_url,optional"`
+		State          string `form:"state,optional" validate:"omitempty,oneof=enable disable"`
+		DepartmentIds  string `form:"department_ids,optional"`
+	}
+	// UpdateStdFileStateReq 修改文件状态请求
+	UpdateStdFileStateReq {
+		State  string `json:"state,optional" validate:"required,oneof=enable disable"`
+		Reason string `json:"reason,optional"`
+	}
+	// BatchStateReq 批量状态更新请求
+	BatchStateReq {
+		Ids    []int64 `json:"ids,optional" validate:"required"`
+		State  string  `json:"state,optional" validate:"required,oneof=enable disable"`
+		Reason string  `json:"reason,optional"`
+	}
+	// StdFileListQuery 列表查询参数
+	StdFileListQuery {
+		CatalogId    int64  `form:"catalog_id,optional"`
+		Keyword      string `form:"keyword,optional"`
+		OrgType      int32  `form:"org_type,optional"`
+		State        string `form:"state,optional" validate:"omitempty,oneof=enable disable"`
+		Offset       int    `form:"offset,optional,default=1"`
+		Limit        int    `form:"limit,optional,default=20"`
+		Sort         string `form:"sort,optional,default=update_time"`
+		Direction    string `form:"direction,optional,default=desc"`
+		DepartmentId string `form:"department_id,optional"`
+	}
+	// StdFileRelationQuery 关联查询参数
+	StdFileRelationQuery {
+		Offset int `form:"offset,optional,default=1"`
+		Limit  int `form:"limit,optional,default=20"`
+	}
+	// StdFileRelationDto 关联关系请求
+	StdFileRelationDto {
+		DeIds   []int64 `json:"deIds,optional"`
+		DictIds []int64 `json:"dictIds,optional"`
+		RuleIds []int64 `json:"ruleIds,optional"`
+	}
+	// ==================== 响应类型 ====================
+	// StdFileDetailResp 标准文件详情响应（完整字段）
+	StdFileDetailResp {
+		Id                  int64  `json:"id"`
+		Number              string `json:"number"`
+		Name                string `json:"name"`
+		CatalogId           int64  `json:"catalogId"`
+		CatalogName         string `json:"catalogName,omitempty"`
+		ActDate             string `json:"actDate,omitempty"`
+		PublishDate         string `json:"publishDate,omitempty"`
+		DisableDate         string `json:"disableDate,omitempty"`
+		AttachmentType      string `json:"attachmentType"`
+		AttachmentUrl       string `json:"attachmentUrl,omitempty"`
+		FileName            string `json:"fileName,omitempty"`
+		OrgType             int32  `json:"orgType"`
+		Description         string `json:"description,omitempty"`
+		State               string `json:"state"`
+		DisableReason       string `json:"disableReason,omitempty"`
+		Version             int    `json:"version"`
+		DepartmentId        string `json:"departmentId,omitempty"`
+		DepartmentName      string `json:"departmentName,omitempty"`
+		DepartmentPathNames string `json:"departmentPathNames,omitempty"`
+		CreateTime          string `json:"createTime,omitempty"`
+		CreateUser          string `json:"createUser,omitempty"`
+		UpdateTime          string `json:"updateTime,omitempty"`
+		UpdateUser          string `json:"updateUser,omitempty"`
+	}
+	// StdFileDataListResp 标准文件数据列表响应
+	StdFileDataListResp {
+		TotalCount int64               `json:"totalCount"`
+		Data       []StdFileDetailResp `json:"data"`
+	}
+	// StdFileRelationResp 关联关系响应
+	StdFileRelationResp {
+		DeIds   []int64 `json:"deIds"`
+		DictIds []int64 `json:"dictIds"`
+		RuleIds []int64 `json:"ruleIds"`
+	}
+	// BaseResp 基础响应
+	BaseResp {
+		Code        string `json:"code"`
+		Description string `json:"description"`
+	}
+)
+
+// ==================== 外部API（open标签）====================
+@server (
+	prefix:     /api/standardization/v1
+	group:      stdfile
+	middleware: TokenCheck
+)
+service api {
+	@doc "新增标准文件"
+	@handler CreateStdFile
+	post /std-file (CreateStdFileReq) returns (StdFileDetailResp)
+
+	@doc "根据ID修改标准文件"
+	@handler UpdateStdFile
+	put /std-file/:id (UpdateStdFileReq) returns (StdFileDetailResp)
+
+	@doc "标准文件-列表查询"
+	@handler ListStdFile
+	get /std-file (StdFileListQuery) returns (StdFileDataListResp)
+
+	@doc "根据ID查询详情"
+	@handler GetStdFile
+	get /std-file/:id returns (StdFileDetailResp)
+
+	@doc "根据文件ID启用/停用"
+	@handler UpdateStdFileState
+	put /std-file/state/:id (UpdateStdFileStateReq) returns (BaseResp)
+
+	@doc "根据id列表查询"
+	@handler QueryStdFileByIds
+	post /std-file/queryByIds (QueryByIdsReq) returns (StdFileDataListResp)
+}
+
+// ==================== 其他API（无认证）====================
+@server (
+	prefix: /api/standardization/v1
+	group:  stdfile
+)
+service api {
+	@doc "标准文件管理-批量删除"
+	@handler DeleteStdFile
+	delete /std-file/delete/:ids returns (BaseResp)
+
+	@doc "移动到指定目录-目录移动"
+	@handler RemoveStdFileCatalog
+	post /std-file/catalog/remove (RemoveCatalogReq) returns (BaseResp)
+
+	@doc "根据文件ID下载标准文件附件"
+	@handler DownloadStdFile
+	get /std-file/download/:id
+
+	@doc "标准文件附件下载（批量）"
+	@handler DownloadBatchStdFile
+	post /std-file/downloadBatch (QueryByIdsReq)
+
+	@doc "查询关联数据元"
+	@handler QueryRelationDe
+	get /std-file/relation/de/:id (StdFileRelationQuery) returns (StdFileDataListResp)
+
+	@doc "查询关联的码表"
+	@handler QueryRelationDict
+	get /std-file/relation/dict/:id (StdFileRelationQuery) returns (StdFileDataListResp)
+
+	@doc "查询关联编码规则"
+	@handler QueryRelationRule
+	get /std-file/relation/rule/:id (StdFileRelationQuery) returns (StdFileDataListResp)
+
+	@doc "根据标准文件ID添加关联关系"
+	@handler AddRelation
+	put /std-file/relation/:id (StdFileRelationDto) returns (BaseResp)
+
+	@doc "标准文件关联关系查询"
+	@handler QueryRelations
+	get /std-file/relation/:id returns (StdFileRelationResp)
+
+	@doc "查询数据是否存在"
+	@handler QueryDataExists
+	get /std-file/queryDataExists (QueryDataExistsReq) returns (BaseResp)
+
+	@doc "批量启用/停用"
+	@handler BatchStateStdFile
+	put /std-file/batchState (BatchStateReq) returns (BaseResp)
+}
+

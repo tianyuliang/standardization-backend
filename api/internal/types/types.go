@@ -3,6 +3,10 @@
 
 package types
 
+// ============================================
+// 共享类型 - 跨模块引用
+// ============================================
+
 type CatalogWithFileResp struct {
 	Id           int64                  `json:"id"`
 	CatalogName  string                 `json:"catalogName"`
@@ -66,6 +70,23 @@ type PageInfoWithKeyword struct {
 type PageResp struct {
 	Entries    interface{} `json:"entries"`     // 数据列表
 	TotalCount int64       `json:"total_count"` // 总记录数
+}
+
+type QueryByIdsReq struct {
+	Ids []int64 `json:"ids,optional" validate:"required"`
+}
+
+type QueryDataExistsReq struct {
+	FilterId      int64  `form:"filter_id,optional"`      // 排除的规则ID
+	Number        string `form:"number,optional"`         // 标准编号
+	OrgType       int32  `form:"org_type,optional"`       // 组织类型
+	Name          string `form:"name,optional"`           // 规则/文件名称
+	DepartmentIds string `form:"department_ids,optional"` // 部门IDs
+}
+
+type RemoveCatalogReq struct {
+	Ids       []int64 `json:"ids,optional" validate:"required"`
+	CatalogId int64   `json:"catalogId,optional" validate:"required"`
 }
 
 type RuleCustom struct {

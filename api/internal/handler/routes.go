@@ -6,8 +6,7 @@ package handler
 import (
 	"net/http"
 
-	catalog "github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/handler/catalog"
-	rule "github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/handler/rule"
+	stdfile "github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/handler/stdfile"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -15,169 +14,119 @@ import (
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodGet,
-				Path:    "/health",
-				Handler: HealthCheckHandler(serverCtx),
-			},
-		},
-		rest.WithPrefix("/api/v1"),
-	)
-
-	server.AddRoutes(
-		[]rest.Route{
-			{
-				// 创建目录
-				Method:  http.MethodPost,
-				Path:    "/catalog",
-				Handler: catalog.CreateCatalogHandler(serverCtx),
-			},
-			{
-				// 修改目录
-				Method:  http.MethodPut,
-				Path:    "/catalog/:id",
-				Handler: catalog.UpdateCatalogHandler(serverCtx),
-			},
-			{
-				// 删除目录
-				Method:  http.MethodDelete,
-				Path:    "/catalog/:id",
-				Handler: catalog.DeleteCatalogHandler(serverCtx),
-			},
-			{
-				// 检索目录
-				Method:  http.MethodGet,
-				Path:    "/catalog/query",
-				Handler: catalog.QueryHandler(serverCtx),
-			},
-			{
-				// 查询目录及文件树
-				Method:  http.MethodGet,
-				Path:    "/catalog/query/with_file",
-				Handler: catalog.QueryWithFileHandler(serverCtx),
-			},
-			{
-				// 查询目录树
-				Method:  http.MethodGet,
-				Path:    "/catalog/query_tree",
-				Handler: catalog.QueryTreeHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.TokenCheck},
+			[]rest.Route{
+				{
+					// 新增标准文件
+					Method:  http.MethodPost,
+					Path:    "/std-file",
+					Handler: stdfile.CreateStdFileHandler(serverCtx),
+				},
+				{
+					// 标准文件-列表查询
+					Method:  http.MethodGet,
+					Path:    "/std-file",
+					Handler: stdfile.ListStdFileHandler(serverCtx),
+				},
+				{
+					// 根据ID修改标准文件
+					Method:  http.MethodPut,
+					Path:    "/std-file/:id",
+					Handler: stdfile.UpdateStdFileHandler(serverCtx),
+				},
+				{
+					// 根据ID查询详情
+					Method:  http.MethodGet,
+					Path:    "/std-file/:id",
+					Handler: stdfile.GetStdFileHandler(serverCtx),
+				},
+				{
+					// 根据id列表查询
+					Method:  http.MethodPost,
+					Path:    "/std-file/queryByIds",
+					Handler: stdfile.QueryStdFileByIdsHandler(serverCtx),
+				},
+				{
+					// 根据文件ID启用/停用
+					Method:  http.MethodPut,
+					Path:    "/std-file/state/:id",
+					Handler: stdfile.UpdateStdFileStateHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/api/standardization/v1"),
 	)
 
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				// 新增编码规则
-				Method:  http.MethodPost,
-				Path:    "/rule",
-				Handler: rule.CreateRuleHandler(serverCtx),
-			},
-			{
-				// 编码规则列表查询
-				Method:  http.MethodGet,
-				Path:    "/rule",
-				Handler: rule.ListRuleHandler(serverCtx),
-			},
-			{
-				// 根据ID修改编码规则
+				// 批量启用/停用
 				Method:  http.MethodPut,
-				Path:    "/rule/:id",
-				Handler: rule.UpdateRuleHandler(serverCtx),
+				Path:    "/std-file/batchState",
+				Handler: stdfile.BatchStateStdFileHandler(serverCtx),
 			},
 			{
-				// 编码规则详情查看
-				Method:  http.MethodGet,
-				Path:    "/rule/:id",
-				Handler: rule.GetRuleHandler(serverCtx),
+				// 移动到指定目录-目录移动
+				Method:  http.MethodPost,
+				Path:    "/std-file/catalog/remove",
+				Handler: stdfile.RemoveStdFileCatalogHandler(serverCtx),
 			},
 			{
-				// 编码规则删除&批量删除
+				// 标准文件管理-批量删除
 				Method:  http.MethodDelete,
-				Path:    "/rule/:ids",
-				Handler: rule.DeleteRuleHandler(serverCtx),
+				Path:    "/std-file/delete/:ids",
+				Handler: stdfile.DeleteStdFileHandler(serverCtx),
 			},
 			{
-				// 编码规则目录移动
+				// 根据文件ID下载标准文件附件
+				Method:  http.MethodGet,
+				Path:    "/std-file/download/:id",
+				Handler: stdfile.DownloadStdFileHandler(serverCtx),
+			},
+			{
+				// 标准文件附件下载（批量）
 				Method:  http.MethodPost,
-				Path:    "/rule/catalog/remove",
-				Handler: rule.RemoveRuleCatalogHandler(serverCtx),
+				Path:    "/std-file/downloadBatch",
+				Handler: stdfile.DownloadBatchStdFileHandler(serverCtx),
 			},
 			{
-				// 获取自定义日期格式列表
+				// 查询数据是否存在
 				Method:  http.MethodGet,
-				Path:    "/rule/getCustomDateFormat",
-				Handler: rule.GetCustomDateFormatHandler(serverCtx),
+				Path:    "/std-file/queryDataExists",
+				Handler: stdfile.QueryDataExistsHandler(serverCtx),
 			},
 			{
-				// 批量查询规则
-				Method:  http.MethodPost,
-				Path:    "/rule/queryByIds",
-				Handler: rule.QueryRuleByIdsHandler(serverCtx),
-			},
-			{
-				// 根据标准文件查询规则
-				Method:  http.MethodGet,
-				Path:    "/rule/queryByStdFile",
-				Handler: rule.QueryRuleByStdFileHandler(serverCtx),
-			},
-			{
-				// 根据标准文件目录查询规则
-				Method:  http.MethodGet,
-				Path:    "/rule/queryByStdFileCatalog",
-				Handler: rule.QueryRuleByStdFileCatalogHandler(serverCtx),
-			},
-			{
-				// 检查数据是否存在
-				Method:  http.MethodGet,
-				Path:    "/rule/queryDataExists",
-				Handler: rule.QueryDataExistsHandler(serverCtx),
-			},
-			{
-				// 查询引用规则的数据元
-				Method:  http.MethodGet,
-				Path:    "/rule/relation/de/:id",
-				Handler: rule.QueryRuleUsedDataElementHandler(serverCtx),
-			},
-			{
-				// 查询规则关联的标准文件
-				Method:  http.MethodGet,
-				Path:    "/rule/relation/stdfile/:id",
-				Handler: rule.QueryStdFilesByRuleHandler(serverCtx),
-			},
-			{
-				// 停用/启用编码规则
+				// 根据标准文件ID添加关联关系
 				Method:  http.MethodPut,
-				Path:    "/rule/state/:id",
-				Handler: rule.UpdateRuleStateHandler(serverCtx),
+				Path:    "/std-file/relation/:id",
+				Handler: stdfile.AddRelationHandler(serverCtx),
+			},
+			{
+				// 标准文件关联关系查询
+				Method:  http.MethodGet,
+				Path:    "/std-file/relation/:id",
+				Handler: stdfile.QueryRelationsHandler(serverCtx),
+			},
+			{
+				// 查询关联数据元
+				Method:  http.MethodGet,
+				Path:    "/std-file/relation/de/:id",
+				Handler: stdfile.QueryRelationDeHandler(serverCtx),
+			},
+			{
+				// 查询关联的码表
+				Method:  http.MethodGet,
+				Path:    "/std-file/relation/dict/:id",
+				Handler: stdfile.QueryRelationDictHandler(serverCtx),
+			},
+			{
+				// 查询关联编码规则
+				Method:  http.MethodGet,
+				Path:    "/std-file/relation/rule/:id",
+				Handler: stdfile.QueryRelationRuleHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/api/standardization/v1"),
-	)
-
-	server.AddRoutes(
-		[]rest.Route{
-			{
-				// 内部-根据数据元编码查看规则详情
-				Method:  http.MethodGet,
-				Path:    "/getDetailByDataCode/:dataCode",
-				Handler: rule.GetRuleDetailByDataCodeHandler(serverCtx),
-			},
-			{
-				// 内部-根据数据元ID查看规则详情
-				Method:  http.MethodGet,
-				Path:    "/getDetailByDataId/:dataId",
-				Handler: rule.GetRuleDetailByDataIdHandler(serverCtx),
-			},
-			{
-				// 内部-根据ID查看规则详情
-				Method:  http.MethodGet,
-				Path:    "/getId/:id",
-				Handler: rule.GetRuleInternalHandler(serverCtx),
-			},
-		},
-		rest.WithPrefix("/api/standardization/v1/rule/internal"),
 	)
 }

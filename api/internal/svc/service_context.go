@@ -8,9 +8,12 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/config"
+	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/middleware"
 	catalogmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/catalog/catalog"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/relation_file"
 	rulemodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/rule"
+	stdfilemodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/stdfile/stdfile"
+	"github.com/zeromicro/go-zero/rest"
 )
 
 type ServiceContext struct {
@@ -19,6 +22,8 @@ type ServiceContext struct {
 	RuleModel             rulemodel.RuleModel
 	CatalogModel          catalogmodel.CatalogModel
 	RelationRuleFileModel relation_file.RelationRuleFileModel
+	StdFileModel          stdfilemodel.StdFileModel
+	TokenCheck            rest.Middleware
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -42,5 +47,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		RuleModel:             rulemodel.NewRuleModel(conn),
 		CatalogModel:          catalogmodel.NewCatalogModel(conn),
 		RelationRuleFileModel: relation_file.NewRelationRuleFileModel(conn),
+		StdFileModel:          stdfilemodel.NewStdFileModel(conn),
+		TokenCheck:            middleware.NewTokenCheckMiddleware().Handle,
 	}
 }

@@ -207,10 +207,10 @@ func CatalogNotExist() error {
 
 const (
 	// 通用错误 (30200-30209)
-	ErrCodeStdFileDataNotExist  = 30201 // DATA_NOT_EXIST - 数据不存在
-	ErrCodeStdFileParamEmpty    = 30202 // PARAMETER_EMPTY - 参数为空
-	ErrCodeStdFileInvalidParam  = 30203 // InvalidParameter - 参数无效
-	ErrCodeStdFileDataExist     = 30204 // DATA_EXIST - 数据已存在
+	ErrCodeStdFileDataNotExist   = 30201 // DATA_NOT_EXIST - 数据不存在
+	ErrCodeStdFileParamEmpty     = 30202 // PARAMETER_EMPTY - 参数为空
+	ErrCodeStdFileInvalidParam   = 30203 // InvalidParameter - 参数无效
+	ErrCodeStdFileDataExist      = 30204 // DATA_EXIST - 数据已存在
 	ErrCodeStdFileDownloadFailed = 30205 // FileDownloadFailed - 文件下载失败
 
 	// 编号相关 (30210-30219)
@@ -221,11 +221,11 @@ const (
 	ErrCodeStdFileCatalogNotExist       = 30214 // 目录不存在
 
 	// 文件相关 (30220-30229)
-	ErrCodeStdFileEmpty        = 30220 // 文件为空
+	ErrCodeStdFileEmpty          = 30220 // 文件为空
 	ErrCodeStdFileTypeNotSupport = 30221 // 不支持的文件类型
-	ErrCodeStdFileSizeExceed   = 30222 // 文件大小超限
-	ErrCodeStdFileUrlEmpty     = 30223 // 链接地址为空
-	ErrCodeStdFileUrlTooLong    = 30224 // 链接地址过长
+	ErrCodeStdFileSizeExceed     = 30222 // 文件大小超限
+	ErrCodeStdFileUrlEmpty       = 30223 // 链接地址为空
+	ErrCodeStdFileUrlTooLong     = 30224 // 链接地址过长
 
 	// 参数相关 (30230-30239)
 	ErrCodeStdFileIdsEmpty      = 30230 // 批量删除ids为空
