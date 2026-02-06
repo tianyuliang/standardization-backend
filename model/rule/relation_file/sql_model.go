@@ -76,6 +76,32 @@ func (m *defaultRelationRuleFileModel) FindByRuleId(ctx context.Context, ruleId 
 	return result, rows.Err()
 }
 
+// FindByFileId 查询文件关联的规则
+func (m *defaultRelationRuleFileModel) FindByFileId(ctx context.Context, fileId int64) ([]*RelationRuleFile, error) {
+	query := `
+		SELECT f_id, f_rule_id, f_file_id
+		FROM t_relation_rule_file
+		WHERE f_file_id = ?
+	`
+
+	rows, err := m.conn.QueryContext(ctx, query, fileId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result []*RelationRuleFile
+	for rows.Next() {
+		var item RelationRuleFile
+		err := rows.Scan(&item.Id, &item.RuleId, &item.FileId)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, &item)
+	}
+	return result, rows.Err()
+}
+
 // DeleteByRuleIds 批量删除规则的文件关联
 func (m *defaultRelationRuleFileModel) DeleteByRuleIds(ctx context.Context, ruleIds []int64) error {
 	if len(ruleIds) == 0 {

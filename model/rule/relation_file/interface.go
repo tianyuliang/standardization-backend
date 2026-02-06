@@ -18,6 +18,9 @@ type RelationRuleFileModel interface {
 	// FindByRuleId 查询规则关联的文件
 	FindByRuleId(ctx context.Context, ruleId int64) ([]*RelationRuleFile, error)
 
+	// FindByFileId 查询文件关联的规则
+	FindByFileId(ctx context.Context, fileId int64) ([]*RelationRuleFile, error)
+
 	// DeleteByRuleIds 批量删除规则的文件关联
 	DeleteByRuleIds(ctx context.Context, ruleIds []int64) error
 }

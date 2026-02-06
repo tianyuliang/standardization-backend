@@ -376,7 +376,7 @@
 
 ### 4.1 接口实现: GET /v1/rule/relation/de/{id}
 
-- [ ] T032 [P] 实现 `api/internal/logic/rule/query_rule_used_data_element_logic.go`
+- [x] T032 [P] 实现 `api/internal/logic/rule/query_rule_used_data_element_logic.go`
   ```go
   func (l *QueryRuleUsedDataElementLogic) QueryUsedDataElement(id int64, req types.PageQuery) (resp *types.DataElementListResp, err error) {
       // 1. 校验规则存在
@@ -390,7 +390,7 @@
 
 ### 4.2 接口实现: GET /v1/rule/relation/stdfile/{id}
 
-- [ ] T034 [P] 实现 `api/internal/logic/rule/query_std_files_by_rule_logic.go`
+- [x] T034 [P] 实现 `api/internal/logic/rule/query_std_files_by_rule_logic.go`
   ```go
   func (l *QueryStdFilesByRuleLogic) QueryStdFilesByRule(id int64, req types.PageQuery) (resp *types.StdFileListResp, err error) {
       // 1. 查询关联的文件ID列表
@@ -404,7 +404,7 @@
 
 ### 4.3 接口实现: GET /v1/rule/queryByStdFileCatalog
 
-- [ ] T036 [P] 实现 `api/internal/logic/rule/query_rule_by_std_file_catalog_logic.go`
+- [x] T036 [P] 实现 `api/internal/logic/rule/query_rule_by_std_file_catalog_logic.go`
   ```go
   func (l *QueryRuleByStdFileCatalogLogic) QueryByStdFileCatalog(req types.QueryByCatalogReq) (resp *types.RuleListResp, err error) {
       // 1. catalog_id = -1: 返回未关联文件的规则
@@ -431,7 +431,7 @@
 
 ### 4.4 接口实现: GET /v1/rule/queryByStdFile
 
-- [ ] T038 [P] 实现 `api/internal/logic/rule/query_rule_by_std_file_logic.go`
+- [x] T038 [P] 实现 `api/internal/logic/rule/query_rule_by_std_file_logic.go`
   ```go
   func (l *QueryRuleByStdFileLogic) QueryByStdFile(fileId int64, req types.RuleListQuery) (resp *types.RuleListResp, err error) {
       // 1. 查询关联该文件的规则
@@ -456,7 +456,7 @@
 
 ### 5.1 接口实现: POST /v1/rule/queryByIds
 
-- [ ] T040 [P] 实现 `api/internal/logic/rule/query_rule_by_ids_logic.go`
+- [x] T040 [P] 实现 `api/internal/logic/rule/query_rule_by_ids_logic.go`
   ```go
   func (l *QueryRuleByIdsLogic) QueryByIds(req *types.QueryByIdsReq) (resp *types.RuleListResp, err error) {
       // 1. 参数校验
@@ -769,10 +769,9 @@ Test{Function}_{Scenario}_{ExpectedResult}
 
 | Week | Phase | 内容 | 完成度 |
 |------|-------|------|--------|
-| 1 | Phase 0-3 | 基础设施 + CRUD + 状态 + 目录 | 40% (Phase 0-3 ✅) |
-| 2 | Phase 4 | 关联查询 | 0% |
-| 3 | Phase 5-7 | 批量查询 + 内部接口 + 辅助接口 | 0% |
-| 4 | Phase 8 | 收尾工作 + 验证 | 0% |
+| 1 | Phase 0-5 | 基础设施 + CRUD + 状态 + 目录 + 关联 + 批量 | 60% (Phase 0-5 ✅) |
+| 2 | Phase 6-7 | 内部接口 + 辅助接口 | 0% |
+| 3 | Phase 8 | 收尾工作 + 验证 | 0% |
 
 ---
 
@@ -785,3 +784,4 @@ Test{Function}_{Scenario}_{ExpectedResult}
 | 1.2 | 2026-02-05 | Phase 1 基础实现完成 (60%) - T014/T015修正，Logic层实现 |
 | 1.3 | 2026-02-06 | Phase 2 完成 - 状态管理接口实现 |
 | 1.4 | 2026-02-06 | Phase 3 完成 - 目录移动接口实现 |
+| 1.5 | 2026-02-06 | Phase 4-5 完成 - 关联查询 + 批量查询接口实现 |

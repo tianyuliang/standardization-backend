@@ -64,6 +64,24 @@ type RemoveCatalogReq {
     CatalogId int64   `json:"catalogId"`
 }
 
+// QueryByIdsReq 批量ID查询请求
+type QueryByIdsReq {
+    Ids []int64 `json:"ids"`
+}
+
+// QueryByStdFileCatalogReq 按标准文件目录查询请求
+type QueryByStdFileCatalogReq {
+    CatalogId int64 `form:"catalogId,optional"`
+    Offset    int   `form:"offset,default=1,range=[1:]"`
+    Limit     int   `form:"limit,default=10,range=[0:2000]"`
+}
+
+// PageQuery 分页查询参数
+type PageQuery {
+    Offset int `form:"offset,default=1,range=[1:]"`
+    Limit  int `form:"limit,default=10,range=[0:2000]"`
+}
+
 // ============================================
 // 响应类型定义
 // ============================================
@@ -106,6 +124,35 @@ type RuleCustom {
     Count         int    `json:"count"`
 }
 
+// DataElementResp 数据元响应
+type DataElementResp {
+    Id       int64  `json:"id"`
+    Name     string `json:"name"`
+    Code     string `json:"code"`
+    RuleId   int64  `json:"ruleId"`
+    RuleName string `json:"ruleName"`
+}
+
+// DataElementListResp 数据元列表响应
+type DataElementListResp {
+    Entries    []DataElementResp `json:"entries"`
+    TotalCount int64             `json:"total_count"`
+}
+
+// StdFileResp 标准文件响应
+type StdFileResp {
+    Id          int64  `json:"id"`
+    Name        string `json:"name"`
+    CatalogId   int64  `json:"catalogId"`
+    CatalogName string `json:"catalogName"`
+}
+
+// StdFileListResp 标准文件列表响应
+type StdFileListResp {
+    Entries    []StdFileResp `json:"entries"`
+    TotalCount int64         `json:"total_count"`
+}
+
 // ============================================
 // API 定义 - 基础 CRUD
 // ============================================
@@ -142,4 +189,24 @@ service api {
     @doc "编码规则目录移动"
     @handler RemoveRuleCatalog
     post /rule/catalog/remove (RemoveCatalogReq) returns (EmptyResp)
+
+    @doc "查询引用规则的数据元"
+    @handler QueryRuleUsedDataElement
+    get /rule/relation/de/:id (PageQuery) returns (DataElementListResp)
+
+    @doc "查询规则关联的标准文件"
+    @handler QueryStdFilesByRule
+    get /rule/relation/stdfile/:id (PageQuery) returns (StdFileListResp)
+
+    @doc "根据标准文件目录查询规则"
+    @handler QueryRuleByStdFileCatalog
+    get /rule/queryByStdFileCatalog (QueryByStdFileCatalogReq) returns (RuleListResp)
+
+    @doc "根据标准文件查询规则"
+    @handler QueryRuleByStdFile
+    get /rule/queryByStdFile (RuleListQuery) returns (RuleListResp)
+
+    @doc "批量查询规则"
+    @handler QueryRuleByIds
+    post /rule/queryByIds (QueryByIdsReq) returns (RuleListResp)
 }

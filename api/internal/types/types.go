@@ -3,6 +3,14 @@
 
 package types
 
+type DataElementResp struct {
+	Id       int64  `json:"id"`
+	Name     string `json:"name"`
+	Code     string `json:"code"`
+	RuleId   int64  `json:"ruleId"`
+	RuleName string `json:"ruleName"`
+}
+
 type HealthResp struct {
 	Status string `json:"status"`
 }
@@ -45,4 +53,11 @@ type RuleCustom struct {
 	Value         string `json:"value"`
 	SegmentLength int    `json:"segmentLength"`
 	Count         int    `json:"count"`
+}
+
+type StdFileResp struct {
+	Id          int64  `json:"id"`
+	Name        string `json:"name"`
+	CatalogId   int64  `json:"catalogId"`
+	CatalogName string `json:"catalogName"`
 }

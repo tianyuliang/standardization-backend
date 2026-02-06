@@ -15,7 +15,27 @@ type CreateRuleReq struct {
 	DepartmentIds string       `json:"departmentIds,optional"`
 }
 
+type DataElementListResp struct {
+	Entries    []DataElementResp `json:"entries"`
+	TotalCount int64             `json:"total_count"`
+}
+
 type EmptyResp struct {
+}
+
+type PageQuery struct {
+	Offset int `form:"offset,default=1,range=[1:]"`
+	Limit  int `form:"limit,default=10,range=[0:2000]"`
+}
+
+type QueryByIdsReq struct {
+	Ids []int64 `json:"ids"`
+}
+
+type QueryByStdFileCatalogReq struct {
+	CatalogId int64 `form:"catalogId,optional"`
+	Offset    int   `form:"offset,default=1,range=[1:]"`
+	Limit     int   `form:"limit,default=10,range=[0:2000]"`
 }
 
 type RemoveCatalogReq struct {
@@ -59,6 +79,11 @@ type RuleResp struct {
 	UpdateUser    string  `json:"updateUser"`
 	StdFileIds    []int64 `json:"stdFileIds"`
 	Used          bool    `json:"used"`
+}
+
+type StdFileListResp struct {
+	Entries    []StdFileResp `json:"entries"`
+	TotalCount int64         `json:"total_count"`
 }
 
 type UpdateRuleReq struct {

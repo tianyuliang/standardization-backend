@@ -63,6 +63,36 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: rule.RemoveRuleCatalogHandler(serverCtx),
 			},
 			{
+				// 批量查询规则
+				Method:  http.MethodPost,
+				Path:    "/rule/queryByIds",
+				Handler: rule.QueryRuleByIdsHandler(serverCtx),
+			},
+			{
+				// 根据标准文件查询规则
+				Method:  http.MethodGet,
+				Path:    "/rule/queryByStdFile",
+				Handler: rule.QueryRuleByStdFileHandler(serverCtx),
+			},
+			{
+				// 根据标准文件目录查询规则
+				Method:  http.MethodGet,
+				Path:    "/rule/queryByStdFileCatalog",
+				Handler: rule.QueryRuleByStdFileCatalogHandler(serverCtx),
+			},
+			{
+				// 查询引用规则的数据元
+				Method:  http.MethodGet,
+				Path:    "/rule/relation/de/:id",
+				Handler: rule.QueryRuleUsedDataElementHandler(serverCtx),
+			},
+			{
+				// 查询规则关联的标准文件
+				Method:  http.MethodGet,
+				Path:    "/rule/relation/stdfile/:id",
+				Handler: rule.QueryStdFilesByRuleHandler(serverCtx),
+			},
+			{
 				// 停用/启用编码规则
 				Method:  http.MethodPut,
 				Path:    "/rule/state/:id",
