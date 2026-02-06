@@ -4,7 +4,9 @@
 package catalog
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/logic/catalog"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
@@ -15,14 +17,34 @@ import (
 // 修改目录
 func UpdateCatalogHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// Step 1: 解析路径参数 id
+		// 对应 Java: @PathVariable Long id
+		idStr := r.URL.Query().Get("id")
+		if idStr == "" {
+			// go-zero 路由参数解析，从路径中提取 :id
+			// 例如: /catalog/123
+			idStr = r.PathValue("id")
+		}
+		if idStr == "" {
+			httpx.ErrorCtx(r.Context(), w, fmt.Errorf("missing path parameter: id"))
+			return
+		}
+		id, err := strconv.ParseInt(idStr, 10, 64)
+		if err != nil {
+			httpx.ErrorCtx(r.Context(), w, fmt.Errorf("invalid id parameter: %w", err))
+			return
+		}
+
+		// Step 2: 解析请求体
 		var req types.UpdateCatalogReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
+		// Step 3: 调用业务逻辑
 		l := catalog.NewUpdateCatalogLogic(r.Context(), svcCtx)
-		resp, err := l.UpdateCatalog(&req)
+		resp, err := l.UpdateCatalog(id, &req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {
