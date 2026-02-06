@@ -76,17 +76,8 @@ func (l *QueryWithFileLogic) QueryWithFile(req *types.QueryWithFileReq) (resp *t
 	}
 
 	// Step 3: 获取文件列表
-	// 对应 Java: StdFileMgrService.queryList() 或 getByName()
-	var files []*types.FileCountVo
-	if keyword != "" {
-		// Step 3.1: 按关键字搜索文件
-		// 对应 Java: stdFileMgrService.getByName(keyword)
-		files = getMockFiles(keyword)
-	} else {
-		// Step 3.2: 获取所有文件
-		// 对应 Java: stdFileMgrService.queryList()
-		files = getMockFiles("")
-	}
+	// 对应 Java: StdFileMgrService.getByName(keyword)
+	files := StdFileGetByName(l.ctx, l.svcCtx, keyword)
 
 	// Step 4: 组装响应
 	// 对应 Java: 返回 CatalogListByFileResp

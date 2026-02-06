@@ -1,3 +1,6 @@
+//go:build !mock_logic_off
+// +build !mock_logic_off
+
 package catalog
 
 import (
@@ -7,11 +10,24 @@ import (
 	"time"
 
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/errorx"
+	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/logic/catalog/mock"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/types"
 	catalogmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/catalog/catalog"
+)
 
-	"github.com/zeromicro/go-zero/core/logx"
+// Mock functions wrapper for easy access
+// These functions are defined in the mock package with build tags
+var (
+	DataElementGetPageList = mock.DataElementGetPageList
+	DataElementGetCountMap  = mock.DataElementGetCountMapGroupByCatalog
+	DictQueryList           = mock.DictQueryList
+	DictGetCountMap         = mock.DictGetCountMapGroupByCatalog
+	RuleQueryList           = mock.RuleQueryList
+	RuleGetCountMap         = mock.RuleGetCountMapGroupByCatalog
+	StdFileQueryList        = mock.StdFileQueryList
+	StdFileGetByName        = mock.StdFileGetByName
+	StdFileGetCountMap      = mock.StdFileGetCountMapGroupByCatalog
 )
 
 // ============================================
@@ -254,19 +270,32 @@ func CheckCatalogDelete(ctx context.Context, catalog *catalogmodel.Catalog, svcC
 	}
 
 	// 2. 根据类型校验是否存在数据
+	// 对应 Java: checkCatalogDelete() line 500-527
 	switch catalog.Type {
 	case catalogmodel.CatalogTypeDataElement:
-		// TODO: 调用 DataElementModel 检查是否存在数据元
-		logx.WithContext(ctx).Infof("CatalogDeleteCheck: DataElement catalog_id=%d", catalog.Id)
+		// 数据元校验：目录或子目录下已存在数据元，不允许删除
+		// 对应 Java: dataelementInfoService.getPageList(id, ...)
+		if hasData := DataElementGetPageList(ctx, svcCtx, catalog.Id); hasData {
+			return errorx.CatalogHasData()
+		}
 	case catalogmodel.CatalogTypeDict:
-		// TODO: 调用 DictModel 检查是否存在码表
-		logx.WithContext(ctx).Infof("CatalogDeleteCheck: Dict catalog_id=%d", catalog.Id)
+		// 码表校验：目录或子目录下已存在码表，不允许删除
+		// 对应 Java: dictService.queryList(id, ...)
+		if hasData := DictQueryList(ctx, svcCtx, catalog.Id); hasData {
+			return errorx.CatalogHasData()
+		}
 	case catalogmodel.CatalogTypeValueRule:
-		// TODO: 调用 RuleModel 检查是否存在规则
-		logx.WithContext(ctx).Infof("CatalogDeleteCheck: Rule catalog_id=%d", catalog.Id)
+		// 编码规则校验：目录或子目录下已存在编码规则，不允许删除
+		// 对应 Java: ruleService.queryList(id, ...)
+		if hasData := RuleQueryList(ctx, svcCtx, catalog.Id); hasData {
+			return errorx.CatalogHasData()
+		}
 	case catalogmodel.CatalogTypeFile:
-		// TODO: 调用 StdFileModel 检查是否存在文件
-		logx.WithContext(ctx).Infof("CatalogDeleteCheck: StdFile catalog_id=%d", catalog.Id)
+		// 文件校验：目录或子目录下已存在文件，不允许删除
+		// 对应 Java: stdFileMgrService.queryList(id, ...)
+		if hasData := StdFileQueryList(ctx, svcCtx, catalog.Id); hasData {
+			return errorx.CatalogHasData()
+		}
 	}
 
 	return nil
