@@ -6,7 +6,19 @@
       "Bash(git push:*)",
       "Bash(ls:*)",
       "Bash(goctl api go:*)",
-      "Bash(go doc:*)"
+      "Bash(go doc:*)",
+      "Bash(make swagger:*)",
+      "Bash(goctl api doc:*)",
+      "Bash(gofmt:*)",
+      "Bash(golangci-lint run:*)",
+      "Bash(dir specssrc)",
+      "Bash(dir \"d:\\\\go\\\\standardization-backend\\\\specs\")",
+      "Bash(dir:*)",
+      "Bash(del:*)",
+      "Bash(go clean:*)",
+      "Bash(go mod tidy:*)",
+      "Bash(goctl api plugin:*)",
+      "Bash(git checkout:*)"
     ]
   }
 }

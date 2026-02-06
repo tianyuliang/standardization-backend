@@ -1,6 +1,10 @@
 package errorx
 
-import "github.com/jinguoxing/idrm-go-base/errorx"
+import (
+	"fmt"
+
+	"github.com/jinguoxing/idrm-go-base/errorx"
+)
 
 // ========== rule-api 错误码定义 (30300-30399) ==========
 
@@ -197,4 +201,111 @@ func CatalogTypeMismatch() error {
 // CatalogNotExist 目录不存在
 func CatalogNotExist() error {
 	return errorx.NewWithMsg(ErrCodeCatalogEmpty, "目录id对应的目录不存在")
+}
+
+// ========== stdfile-api 错误码定义 (30200-30299) ==========
+
+const (
+	// 通用错误 (30200-30209)
+	ErrCodeStdFileDataNotExist  = 30201 // DATA_NOT_EXIST - 数据不存在
+	ErrCodeStdFileParamEmpty    = 30202 // PARAMETER_EMPTY - 参数为空
+	ErrCodeStdFileInvalidParam  = 30203 // InvalidParameter - 参数无效
+	ErrCodeStdFileDataExist     = 30204 // DATA_EXIST - 数据已存在
+	ErrCodeStdFileDownloadFailed = 30205 // FileDownloadFailed - 文件下载失败
+
+	// 编号相关 (30210-30219)
+	ErrCodeStdFileNumberDuplicate       = 30210 // 标准编号重复
+	ErrCodeStdFileNumberUpdateDuplicate = 30211 // 修改时标准编号重复
+	ErrCodeStdFileNameDuplicate         = 30212 // 文件名称重复
+	ErrCodeStdFileNameUpdateDuplicate   = 30213 // 修改时文件名称重复
+	ErrCodeStdFileCatalogNotExist       = 30214 // 目录不存在
+
+	// 文件相关 (30220-30229)
+	ErrCodeStdFileEmpty        = 30220 // 文件为空
+	ErrCodeStdFileTypeNotSupport = 30221 // 不支持的文件类型
+	ErrCodeStdFileSizeExceed   = 30222 // 文件大小超限
+	ErrCodeStdFileUrlEmpty     = 30223 // 链接地址为空
+	ErrCodeStdFileUrlTooLong    = 30224 // 链接地址过长
+
+	// 参数相关 (30230-30239)
+	ErrCodeStdFileIdsEmpty      = 30230 // 批量删除ids为空
+	ErrCodeStdFileReasonTooLong = 30231 // 停用原因过长
+	ErrCodeStdFileDateFormat    = 30232 // 日期格式不正确
+)
+
+// ========== stdfile-api 辅助函数 ==========
+
+// StdFileNumberDuplicate 标准编号已存在
+func StdFileNumberDuplicate() error {
+	return errorx.NewWithMsg(ErrCodeStdFileNumberDuplicate, "标准编号[number]重复")
+}
+
+// StdFileNameDuplicate 标准文件名称已存在
+func StdFileNameDuplicate() error {
+	return errorx.NewWithMsg(ErrCodeStdFileNameDuplicate, "标准文件名称[name]重复")
+}
+
+// StdFileCatalogNotExist 目录不存在
+func StdFileCatalogNotExist(catalogId int64) error {
+	return errorx.NewWithMsg(ErrCodeStdFileCatalogNotExist, fmt.Sprintf("目录id[%d]对应的目录不存在", catalogId))
+}
+
+// StdFileEmpty 文件不能为空
+func StdFileEmpty() error {
+	return errorx.NewWithMsg(ErrCodeStdFileParamEmpty, "文件不能为空")
+}
+
+// StdFileTypeNotSupported 不支持的文件类型
+func StdFileTypeNotSupported() error {
+	return errorx.NewWithMsg(ErrCodeStdFileInvalidParam, "不支持的文件类型")
+}
+
+// StdFileSizeExceed 文件大小超限
+func StdFileSizeExceed() error {
+	return errorx.NewWithMsg(ErrCodeStdFileInvalidParam, "文件不能超过30M")
+}
+
+// StdFileUrlEmpty 链接不能为空
+func StdFileUrlEmpty() error {
+	return errorx.NewWithMsg(ErrCodeStdFileInvalidParam, "链接不能为空")
+}
+
+// StdFileUrlTooLong 链接地址过长
+func StdFileUrlTooLong() error {
+	return errorx.NewWithMsg(ErrCodeStdFileInvalidParam, "链接长度超过2048")
+}
+
+// StdFileDisableReasonEmpty 停用原因为空
+func StdFileDisableReasonEmpty() error {
+	return errorx.NewWithMsg(ErrCodeStdFileParamEmpty, "停用必须填写停用原因")
+}
+
+// StdFileDisableReasonTooLong 停用原因过长
+func StdFileDisableReasonTooLong() error {
+	return errorx.NewWithMsg(ErrCodeStdFileReasonTooLong, "长度超过800")
+}
+
+// StdFileIdsEmpty ids不能为空
+func StdFileIdsEmpty() error {
+	return errorx.NewWithMsg(ErrCodeStdFileIdsEmpty, "ids 不能为空")
+}
+
+// StdFileDataNotExist 数据不存在
+func StdFileDataNotExist() error {
+	return errorx.NewWithMsg(ErrCodeStdFileDataNotExist, "数据不存在")
+}
+
+// StdFileRecordNotExist 记录不存在
+func StdFileRecordNotExist(id int64) error {
+	return errorx.NewWithMsg(ErrCodeStdFileDataNotExist, fmt.Sprintf("id[%d]对应的数据不存在", id))
+}
+
+// StdFileDownloadFailed 文件下载失败
+func StdFileDownloadFailed(msg string) error {
+	return errorx.NewWithMsg(ErrCodeStdFileDownloadFailed, msg)
+}
+
+// StdFileUrlTypeNoFile URL类型没有文件附件
+func StdFileUrlTypeNoFile() error {
+	return errorx.NewWithMsg(ErrCodeStdFileDownloadFailed, "[URL]类型没有文件附件")
 }
