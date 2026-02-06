@@ -6,6 +6,7 @@ package rule
 import (
 	"context"
 
+	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/logic/rule/mock"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/types"
 	rulemodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/rule"
@@ -21,7 +22,8 @@ type ListRuleLogic struct {
 
 // 编码规则列表查询
 //
-// 业务流程（参考 specs/编码规则管理接口流程说明_20260204.md 第4.4节）:
+// 对应 Java: RuleServiceImpl.queryByCatalog() (lines 140-160)
+// 业务流程:
 //  1. 处理目录ID（获取当前目录及所有子目录ID列表）
 //  2. 构建查询条件
 //  3. 分页查询
@@ -38,9 +40,9 @@ func NewListRuleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListRule
 
 func (l *ListRuleLogic) ListRule(req *types.RuleListQuery) (resp *types.RuleListResp, err error) {
 	// ====== 步骤1: 处理目录ID（获取当前目录及所有子目录ID列表） ======
-	// TODO: 调用 Catalog RPC 获取子目录列表
-	// catalogIds := getMockCatalogIds(req.CatalogId)
-	catalogIds := []int64{req.CatalogId}
+	// 对应 Java: iDeCatalogInfoService.getIDList(catalogId) (line 147)
+	// MOCK: mock.CatalogGetChildIds() - 获取子目录列表
+	catalogIds := mock.CatalogGetChildIds(l.ctx, l.svcCtx, req.CatalogId)
 
 	// ====== 步骤2: 构建查询条件 ======
 	opts := &rulemodel.FindOptions{
@@ -48,28 +50,42 @@ func (l *ListRuleLogic) ListRule(req *types.RuleListQuery) (resp *types.RuleList
 		State:        optionalInt32(req.State),
 		RuleType:     optionalRuleType(req.RuleType),
 		Keyword:      req.Keyword,
-		DepartmentId: "", // TODO: 从请求中获取部门ID
+		DepartmentId: "", // TODO: 添加到请求参数
 		Page:         req.Offset,
 		PageSize:     req.Limit,
-		Sort:         "f_create_time", // 默认按创建时间排序
-		Direction:    "DESC",          // 默认降序
+		Sort:         "", // TODO: 添加到请求参数
+		Direction:    "", // TODO: 添加到请求参数
 	}
 
 	// ====== 步骤3: 分页查询 ======
+	// 对应 Java: ruleMapper.queryByCatalog(page, catalogIds, keyword, orgType, state, departmentId, ruleType) (line 152)
 	rules, totalCount, err := l.svcCtx.RuleModel.FindByCatalogIds(l.ctx, catalogIds, opts)
 	if err != nil {
 		return nil, err
 	}
 
 	// ====== 步骤4: 数据处理 ======
-	// TODO: 批量查询目录名称、部门信息、引用状态
+	// 对应 Java: dbDataToVo(pageResult) (line 155)
 	entries := make([]types.RuleResp, 0, len(rules))
 	for _, r := range rules {
+		// 查询关联文件
+		relations, _ := l.svcCtx.RelationRuleFileModel.FindByRuleId(l.ctx, r.Id)
+		stdFileIds := make([]int64, len(relations))
+		for i, rf := range relations {
+			stdFileIds[i] = rf.FileId
+		}
+
+		// MOCK: mock.CatalogGetCatalogName() - 获取目录名称
+		catalogName := mock.CatalogGetCatalogName(l.ctx, l.svcCtx, r.CatalogId)
+
+		// MOCK: mock.DataElementRuleUsed() - 检查规则是否被引用
+		usedFlag := mock.DataElementRuleUsed(l.ctx, l.svcCtx, r.Id)
+
 		item := types.RuleResp{
 			Id:            r.Id,
 			Name:          r.Name,
 			CatalogId:     r.CatalogId,
-			CatalogName:   "", // TODO: 查询目录名称
+			CatalogName:   catalogName,
 			OrgType:       r.OrgType,
 			Description:   r.Description,
 			RuleType:      intToRuleType(r.RuleType),
@@ -80,8 +96,8 @@ func (l *ListRuleLogic) ListRule(req *types.RuleListQuery) (resp *types.RuleList
 			AuthorityId:   r.AuthorityId,
 			DepartmentIds: r.DepartmentIds,
 			ThirdDeptId:   r.ThirdDeptId,
-			StdFileIds:    nil,   // TODO: 查询关联文件
-			Used:          false, // TODO: 查询引用状态
+			StdFileIds:    stdFileIds,
+			Used:          usedFlag,
 			CreateTime:    timeToStr(r.CreateTime),
 			CreateUser:    r.CreateUser,
 			UpdateTime:    timeToStr(r.UpdateTime),

@@ -6,6 +6,7 @@ package rule
 import (
 	"context"
 
+	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/logic/rule/mock"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/types"
 
@@ -20,9 +21,11 @@ type QueryRuleByStdFileLogic struct {
 
 // 根据标准文件查询规则
 //
+// 对应 Java: RuleServiceImpl.queryByStdFile() (lines 655-674)
 // 业务流程:
-//  1. 查询关联该文件的规则ID列表
-//  2. 根据ID列表批量查询规则详情
+//  1. file_id 为空: 返回空列表
+//  2. 查询关联该文件的规则ID列表
+//  3. 批量查询规则详情
 func NewQueryRuleByStdFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryRuleByStdFileLogic {
 	return &QueryRuleByStdFileLogic{
 		Logger: logx.WithContext(ctx),
@@ -32,7 +35,17 @@ func NewQueryRuleByStdFileLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *QueryRuleByStdFileLogic) QueryRuleByStdFile(fileId int64, req *types.RuleListQuery) (resp *types.RuleListResp, err error) {
-	// ====== 步骤1: 查询关联该文件的规则ID列表 ======
+	// ====== 步骤1: file_id 为空: 返回空列表 ======
+	// 对应 Java: if (CustomUtil.isEmpty(stdFileId)) (lines 664-666)
+	if fileId == 0 {
+		return &types.RuleListResp{
+			Entries:    []types.RuleResp{},
+			TotalCount: 0,
+		}, nil
+	}
+
+	// ====== 步骤2: 查询关联该文件的规则ID列表 ======
+	// 对应 Java: ruleMapper.queryByStdFile(page, stdFileId, ...) (line 672)
 	relations, err := l.svcCtx.RelationRuleFileModel.FindByFileId(l.ctx, fileId)
 	if err != nil {
 		return nil, err
@@ -45,25 +58,40 @@ func (l *QueryRuleByStdFileLogic) QueryRuleByStdFile(fileId int64, req *types.Ru
 		}, nil
 	}
 
-	// ====== 步骤2: 批量查询规则详情 ======
+	// 提取规则ID列表
 	ruleIds := make([]int64, 0, len(relations))
 	for _, r := range relations {
 		ruleIds = append(ruleIds, r.RuleId)
 	}
 
+	// ====== 步骤3: 批量查询规则详情 ======
+	// 对应 Java: return dbDataToVo(pageResult) (line 673)
 	rules, err := l.svcCtx.RuleModel.FindByIds(l.ctx, ruleIds)
 	if err != nil {
 		return nil, err
 	}
 
-	// ====== 步骤3: 构建响应 ======
+	// ====== 步骤4: 构建响应 ======
 	entries := make([]types.RuleResp, 0, len(rules))
 	for _, r := range rules {
+		// 查询关联文件
+		fileRelations, _ := l.svcCtx.RelationRuleFileModel.FindByRuleId(l.ctx, r.Id)
+		stdFileIds := make([]int64, len(fileRelations))
+		for i, rf := range fileRelations {
+			stdFileIds[i] = rf.FileId
+		}
+
+		// MOCK: mock.CatalogGetCatalogName() - 获取目录名称
+		catalogName := mock.CatalogGetCatalogName(l.ctx, l.svcCtx, r.CatalogId)
+
+		// MOCK: mock.DataElementRuleUsed() - 检查规则是否被引用
+		usedFlag := mock.DataElementRuleUsed(l.ctx, l.svcCtx, r.Id)
+
 		item := types.RuleResp{
 			Id:            r.Id,
 			Name:          r.Name,
 			CatalogId:     r.CatalogId,
-			CatalogName:   "", // TODO: 查询目录名称
+			CatalogName:   catalogName,
 			OrgType:       r.OrgType,
 			Description:   r.Description,
 			RuleType:      intToRuleType(r.RuleType),
@@ -78,8 +106,8 @@ func (l *QueryRuleByStdFileLogic) QueryRuleByStdFile(fileId int64, req *types.Ru
 			CreateUser:    r.CreateUser,
 			UpdateTime:    timeToStr(r.UpdateTime),
 			UpdateUser:    r.UpdateUser,
-			StdFileIds:    nil,
-			Used:          false, // TODO: 查询引用状态
+			StdFileIds:    stdFileIds,
+			Used:          usedFlag,
 		}
 		entries = append(entries, item)
 	}

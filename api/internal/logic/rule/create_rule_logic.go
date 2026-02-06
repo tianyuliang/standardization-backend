@@ -7,6 +7,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/errorx"
+	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/logic/rule/mock"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/types"
 	rulemodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/rule"
@@ -22,16 +24,15 @@ type CreateRuleLogic struct {
 
 // 新增编码规则
 //
-// 业务流程（参考 specs/编码规则管理接口流程说明_20260204.md 第4.1节）:
-//  1. 参数校验（Handler已完成基础校验，这里处理业务相关校验）
-//  2. 表达式校验
-//     - REGEX类型：校验正则表达式非空且格式正确
-//     - CUSTOM类型：校验custom非空、segment_length>0、value有效性
-//  3. 名称唯一性校验（同一orgType下）
-//  4. 目录存在性校验
-//  5. 部门ID处理（从Token获取完整路径）
-//  6. 数据处理（生成表达式、设置创建信息）
-//  7. 保存数据库（t_rule + t_relation_rule_file）
+// 对应 Java: RuleServiceImpl.create() (lines 319-348)
+// 业务流程:
+//  1. 表达式校验 (checkRuleExpression)
+//  2. 名称唯一性校验 (checkAddDataExist)
+//  3. 目录存在性校验 (checkCatalogIdExist)
+//  4. 部门ID处理 (从Token获取完整路径)
+//  5. 数据处理 (生成表达式、设置创建信息)
+//  6. 保存数据库 (t_rule)
+//  7. 保存关联文件 (t_relation_rule_file)
 //  8. 发送MQ消息
 //
 // 异常处理：
@@ -54,28 +55,37 @@ func NewCreateRuleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Create
 
 func (l *CreateRuleLogic) CreateRule(req *types.CreateRuleReq) (resp *types.RuleResp, err error) {
 	// ====== 步骤1: 表达式校验 ======
-	// TODO: 调用 ValidateExpression(ruleType, regex, custom)
-	// - REGEX: 校验 regex 非空 + regexp.Compile()
-	// - CUSTOM: 校验 custom 非空 + 遍历校验
+	// 对应 Java: RuleServiceImpl.checkRuleExpression() (lines 381-438)
+	if err := ValidateExpression(req.RuleType, req.Regex, req.Custom); err != nil {
+		return nil, err
+	}
 
 	// ====== 步骤2: 名称唯一性校验 ======
-	// TODO: 调用 CheckNameUnique(name, orgType, departmentIds)
-	// - 查询数据库：SELECT * FROM t_rule WHERE f_name=? AND f_org_type=? AND f_deleted=0 AND f_department_ids=?
-	// - 如果存在记录，返回 errorx.RuleNameDuplicate(name) [错误码 30310]
+	// 对应 Java: RuleServiceImpl.checkAddDataExist() (lines 676-683)
+	if err := CheckNameUnique(l.ctx, l.svcCtx, req.Name, req.OrgType, req.DepartmentIds); err != nil {
+		return nil, err
+	}
 
 	// ====== 步骤3: 目录存在性校验 ======
-	// TODO: 调用 Catalog RPC 校验 catalogId 是否存在
-	// - 当前返回 mock 数据
-	// - 如果不存在，返回 errorx.RuleCatalogNotExist(req.CatalogId) [错误码 30312]
+	// 对应 Java: RuleServiceImpl.checkCatalogIdExist() (lines 699-706)
+	// MOCK: mock.CatalogCheckExist() - 校验目录是否存在
+	if !mock.CatalogCheckExist(l.ctx, l.svcCtx, req.CatalogId) {
+		return nil, errorx.RuleCatalogNotExist(req.CatalogId)
+	}
 
 	// ====== 步骤4: 部门ID处理 ======
-	// TODO: 从 Token 解析部门完整路径
-	// - 当前使用 req.DepartmentIds 原值
-	// - 后续从 Token 获取部门信息
+	// 对应 Java: TokenUtil.getDeptPathIds() (line 334)
+	// MOCK: mock.GetDeptPathIds() - 从 Token/部门服务获取完整路径
+	departmentIds, thirdDeptId := mock.GetDeptPathIds(l.ctx, req.DepartmentIds)
 
 	// ====== 步骤5: 数据处理 ======
+	// 对应 Java: RuleServiceImpl.getExpression() (lines 449-455)
 	expression := getExpression(req.RuleType, req.Regex, req.Custom)
 	now := time.Now()
+
+	// MOCK: mock.GetUserInfo() - 从 Token 获取用户信息
+	authorityId, createUser := mock.GetUserInfo(l.ctx)
+	updateUser := createUser
 
 	ruleData := &rulemodel.Rule{
 		Name:          req.Name,
@@ -86,35 +96,48 @@ func (l *CreateRuleLogic) CreateRule(req *types.CreateRuleReq) (resp *types.Rule
 		Version:       1,
 		Expression:    expression,
 		State:         rulemodel.StateEnable, // 默认启用状态
-		DepartmentIds: req.DepartmentIds,
+		AuthorityId:   authorityId,
+		DepartmentIds: departmentIds,
+		ThirdDeptId:   thirdDeptId,
 		CreateTime:    now,
+		UpdateUser:    updateUser,
 		UpdateTime:    now,
 		Deleted:       0,
 	}
+	ruleData.CreateUser = createUser
 
 	// ====== 步骤6: 保存数据库 ======
+	// 对应 Java: ruleMapper.insert(insert) (line 338)
 	// TODO: 开启事务
-	// 6.1 插入 t_rule
 	id, err := l.svcCtx.RuleModel.Insert(l.ctx, ruleData)
 	if err != nil {
 		return nil, err
 	}
 	ruleData.Id = id
 
-	// 6.2 保存关联文件 t_relation_rule_file
+	// ====== 步骤7: 保存关联文件 ======
+	// 对应 Java: RuleServiceImpl.saveRelationRuleFile() (lines 457-469)
 	if len(req.StdFileIds) > 0 {
-		// TODO: 构建关联文件数据
-		// TODO: 调用 RelationRuleFileModel.InsertBatch()
 		// 注意：最多关联10个标准文件
-		_ = len(req.StdFileIds) // TODO: Implement file relation insertion (suppress staticcheck SA9003)
+		if len(req.StdFileIds) > 10 {
+			logx.Infof("标准文件数量超过10个: %d", len(req.StdFileIds))
+		}
+		if err := SaveRelationRuleFile(l.ctx, l.svcCtx, ruleData.Id, req.StdFileIds); err != nil {
+			logx.Errorf("保存关联文件失败: %v", err)
+			// TODO: 是否需要回滚事务
+		}
 	}
 
-	// ====== 步骤7: 发送MQ消息 ======
-	// TODO: 调用 SendRuleMQMessage(producer, []ruleData, "insert")
-	// - MQ Topic: MQ_MESSAGE_SAILOR
-	// - 消息格式: { "header": {}, "payload": { "type": "smart-recommendation-graph", "content": { "type": "insert", "tableName": "t_rule", "entities": [...] } } }
+	// ====== 步骤8: 发送MQ消息 ======
+	// 对应 Java: RuleServiceImpl.packageMqInfo() + kafkaProducerService.sendMessage() (lines 344-346)
+	if err := SendRuleMQMessage([]*rulemodel.Rule{ruleData}, "insert"); err != nil {
+		logx.Errorf("发送MQ消息失败: %v", err)
+	}
+	logx.Infof("编码规则新增成功: id=%d, name=%s", ruleData.Id, ruleData.Name)
 
-	// ====== 步骤8: 构建响应 ======
+	// ====== 步骤9: 构建响应 ======
+	// 对应 Java: CustomUtil.copyProperties(insert, target) (line 342)
+	// TODO: 查询目录名称、引用状态
 	resp = buildRuleResp(ruleData, "", false, req.StdFileIds)
 	return
 }

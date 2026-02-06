@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/errorx"
+	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/logic/rule/mock"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/types"
-	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/relation_file"
 	rulemodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/rule"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -22,18 +22,17 @@ type UpdateRuleLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// 根据ID修改编码规则
+// 修改编码规则
 //
-// 业务流程（参考 specs/编码规则管理接口流程说明_20260204.md 第4.2节）:
+// 对应 Java: RuleServiceImpl.update() (lines 474-515)
+// 业务流程:
 //  1. 校验规则是否存在
-//  2. 表达式校验（与创建规则相同）
-//  3. 名称唯一性校验（排除自身）
-//  4. 目录存在性校验
-//  5. 版本变更检测
-//     - 需要递增版本号的字段：name, catalog_id, department_ids, org_type, description, rule_type, expression, 关联文件
-//  6. 无变更直接返回原数据
-//  7. 有变更则更新数据（版本号+1、更新关联文件）
-//  8. 发送MQ消息
+//  2. 名称唯一性校验（排除自身）
+//  3. 目录存在性校验
+//  4. 版本变更检测
+//  5. 无变更直接返回原数据
+//  6. 有变更则更新数据（版本号+1、更新关联文件）
+//  7. 发送MQ消息
 //
 // 异常处理：
 //   - 30301: 记录不存在
@@ -49,35 +48,63 @@ func NewUpdateRuleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 
 func (l *UpdateRuleLogic) UpdateRule(id int64, req *types.UpdateRuleReq) (resp *types.RuleResp, err error) {
 	// ====== 步骤1: 校验规则是否存在 ======
+	// 对应 Java: ruleMapper.selectById(id) (lines 475-478)
 	oldRule, err := l.svcCtx.RuleModel.FindOne(l.ctx, id)
 	if err != nil || oldRule == nil {
-		return nil, errorx.RuleRecordNotExist() // [错误码 30301]
+		return nil, errorx.RuleRecordNotExist()
 	}
 
 	// ====== 步骤2: 表达式校验 ======
-	// TODO: 调用 ValidateExpression(ruleType, regex, custom)
+	// 对应 Java: checkRuleExpression() (line 479)
+	if err := ValidateExpression(req.RuleType, req.Regex, req.Custom); err != nil {
+		return nil, err
+	}
 
 	// ====== 步骤3: 名称唯一性校验（排除自身）=====
-	// TODO: 查询同名规则，排除当前id
-	// - 如果存在其他同名记录，返回 errorx.RuleNameDuplicate(name) [错误码 30311]
+	// 对应 Java: checkUpdateDataExist(id, updateDto) (line 479)
+	if err := CheckNameUniqueForUpdate(l.ctx, l.svcCtx, id, req.Name, req.OrgType, req.DepartmentIds); err != nil {
+		return nil, err
+	}
 
 	// ====== 步骤4: 目录存在性校验 ======
-	// TODO: 调用 Catalog RPC 校验 catalogId 是否存在
-	// - 如果不存在，返回 errorx.RuleCatalogNotExist(req.CatalogId) [错误码 30312]
+	// 对应 Java: checkCatalogIdExist(updateDto.getCatalogId()) (line 480)
+	// MOCK: mock.CatalogCheckExist() - 校验目录是否存在
+	if !mock.CatalogCheckExist(l.ctx, l.svcCtx, req.CatalogId) {
+		return nil, errorx.RuleCatalogNotExist(req.CatalogId)
+	}
 
 	// ====== 步骤5: 版本变更检测 ======
-	// TODO: 查询原有关联文件
-	// oldFiles, _ := l.svcCtx.RelationRuleFileModel.FindByRuleId(l.ctx, id)
+	// 对应 Java: checkVersionChange(exist, updateDto) (line 482)
+	// 查询原有关联文件
+	oldFiles, _ := l.svcCtx.RelationRuleFileModel.FindByRuleId(l.ctx, id)
+	oldRelationFiles := make([]*RelationRuleFile, len(oldFiles))
+	for i, f := range oldFiles {
+		oldRelationFiles[i] = &RelationRuleFile{
+			Id:     f.Id,
+			RuleId: f.RuleId,
+			FileId: f.FileId,
+		}
+	}
 
-	// 检测关键字段是否发生变化
-	needVersionIncrement := checkVersionChange(oldRule, req, nil)
+	needVersionIncrement := CheckVersionChange(oldRule, req, oldRelationFiles)
 
 	if !needVersionIncrement {
 		// ====== 步骤6: 无变更直接返回原数据 ======
-		return buildRuleResp(oldRule, "", false, nil), nil
+		// 对应 Java: return Result.success(exist) (lines 483-485)
+		// TODO: 查询目录名称、引用状态、关联文件
+		return buildRuleResp(oldRule, "", false, req.StdFileIds), nil
 	}
 
 	// ====== 步骤7: 有变更则更新数据 ======
+	// 对应 Java: exist.setXXX() + ruleMapper.updateById(exist) (lines 486-504)
+
+	// MOCK: mock.GetDeptPathIds() - 从 Token/部门服务获取完整路径
+	departmentIds, thirdDeptId := mock.GetDeptPathIds(l.ctx, req.DepartmentIds)
+
+	// MOCK: mock.GetUserInfo() - 从 Token 获取用户信息
+	_, updateUser := mock.GetUserInfo(l.ctx)
+
+	// 构建更新数据
 	newRule := &rulemodel.Rule{
 		Id:            oldRule.Id,
 		Name:          req.Name,
@@ -88,42 +115,50 @@ func (l *UpdateRuleLogic) UpdateRule(id int64, req *types.UpdateRuleReq) (resp *
 		Version:       oldRule.Version + 1, // 版本号+1
 		Expression:    getExpression(req.RuleType, req.Regex, req.Custom),
 		State:         oldRule.State, // 保持原有状态
-		DepartmentIds: req.DepartmentIds,
+		DepartmentIds: departmentIds,
+		ThirdDeptId:   thirdDeptId,
 		UpdateTime:    time.Now(),
-		UpdateUser:    "", // TODO: 从 Token 获取
+		UpdateUser:    updateUser,
 		// 继承原有字段
-		CreateTime: oldRule.CreateTime,
-		CreateUser: oldRule.CreateUser,
-		Deleted:    oldRule.Deleted,
+		CreateTime:    oldRule.CreateTime,
+		CreateUser:    oldRule.CreateUser,
+		DisableReason: oldRule.DisableReason,
+		AuthorityId:   oldRule.AuthorityId,
+		Deleted:       oldRule.Deleted,
 	}
 
 	// TODO: 开启事务
+
 	// 7.1 更新 t_rule
+	// 对应 Java: ruleMapper.updateById(exist) (line 504)
 	err = l.svcCtx.RuleModel.Update(l.ctx, newRule)
 	if err != nil {
 		return nil, err
 	}
 
 	// 7.2 更新关联文件 t_relation_rule_file
-	// TODO: 删除旧关联，插入新关联
-	// - l.svcCtx.RelationRuleFileModel.DeleteByRuleId(l.ctx, id)
-	// - l.svcCtx.RelationRuleFileModel.InsertBatch(l.ctx, newFiles)
+	// 对应 Java: relationRuleFileMapper.deleteByRuleId(exist.getId()) (line 506)
+	//            saveRelationRuleFile(exist.getId(), updateDto.getStdFiles()) (line 507)
+	if err := l.svcCtx.RelationRuleFileModel.DeleteByRuleId(l.ctx, id); err != nil {
+		logx.Errorf("删除旧关联文件失败: %v", err)
+	}
+
+	if len(req.StdFileIds) > 0 {
+		if err := SaveRelationRuleFile(l.ctx, l.svcCtx, id, req.StdFileIds); err != nil {
+			logx.Errorf("保存新关联文件失败: %v", err)
+		}
+	}
 
 	// ====== 步骤8: 发送MQ消息 ======
-	// TODO: 调用 SendRuleMQMessage(producer, []newRule, "update")
+	// 对应 Java: packageMqInfo(Arrays.asList(exist), "update") (line 511)
+	//            kafkaProducerService.sendMessage(MqTopic.MQ_MESSAGE_SAILOR, mqInfo) (line 513)
+	if err := SendRuleMQMessage([]*rulemodel.Rule{newRule}, "update"); err != nil {
+		logx.Errorf("发送MQ消息失败: %v", err)
+	}
+	logx.Infof("编码规则修改成功: id=%d, name=%s, version=%d", newRule.Id, newRule.Name, newRule.Version)
 
 	// ====== 步骤9: 构建响应 ======
-	return buildRuleResp(newRule, "", false, nil), nil
-}
-
-// ====== 辅助函数 ======
-
-// checkVersionChange 检测是否需要递增版本号
-// 需要递增版本号的字段：name, catalog_id, department_ids, org_type, description, rule_type, expression, 关联文件
-func checkVersionChange(old *rulemodel.Rule, req *types.UpdateRuleReq, oldFiles []*relation_file.RelationRuleFile) bool {
-	// TODO: 比较以下字段是否变化
-	// - name, catalog_id, department_ids, org_type, description
-	// - rule_type, expression (regex/custom)
-	// - 关联文件
-	return true
+	// 对应 Java: CustomUtil.copyProperties(exist, target) (line 510)
+	// TODO: 查询目录名称、引用状态
+	return buildRuleResp(newRule, "", false, req.StdFileIds), nil
 }

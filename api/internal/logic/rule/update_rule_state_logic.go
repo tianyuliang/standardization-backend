@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/errorx"
+	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/logic/rule/mock"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/types"
 	rulemodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/rule"
@@ -23,7 +25,8 @@ type UpdateRuleStateLogic struct {
 
 // 停用/启用编码规则
 //
-// 业务流程（参考 specs/编码规则管理接口流程说明_20260204.md 第4.2节）:
+// 对应 Java: RuleServiceImpl.updateState() (lines 753-785)
+// 业务流程:
 //  1. 校验规则存在性
 //  2. 停用时必须填写原因
 //  3. 停用原因长度校验 (<= 800)
@@ -44,48 +47,68 @@ func NewUpdateRuleStateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 
 func (l *UpdateRuleStateLogic) UpdateRuleState(id int64, req *types.UpdateRuleStateReq) (resp *types.EmptyResp, err error) {
 	// ====== 步骤1: 校验规则存在性 ======
-	_, err = l.svcCtx.RuleModel.FindOne(l.ctx, id)
-	if err != nil {
-		// TODO: 返回 errorx.RuleNotExist(id) [错误码 30301]
-		return nil, err
+	// 对应 Java: ruleMapper.selectById(id) (lines 754-757)
+	exist, err := l.svcCtx.RuleModel.FindOne(l.ctx, id)
+	if err != nil || exist == nil {
+		return nil, errorx.RuleDataNotExist()
 	}
 
 	// ====== 步骤2: 停用时必须填写原因 ======
+	// 对应 Java: if (EnableDisableStatusEnum.DISABLE.equals(state)) (lines 759-764)
 	targetState := rulemodel.GetStateInt(req.State)
 	if targetState == rulemodel.StateDisable {
 		if strings.TrimSpace(req.Reason) == "" {
-			// TODO: 返回 errorx.RuleDisableReasonEmpty() [错误码 30302]
-			return nil, err
+			return nil, errorx.RuleDisableReasonEmpty()
 		}
 	}
 
 	// ====== 步骤3: 停用原因长度校验 ======
+	// 对应 Java: if (disableReason.length() > 800) (lines 765-770)
 	if targetState == rulemodel.StateDisable && len([]rune(req.Reason)) > 800 {
-		// TODO: 返回 errorx.RuleDisableReasonTooLong() [错误码 30303]
-		return nil, err
+		return nil, errorx.RuleDisableReasonTooLong()
 	}
 
 	// ====== 步骤4: 更新状态 ======
-	updateData := &rulemodel.Rule{
-		Id:         id,
-		State:      targetState,
-		UpdateTime: time.Now(),
-	}
+	// 对应 Java: ruleMapper.updateState(id, state, disableReason) (line 778)
+	// MOCK: mock.GetUserInfo() - 从 Token 获取用户信息
+	_, updateUser := mock.GetUserInfo(l.ctx)
+
+	var disableReason string
 	if targetState == rulemodel.StateDisable {
-		updateData.DisableReason = req.Reason
-	} else {
-		updateData.DisableReason = ""
+		disableReason = req.Reason
 	}
 
-	err = l.svcCtx.RuleModel.Update(l.ctx, updateData)
+	err = l.svcCtx.RuleModel.UpdateState(l.ctx, id, targetState, disableReason)
 	if err != nil {
 		return nil, err
 	}
 
 	// ====== 步骤5: 发送MQ消息 ======
-	// TODO: 调用 SendRuleMQMessage(producer, []updateData, "update")
-	// - MQ Topic: MQ_MESSAGE_SAILOR
-	// - 消息格式: { "header": {}, "payload": { "type": "smart-recommendation-graph", "content": { "type": "update", "tableName": "t_rule", "entities": [...] } } }
+	// 对应 Java: packageMqInfo(Arrays.asList(exist), "update") (line 781)
+	//            kafkaProducerService.sendMessage(MqTopic.MQ_MESSAGE_SAILOR, mqInfo) (line 783)
+	// 构建更新后的规则用于MQ消息
+	updatedRule := &rulemodel.Rule{
+		Id:            exist.Id,
+		Name:          exist.Name,
+		CatalogId:     exist.CatalogId,
+		OrgType:       exist.OrgType,
+		Description:   exist.Description,
+		RuleType:      exist.RuleType,
+		Version:       exist.Version,
+		Expression:    exist.Expression,
+		State:         targetState,
+		DisableReason: disableReason,
+		AuthorityId:   exist.AuthorityId,
+		DepartmentIds: exist.DepartmentIds,
+		ThirdDeptId:   exist.ThirdDeptId,
+		UpdateTime:    time.Now(),
+		UpdateUser:    updateUser,
+	}
+
+	if err := SendRuleMQMessage([]*rulemodel.Rule{updatedRule}, "update"); err != nil {
+		logx.Errorf("发送MQ消息失败: %v", err)
+	}
+	logx.Infof("编码规则状态更新成功: id=%d, state=%d", id, targetState)
 
 	return &types.EmptyResp{}, nil
 }
