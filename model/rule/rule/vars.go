@@ -81,6 +81,30 @@ func GetRuleTypeInt(ruleType string) int32 {
 	}
 }
 
+// GetStateString 将 int32 状态转换为字符串
+func GetStateString(state int32) string {
+	switch state {
+	case StateDisable:
+		return "DISABLE"
+	case StateEnable:
+		return "ENABLE"
+	default:
+		return "ENABLE"
+	}
+}
+
+// GetStateInt 将字符串状态转换为 int32
+func GetStateInt(state string) int32 {
+	switch state {
+	case "DISABLE":
+		return StateDisable
+	case "ENABLE":
+		return StateEnable
+	default:
+		return StateEnable
+	}
+}
+
 // ParseCustomTypeString 将自定义类型字符串转换为 int
 func ParseCustomTypeString(customType string) int {
 	switch customType {

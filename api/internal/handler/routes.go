@@ -56,6 +56,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/rule/:ids",
 				Handler: rule.DeleteRuleHandler(serverCtx),
 			},
+			{
+				// 停用/启用编码规则
+				Method:  http.MethodPut,
+				Path:    "/rule/state/:id",
+				Handler: rule.UpdateRuleStateHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/v1"),
 	)

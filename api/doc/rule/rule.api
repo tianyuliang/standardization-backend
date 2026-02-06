@@ -134,4 +134,8 @@ service api {
     @doc "编码规则删除&批量删除"
     @handler DeleteRule
     delete /rule/:ids returns (EmptyResp)
+
+    @doc "停用/启用编码规则"
+    @handler UpdateRuleState
+    put /rule/state/:id (UpdateRuleStateReq) returns (EmptyResp)
 }

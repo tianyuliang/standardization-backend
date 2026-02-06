@@ -67,3 +67,8 @@ type UpdateRuleReq struct {
 	StdFileIds    []int64      `json:"stdFileIds,optional"`
 	DepartmentIds string       `json:"departmentIds,optional"`
 }
+
+type UpdateRuleStateReq struct {
+	State  string `json:"state"`
+	Reason string `json:"reason,optional"`
+}

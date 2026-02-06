@@ -51,8 +51,3 @@ type RuleCustom struct {
 	SegmentLength int    `json:"segmentLength"`
 	Count         int    `json:"count"`
 }
-
-type UpdateRuleStateReq struct {
-	State  string `json:"state"`
-	Reason string `json:"reason,optional"`
-}

@@ -312,7 +312,7 @@
 
 ### 2.1 接口实现: PUT /v1/rule/state/{id}
 
-- [ ] T028 实现 `api/internal/logic/rule/update_rule_state_logic.go`
+- [x] T028 实现 `api/internal/logic/rule/update_rule_state_logic.go`
   ```go
   func (l *UpdateRuleStateLogic) UpdateState(id int64, req *types.UpdateRuleStateReq) error {
       // 1. 校验存在性
@@ -769,8 +769,8 @@ Test{Function}_{Scenario}_{ExpectedResult}
 
 | Week | Phase | 内容 | 完成度 |
 |------|-------|------|--------|
-| 1 | Phase 0-1 | 基础设施 + CRUD | 25% (Phase 0 ✅, Phase 1 🔄 60%) |
-| 2 | Phase 2-4 | 状态 + 目录 + 关联查询 | 0% |
+| 1 | Phase 0-2 | 基础设施 + CRUD + 状态管理 | 35% (Phase 0 ✅, Phase 1 ✅, Phase 2 ✅) |
+| 2 | Phase 3-4 | 目录移动 + 关联查询 | 0% |
 | 3 | Phase 5-7 | 批量查询 + 内部接口 + 辅助接口 | 0% |
 | 4 | Phase 8 | 收尾工作 + 验证 | 0% |
 
@@ -783,3 +783,4 @@ Test{Function}_{Scenario}_{ExpectedResult}
 | 1.0 | 2026-02-05 | 按接口增量维度重组任务 |
 | 1.1 | 2026-02-05 | Phase 0 完成，标记任务状态 |
 | 1.2 | 2026-02-05 | Phase 1 基础实现完成 (60%) - T014/T015修正，Logic层实现 |
+| 1.3 | 2026-02-06 | Phase 2 完成 - 状态管理接口实现 |
