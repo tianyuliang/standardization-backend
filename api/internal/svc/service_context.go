@@ -7,17 +7,17 @@ import (
 	"context"
 	"time"
 
-	"github.com/jmoiron/sqlx"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/config"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/relation_file"
 	rulemodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/rule"
 )
 
 type ServiceContext struct {
-	Config  config.Config
-	DB      *sqlx.DB
-	RuleModel            rulemodel.RuleModel
+	Config                config.Config
+	DB                    *sqlx.DB
+	RuleModel             rulemodel.RuleModel
 	RelationRuleFileModel relation_file.RelationRuleFileModel
 	// TODO: 后续添加 Kafka Producer
 	// KafkaProducer *kafka.Producer
@@ -41,9 +41,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	}
 
 	return &ServiceContext{
-		Config:               c,
-		DB:                   db,
-		RuleModel:            rulemodel.NewRuleModel(conn),
+		Config:                c,
+		DB:                    db,
+		RuleModel:             rulemodel.NewRuleModel(conn),
 		RelationRuleFileModel: relation_file.NewRelationRuleFileModel(conn),
 	}
 }

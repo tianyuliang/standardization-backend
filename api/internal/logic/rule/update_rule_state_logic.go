@@ -24,11 +24,11 @@ type UpdateRuleStateLogic struct {
 // 停用/启用编码规则
 //
 // 业务流程（参考 specs/编码规则管理接口流程说明_20260204.md 第4.2节）:
-//   1. 校验规则存在性
-//   2. 停用时必须填写原因
-//   3. 停用原因长度校验 (<= 800)
-//   4. 更新状态（启用时清空停用原因）
-//   5. 发送MQ消息
+//  1. 校验规则存在性
+//  2. 停用时必须填写原因
+//  3. 停用原因长度校验 (<= 800)
+//  4. 更新状态（启用时清空停用原因）
+//  5. 发送MQ消息
 //
 // 异常处理:
 //   - 30301: 规则不存在
@@ -67,8 +67,8 @@ func (l *UpdateRuleStateLogic) UpdateRuleState(id int64, req *types.UpdateRuleSt
 
 	// ====== 步骤4: 更新状态 ======
 	updateData := &rulemodel.Rule{
-		Id:     id,
-		State:  targetState,
+		Id:         id,
+		State:      targetState,
 		UpdateTime: time.Now(),
 	}
 	if targetState == rulemodel.StateDisable {

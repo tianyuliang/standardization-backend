@@ -22,7 +22,8 @@ type GetCustomDateFormatLogic struct {
 // 获取自定义日期格式列表
 //
 // 业务流程:
-//   返回预定义的日期格式列表
+//
+//	返回预定义的日期格式列表
 func NewGetCustomDateFormatLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCustomDateFormatLogic {
 	return &GetCustomDateFormatLogic{
 		Logger: logx.WithContext(ctx),

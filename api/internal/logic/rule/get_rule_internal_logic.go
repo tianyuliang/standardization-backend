@@ -21,7 +21,8 @@ type GetRuleInternalLogic struct {
 // 内部-根据ID查看规则详情
 //
 // 业务流程:
-//   与 GET /v1/rule/{id} 实现相同，仅路由不同
+//
+//	与 GET /v1/rule/{id} 实现相同，仅路由不同
 func NewGetRuleInternalLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetRuleInternalLogic {
 	return &GetRuleInternalLogic{
 		Logger: logx.WithContext(ctx),

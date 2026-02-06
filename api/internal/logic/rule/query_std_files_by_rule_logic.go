@@ -21,9 +21,9 @@ type QueryStdFilesByRuleLogic struct {
 // 查询规则关联的标准文件
 //
 // 业务流程:
-//   1. 校验规则存在
-//   2. 查询关联的文件ID列表
-//   3. 查询文件详情
+//  1. 校验规则存在
+//  2. 查询关联的文件ID列表
+//  3. 查询文件详情
 func NewQueryStdFilesByRuleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryStdFilesByRuleLogic {
 	return &QueryStdFilesByRuleLogic{
 		Logger: logx.WithContext(ctx),

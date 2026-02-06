@@ -21,8 +21,8 @@ type QueryDataExistsLogic struct {
 // 检查数据是否存在
 //
 // 业务流程:
-//   1. 部门ID路径处理
-//   2. 检查是否存在（支持 filter_id 排除自身）
+//  1. 部门ID路径处理
+//  2. 检查是否存在（支持 filter_id 排除自身）
 func NewQueryDataExistsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryDataExistsLogic {
 	return &QueryDataExistsLogic{
 		Logger: logx.WithContext(ctx),

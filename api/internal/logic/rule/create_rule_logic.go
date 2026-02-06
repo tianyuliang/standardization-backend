@@ -23,16 +23,16 @@ type CreateRuleLogic struct {
 // 新增编码规则
 //
 // 业务流程（参考 specs/编码规则管理接口流程说明_20260204.md 第4.1节）:
-//   1. 参数校验（Handler已完成基础校验，这里处理业务相关校验）
-//   2. 表达式校验
-//      - REGEX类型：校验正则表达式非空且格式正确
-//      - CUSTOM类型：校验custom非空、segment_length>0、value有效性
-//   3. 名称唯一性校验（同一orgType下）
-//   4. 目录存在性校验
-//   5. 部门ID处理（从Token获取完整路径）
-//   6. 数据处理（生成表达式、设置创建信息）
-//   7. 保存数据库（t_rule + t_relation_rule_file）
-//   8. 发送MQ消息
+//  1. 参数校验（Handler已完成基础校验，这里处理业务相关校验）
+//  2. 表达式校验
+//     - REGEX类型：校验正则表达式非空且格式正确
+//     - CUSTOM类型：校验custom非空、segment_length>0、value有效性
+//  3. 名称唯一性校验（同一orgType下）
+//  4. 目录存在性校验
+//  5. 部门ID处理（从Token获取完整路径）
+//  6. 数据处理（生成表达式、设置创建信息）
+//  7. 保存数据库（t_rule + t_relation_rule_file）
+//  8. 发送MQ消息
 //
 // 异常处理：
 //   - 30310: 规则名称已存在
@@ -106,6 +106,7 @@ func (l *CreateRuleLogic) CreateRule(req *types.CreateRuleReq) (resp *types.Rule
 		// TODO: 构建关联文件数据
 		// TODO: 调用 RelationRuleFileModel.InsertBatch()
 		// 注意：最多关联10个标准文件
+		_ = len(req.StdFileIds) // TODO: Implement file relation insertion (suppress staticcheck SA9003)
 	}
 
 	// ====== 步骤7: 发送MQ消息 ======

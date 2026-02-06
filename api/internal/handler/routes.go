@@ -111,7 +111,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: rule.UpdateRuleStateHandler(serverCtx),
 			},
 		},
-		rest.WithPrefix("/v1"),
+		rest.WithPrefix("/api/standardization/v1"),
 	)
 
 	server.AddRoutes(
@@ -135,6 +135,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: rule.GetRuleInternalHandler(serverCtx),
 			},
 		},
-		rest.WithPrefix("/v1/rule/internal"),
+		rest.WithPrefix("/api/standardization/v1/rule/internal"),
 	)
 }

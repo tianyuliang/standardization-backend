@@ -21,8 +21,8 @@ type GetRuleDetailByDataCodeLogic struct {
 // 内部-根据数据元编码查看规则详情
 //
 // 业务流程:
-//   1. 根据数据元编码查询规则ID
-//   2. 查询规则详情
+//  1. 根据数据元编码查询规则ID
+//  2. 查询规则详情
 func NewGetRuleDetailByDataCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetRuleDetailByDataCodeLogic {
 	return &GetRuleDetailByDataCodeLogic{
 		Logger: logx.WithContext(ctx),

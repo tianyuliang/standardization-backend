@@ -6,12 +6,12 @@ import "github.com/jinguoxing/idrm-go-base/errorx"
 
 const (
 	// 通用错误 (30300-30309)
-	ErrCodeRuleDataNotExist  = 30301 // DATA_NOT_EXIST - 数据不存在
-	ErrCodeRuleParamEmpty    = 30302 // PARAMETER_EMPTY - 参数为空
-	ErrCodeRuleInvalidParam  = 30303 // InvalidParameter - 参数无效
+	ErrCodeRuleDataNotExist = 30301 // DATA_NOT_EXIST - 数据不存在
+	ErrCodeRuleParamEmpty   = 30302 // PARAMETER_EMPTY - 参数为空
+	ErrCodeRuleInvalidParam = 30303 // InvalidParameter - 参数无效
 
 	// 名称相关 (30310-30319)
-	ErrCodeRuleNameDuplicate      = 30310 // 创建时名称重复
+	ErrCodeRuleNameDuplicate       = 30310 // 创建时名称重复
 	ErrCodeRuleNameUpdateDuplicate = 30311 // 修改时名称重复
 	ErrCodeRuleCatalogNotExist     = 30312 // 目录不存在
 
@@ -28,7 +28,7 @@ const (
 
 	// 参数相关 (30335-30339)
 	ErrCodeRuleIdsEmpty      = 30335 // 批量删除ids为空
-	ErrCodeRuleReasonTooLong  = 30336 // 停用原因过长
+	ErrCodeRuleReasonTooLong = 30336 // 停用原因过长
 	ErrCodeRuleQueryIdsEmpty = 30337 // 批量查询ids为空
 )
 

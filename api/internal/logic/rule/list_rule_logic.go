@@ -22,10 +22,10 @@ type ListRuleLogic struct {
 // 编码规则列表查询
 //
 // 业务流程（参考 specs/编码规则管理接口流程说明_20260204.md 第4.4节）:
-//   1. 处理目录ID（获取当前目录及所有子目录ID列表）
-//   2. 构建查询条件
-//   3. 分页查询
-//   4. 数据处理（解析expression、查询目录/部门/引用状态）
+//  1. 处理目录ID（获取当前目录及所有子目录ID列表）
+//  2. 构建查询条件
+//  3. 分页查询
+//  4. 数据处理（解析expression、查询目录/部门/引用状态）
 //
 // 特殊说明：本接口无异常抛出
 func NewListRuleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListRuleLogic {
@@ -80,7 +80,7 @@ func (l *ListRuleLogic) ListRule(req *types.RuleListQuery) (resp *types.RuleList
 			AuthorityId:   r.AuthorityId,
 			DepartmentIds: r.DepartmentIds,
 			ThirdDeptId:   r.ThirdDeptId,
-			StdFileIds:    nil, // TODO: 查询关联文件
+			StdFileIds:    nil,   // TODO: 查询关联文件
 			Used:          false, // TODO: 查询引用状态
 			CreateTime:    timeToStr(r.CreateTime),
 			CreateUser:    r.CreateUser,

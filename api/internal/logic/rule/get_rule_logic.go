@@ -21,12 +21,12 @@ type GetRuleLogic struct {
 // 编码规则详情查看
 //
 // 业务流程（参考 specs/编码规则管理接口流程说明_20260204.md 第4.3节）:
-//   1. 查询规则基本信息
-//   2. 查询目录信息（目录名称）
-//   3. 根据ruleType解析expression（返回regex或custom）
-//   4. 查询关联文件列表
-//   5. 查询部门信息（部门名称、路径名称）
-//   6. 查询是否被引用（usedFlag）
+//  1. 查询规则基本信息
+//  2. 查询目录信息（目录名称）
+//  3. 根据ruleType解析expression（返回regex或custom）
+//  4. 查询关联文件列表
+//  5. 查询部门信息（部门名称、路径名称）
+//  6. 查询是否被引用（usedFlag）
 //
 // 特殊说明：本接口无异常抛出，记录不存在时返回null（code=0）
 func NewGetRuleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetRuleLogic {

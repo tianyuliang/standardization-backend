@@ -21,8 +21,8 @@ type QueryRuleByStdFileLogic struct {
 // 根据标准文件查询规则
 //
 // 业务流程:
-//   1. 查询关联该文件的规则ID列表
-//   2. 根据ID列表批量查询规则详情
+//  1. 查询关联该文件的规则ID列表
+//  2. 根据ID列表批量查询规则详情
 func NewQueryRuleByStdFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryRuleByStdFileLogic {
 	return &QueryRuleByStdFileLogic{
 		Logger: logx.WithContext(ctx),
@@ -60,26 +60,26 @@ func (l *QueryRuleByStdFileLogic) QueryRuleByStdFile(fileId int64, req *types.Ru
 	entries := make([]types.RuleResp, 0, len(rules))
 	for _, r := range rules {
 		item := types.RuleResp{
-			Id:             r.Id,
-			Name:           r.Name,
-			CatalogId:      r.CatalogId,
-			CatalogName:    "", // TODO: 查询目录名称
-			OrgType:        r.OrgType,
-			Description:    r.Description,
-			RuleType:       intToRuleType(r.RuleType),
-			Version:        r.Version,
-			Expression:     r.Expression,
-			State:          r.State,
-			DisableReason:  r.DisableReason,
-			AuthorityId:    r.AuthorityId,
-			DepartmentIds:  r.DepartmentIds,
-			ThirdDeptId:    r.ThirdDeptId,
-			CreateTime:     timeToStr(r.CreateTime),
-			CreateUser:     r.CreateUser,
-			UpdateTime:     timeToStr(r.UpdateTime),
-			UpdateUser:     r.UpdateUser,
-			StdFileIds:     nil,
-			Used:           false, // TODO: 查询引用状态
+			Id:            r.Id,
+			Name:          r.Name,
+			CatalogId:     r.CatalogId,
+			CatalogName:   "", // TODO: 查询目录名称
+			OrgType:       r.OrgType,
+			Description:   r.Description,
+			RuleType:      intToRuleType(r.RuleType),
+			Version:       r.Version,
+			Expression:    r.Expression,
+			State:         r.State,
+			DisableReason: r.DisableReason,
+			AuthorityId:   r.AuthorityId,
+			DepartmentIds: r.DepartmentIds,
+			ThirdDeptId:   r.ThirdDeptId,
+			CreateTime:    timeToStr(r.CreateTime),
+			CreateUser:    r.CreateUser,
+			UpdateTime:    timeToStr(r.UpdateTime),
+			UpdateUser:    r.UpdateUser,
+			StdFileIds:    nil,
+			Used:          false, // TODO: 查询引用状态
 		}
 		entries = append(entries, item)
 	}

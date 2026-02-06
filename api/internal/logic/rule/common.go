@@ -24,16 +24,6 @@ func ruleTypeToInt(ruleType string) int32 {
 	return rulemodel.GetRuleTypeInt(ruleType)
 }
 
-// intToState 将 int32 状态转换为字符串
-func intToState(state int32) string {
-	return rulemodel.GetStateString(state)
-}
-
-// stateToInt 将字符串状态转换为 int32
-func stateToInt(state string) int32 {
-	return rulemodel.GetStateInt(state)
-}
-
 // timeToStr 将 time.Time 转换为字符串
 func timeToStr(t time.Time) string {
 	if t.IsZero() {

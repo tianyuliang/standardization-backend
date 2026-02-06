@@ -24,11 +24,11 @@ type DeleteRuleLogic struct {
 // 编码规则删除&批量删除
 //
 // 业务流程（参考 specs/编码规则管理接口流程说明_20260204.md 第4.5节）:
-//   1. 解析ID列表（多个ID用英文逗号分隔）
-//   2. 校验ids不为空
-//   3. 物理删除t_rule记录
-//   4. 同步删除t_relation_rule_file关联记录
-//   5. 发送MQ消息（操作类型：delete）
+//  1. 解析ID列表（多个ID用英文逗号分隔）
+//  2. 校验ids不为空
+//  3. 物理删除t_rule记录
+//  4. 同步删除t_relation_rule_file关联记录
+//  5. 发送MQ消息（操作类型：delete）
 //
 // 异常处理：
 //   - 30335: ids 不能为空

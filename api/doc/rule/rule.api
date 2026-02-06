@@ -175,7 +175,7 @@ type StdFileListResp {
 // ============================================
 
 @server(
-    prefix: /v1
+    prefix: /api/standardization/v1
     group: rule
 )
 service api {
@@ -241,7 +241,7 @@ service api {
 // ============================================
 
 @server(
-    prefix: /v1/rule/internal
+    prefix: /api/standardization/v1/rule/internal
     group: rule
 )
 service api {

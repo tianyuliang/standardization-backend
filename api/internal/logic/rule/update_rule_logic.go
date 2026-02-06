@@ -25,15 +25,15 @@ type UpdateRuleLogic struct {
 // 根据ID修改编码规则
 //
 // 业务流程（参考 specs/编码规则管理接口流程说明_20260204.md 第4.2节）:
-//   1. 校验规则是否存在
-//   2. 表达式校验（与创建规则相同）
-//   3. 名称唯一性校验（排除自身）
-//   4. 目录存在性校验
-//   5. 版本变更检测
-//      - 需要递增版本号的字段：name, catalog_id, department_ids, org_type, description, rule_type, expression, 关联文件
-//   6. 无变更直接返回原数据
-//   7. 有变更则更新数据（版本号+1、更新关联文件）
-//   8. 发送MQ消息
+//  1. 校验规则是否存在
+//  2. 表达式校验（与创建规则相同）
+//  3. 名称唯一性校验（排除自身）
+//  4. 目录存在性校验
+//  5. 版本变更检测
+//     - 需要递增版本号的字段：name, catalog_id, department_ids, org_type, description, rule_type, expression, 关联文件
+//  6. 无变更直接返回原数据
+//  7. 有变更则更新数据（版本号+1、更新关联文件）
+//  8. 发送MQ消息
 //
 // 异常处理：
 //   - 30301: 记录不存在
@@ -92,9 +92,9 @@ func (l *UpdateRuleLogic) UpdateRule(id int64, req *types.UpdateRuleReq) (resp *
 		UpdateTime:    time.Now(),
 		UpdateUser:    "", // TODO: 从 Token 获取
 		// 继承原有字段
-		CreateTime:    oldRule.CreateTime,
-		CreateUser:    oldRule.CreateUser,
-		Deleted:       oldRule.Deleted,
+		CreateTime: oldRule.CreateTime,
+		CreateUser: oldRule.CreateUser,
+		Deleted:    oldRule.Deleted,
 	}
 
 	// TODO: 开启事务
