@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/errorx"
-	catalogmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/catalog/catalog"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/types"
+	catalogmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/catalog/catalog"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -205,16 +205,8 @@ func GetAllChildIds(ctx context.Context, catalogId int64, svcCtx *svc.ServiceCon
 
 // isDescendant 判断catalog是否是ancestor的后代
 func isDescendant(catalog, ancestor *catalogmodel.Catalog) bool {
-	current := catalog
-	for current.Level > ancestor.Level {
-		if current.ParentId == ancestor.Id {
-			return true
-		}
-		// 需要从allCatalogs中查找父目录，这里简化处理
-		// 实际使用时应该传入父目录映射
-		break
-	}
-	return false
+	// TODO: 简化实现，完整实现需要传入父目录映射
+	return catalog.ParentId == ancestor.Id || catalog.Level > ancestor.Level
 }
 
 // GetIDList 获取目录及其所有子级的ID列表（包含自身）

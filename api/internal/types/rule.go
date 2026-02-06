@@ -28,9 +28,6 @@ type DataExistsResp struct {
 	Exists bool `json:"exists"`
 }
 
-type EmptyResp struct {
-}
-
 type PageQuery struct {
 	Offset int `form:"offset,default=1,range=[1:]"`
 	Limit  int `form:"limit,default=10,range=[0:2000]"`

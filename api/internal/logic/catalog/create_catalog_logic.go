@@ -9,9 +9,9 @@ import (
 
 	baseerrorx "github.com/jinguoxing/idrm-go-base/errorx"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/errorx"
-	catalogmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/catalog/catalog"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/types"
+	catalogmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/catalog/catalog"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

@@ -14,11 +14,11 @@ import (
 )
 
 type ServiceContext struct {
-	Config                 config.Config
-	db                     *sqlx.DB
-	RuleModel              rulemodel.RuleModel
-	CatalogModel           catalogmodel.CatalogModel
-	RelationRuleFileModel  relation_file.RelationRuleFileModel
+	Config                config.Config
+	db                    *sqlx.DB
+	RuleModel             rulemodel.RuleModel
+	CatalogModel          catalogmodel.CatalogModel
+	RelationRuleFileModel relation_file.RelationRuleFileModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -37,10 +37,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	}
 
 	return &ServiceContext{
-		Config:                 c,
-		db:                     db,
-		RuleModel:              rulemodel.NewRuleModel(conn),
-		CatalogModel:           catalogmodel.NewCatalogModel(conn),
-		RelationRuleFileModel:  relation_file.NewRelationRuleFileModel(conn),
+		Config:                c,
+		db:                    db,
+		RuleModel:             rulemodel.NewRuleModel(conn),
+		CatalogModel:          catalogmodel.NewCatalogModel(conn),
+		RelationRuleFileModel: relation_file.NewRelationRuleFileModel(conn),
 	}
 }

@@ -81,28 +81,28 @@ type Rule struct {
 
 // RuleVo 编码规则视图对象
 type RuleVo struct {
-	Id                 int64       `json:"id"`
-	Name               string      `json:"name"`
-	CatalogId          int64       `json:"catalogId"`
-	CatalogName        string      `json:"catalogName,omitempty"`
-	FullCatalogName    string      `json:"fullCatalogName,omitempty"`
-	OrgType            int32       `json:"orgType"`
-	Description        string      `json:"description,omitempty"`
-	RuleType           string      `json:"ruleType"`
-	Version            int32       `json:"version"`
-	Regex              string      `json:"regex,omitempty"`
-	Custom             []RuleCustom `json:"custom,omitempty"`
-	State              string      `json:"state"`
-	DisableReason      string      `json:"disableReason,omitempty"`
-	StdFiles           []int64     `json:"stdFiles,omitempty"`
-	UsedFlag           bool        `json:"usedFlag"`
-	DepartmentId       string      `json:"departmentId,omitempty"`
-	DepartmentName     string      `json:"departmentName,omitempty"`
-	DepartmentPathNames string     `json:"departmentPathNames,omitempty"`
-	CreateTime         string      `json:"createTime,omitempty"`
-	CreateUser         string      `json:"createUser,omitempty"`
-	UpdateTime         string      `json:"updateTime,omitempty"`
-	UpdateUser         string      `json:"updateUser,omitempty"`
+	Id                  int64        `json:"id"`
+	Name                string       `json:"name"`
+	CatalogId           int64        `json:"catalogId"`
+	CatalogName         string       `json:"catalogName,omitempty"`
+	FullCatalogName     string       `json:"fullCatalogName,omitempty"`
+	OrgType             int32        `json:"orgType"`
+	Description         string       `json:"description,omitempty"`
+	RuleType            string       `json:"ruleType"`
+	Version             int32        `json:"version"`
+	Regex               string       `json:"regex,omitempty"`
+	Custom              []RuleCustom `json:"custom,omitempty"`
+	State               string       `json:"state"`
+	DisableReason       string       `json:"disableReason,omitempty"`
+	StdFiles            []int64      `json:"stdFiles,omitempty"`
+	UsedFlag            bool         `json:"usedFlag"`
+	DepartmentId        string       `json:"departmentId,omitempty"`
+	DepartmentName      string       `json:"departmentName,omitempty"`
+	DepartmentPathNames string       `json:"departmentPathNames,omitempty"`
+	CreateTime          string       `json:"createTime,omitempty"`
+	CreateUser          string       `json:"createUser,omitempty"`
+	UpdateTime          string       `json:"updateTime,omitempty"`
+	UpdateUser          string       `json:"updateUser,omitempty"`
 }
 
 // RuleCustom 自定义规则配置

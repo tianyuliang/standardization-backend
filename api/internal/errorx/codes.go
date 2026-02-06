@@ -113,13 +113,13 @@ func RuleRecordNotExist() error {
 
 const (
 	// 通用错误 (30100-30109)
-	ErrCodeCatalogError       = 30100 // CatalogServiceError - 目录服务错误
-	ErrCodeCatalogEmpty       = 30101 // Empty - 数据不存在
+	ErrCodeCatalogError        = 30100 // CatalogServiceError - 目录服务错误
+	ErrCodeCatalogEmpty        = 30101 // Empty - 数据不存在
 	ErrCodeCatalogMissingParam = 30102 // MissingParameter - 参数缺失
 	ErrCodeCatalogInvalidParam = 30103 // InvalidParameter - 参数无效
-	ErrCodeCatalogOutOfRange    = 30104 // OutOfRange - 超出范围
-	ErrCodeCatalogConflict      = 30105 // OperationConflict - 操作冲突
-	ErrCodeCatalogDataExist     = 30106 // DATA_EXIST - 数据已存在
+	ErrCodeCatalogOutOfRange   = 30104 // OutOfRange - 超出范围
+	ErrCodeCatalogConflict     = 30105 // OperationConflict - 操作冲突
+	ErrCodeCatalogDataExist    = 30106 // DATA_EXIST - 数据已存在
 )
 
 // ========== catalog-api 辅助函数 ==========
