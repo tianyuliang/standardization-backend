@@ -3,6 +3,21 @@
 
 package types
 
+type BusinessTableResp struct {
+	Id               int64  `json:"id"`
+	TableName        string `json:"tableName"`
+	TableDescription string `json:"tableDescription"`
+	TableField       string `json:"tableField"`
+	Status           int32  `json:"status"`
+	CreateUser       string `json:"createUser"`
+	CreateTime       string `json:"createTime"`
+}
+
+type BusinessTableStateVo struct {
+	BusinessTableFieldId string `json:"businessTableFieldId"`
+	State                string `json:"state"`
+}
+
 type CatalogWithFileResp struct {
 	Id           int64                  `json:"id"`
 	CatalogName  string                 `json:"catalogName"`
@@ -12,6 +27,38 @@ type CatalogWithFileResp struct {
 	Children     []*CatalogWithFileResp `json:"children,omitempty"`
 	Files        []*FileCountVo         `json:"files,omitempty"`
 	HaveChildren bool                   `json:"haveChildren"`
+}
+
+type DataElementInfo struct {
+	FieldId   int64  `json:"fieldId,optional"`
+	StdCode   string `json:"stdCode,optional"`
+	StdChName string `json:"stdChName,optional"`
+	StdEnName string `json:"stdEnName,optional"`
+}
+
+// DataElementDetailVo 数据元详情
+type DataElementDetailVo struct {
+	Id          int64  `json:"id,optional"`
+	NameCn      string `json:"nameCn,optional"`
+	NameEn      string `json:"nameEn,optional"`
+	StdCode     string `json:"stdCode,optional"`
+	StdTypeName string `json:"stdTypeName,optional"`
+	DataTypeName string `json:"dataTypeName,optional"`
+	DataLength  *int   `json:"dataLength,optional"`
+	DataPrecision *int  `json:"dataPrecision,optional"`
+	StdType     int32  `json:"stdType,optional"`
+	DataType    int32  `json:"dataType,optional"`
+	ChName      string `json:"chName,optional"`
+	RuleName    string `json:"ruleName,optional"`
+}
+
+// TaskDetailDto 任务详情
+type TaskDetailDto struct {
+	TaskId   string `json:"taskId,optional"`
+	TaskNo   string `json:"taskNo,optional"`
+	OrgType  string `json:"org_type,optional"`
+	Status   int32  `json:"status,optional"`
+	Webhook  string `json:"webhook,optional"`
 }
 
 type DataElementResp struct {
@@ -27,6 +74,19 @@ type DataExistsResp struct {
 }
 
 type EmptyResp struct {
+}
+
+type FieldInfo struct {
+	FieldName        string `json:"fieldName,optional" validate:"required"`
+	FieldDescription string `json:"fieldDescription,optional"`
+	DataType         string `json:"dataType,optional"`
+}
+
+type FieldResp struct {
+	Id               int64  `json:"id"`
+	FieldName        string `json:"fieldName"`
+	FieldDescription string `json:"fieldDescription"`
+	DataType         string `json:"dataType"`
 }
 
 type FileCountVo struct {
@@ -52,17 +112,6 @@ type PageBaseInfo struct {
 	Limit  int `form:"limit,default=10,range=[0:2000]"` // 每页大小，默认10，0表示不分页
 }
 
-type PageInfo struct {
-	PageBaseInfo
-	Direction string `form:"direction,default=desc,options=asc|desc"`               // 排序方向：asc 正序，desc 倒序
-	Sort      string `form:"sort,default=created_at,options=created_at|updated_at"` // 排序字段
-}
-
-type PageInfoWithKeyword struct {
-	PageInfo
-	KeywordInfo
-}
-
 type PageQuery struct {
 	Offset int `form:"offset,default=1,range=[1:]"`
 	Limit  int `form:"limit,default=10,range=[0:2000]"`
@@ -85,6 +134,15 @@ type QueryDataExistsReq struct {
 	DepartmentIds string `form:"department_ids,optional"` // 部门IDs
 }
 
+type QueryProcessReq struct {
+	TaskId string `json:"taskId,optional" validate:"required"`
+}
+
+type QueryTaskStateReq struct {
+	BusinessTableId []string `json:"businessTableId,optional" validate:"required"`
+	State           []string `json:"state,optional"`
+}
+
 type RemoveCatalogReq struct {
 	Ids       []int64 `json:"ids,optional" validate:"required"`
 	CatalogId int64   `json:"catalogId,optional" validate:"required"`
@@ -102,4 +160,35 @@ type StdFileResp struct {
 	Name        string `json:"name"`
 	CatalogId   int64  `json:"catalogId"`
 	CatalogName string `json:"catalogName"`
+}
+
+type StdRecItem struct {
+	StdCode   string  `json:"stdCode"`
+	StdName   string  `json:"stdName"`
+	MatchRate float64 `json:"matchRate"`
+}
+
+type TaskResp struct {
+	Id               int64  `json:"id"`
+	TaskNo           string `json:"taskNo"`
+	Table            string `json:"table"`
+	TableDescription string `json:"tableDescription"`
+	TableField       string `json:"tableField"`
+	Status           int32  `json:"status"`
+	CreateTime       string `json:"createTime"`
+	CreateUser       string `json:"createUser"`
+	CreateUserPhone  string `json:"createUserPhone"`
+	Webhook          string `json:"webhook"`
+}
+
+type TaskStdCreateResult struct {
+	Id                    int64  `json:"id"`
+	TaskId                int64  `json:"taskId"`
+	TableField            string `json:"tableField"`
+	TableFieldDescription string `json:"tableFieldDescription"`
+	StdRefFile            string `json:"stdRefFile"`
+	StdCode               string `json:"stdCode"`
+	RecStdCodes           string `json:"recStdCodes"`
+	StdChName             string `json:"stdChName"`
+	StdEnName             string `json:"stdEnName"`
 }

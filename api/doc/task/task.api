@@ -1,0 +1,312 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 请求类型 ====================
+
+// StagingRelationReq 标准关联暂存请求
+type StagingRelationReq {
+	TaskId        int64       `json:"taskId,optional" validate:"required"`
+	BusinessTable string      `json:"businessTable,optional" validate:"required"`
+	Fields        []FieldInfo `json:"fields,optional"`
+}
+
+// FieldInfo 字段信息
+type FieldInfo {
+	FieldName        string `json:"fieldName,optional" validate:"required"`
+	FieldDescription string `json:"fieldDescription,optional"`
+	DataType         string `json:"dataType,optional"`
+}
+
+// SubmitDataElementReq 提交数据元请求
+type SubmitDataElementReq {
+	Id             string `json:"id,optional" validate:"required"`
+	DataElementId string `json:"dataElementId,optional"`
+}
+
+// DataElementInfo 数据元信息
+type DataElementInfo {
+	FieldId   int64  `json:"fieldId,optional"`
+	StdCode   string `json:"stdCode,optional"`
+	StdChName string `json:"stdChName,optional"`
+	StdEnName string `json:"stdEnName,optional"`
+}
+
+// StdRecReq 标准推荐请求
+type StdRecReq {
+	TaskId               int64  `json:"taskId,optional" validate:"required"`
+	BusinessTable        string `json:"businessTable,optional" validate:"required"`
+	TableField           string `json:"tableField,optional" validate:"required"`
+	TableFieldDescription string `json:"tableFieldDescription,optional"`
+}
+
+// RuleRecReq 规则推荐请求
+type RuleRecReq {
+	BusinessTable        string `json:"businessTable,optional" validate:"required"`
+	TableField           string `json:"tableField,optional" validate:"required"`
+	TableFieldDescription string `json:"tableFieldDescription,optional"`
+	DataType             string `json:"dataType,optional"`
+}
+
+// CreateTaskReq 创建任务请求
+type CreateTaskReq {
+	TaskId string  `json:"taskId,optional" validate:"required"`
+	Ids    []string `json:"ids,optional" validate:"required"`
+	Webhook string   `json:"webhook,optional"`
+}
+
+// UpdateDescriptionReq 修改字段说明请求
+type UpdateDescriptionReq {
+	FieldId          int64  `json:"fieldId,optional" validate:"required"`
+	FieldDescription string `json:"fieldDescription,optional"`
+}
+
+// UpdateTableNameReq 修改表名请求
+type UpdateTableNameReq {
+	TableId   int64  `json:"tableId,optional" validate:"required"`
+	TableName string `json:"tableName,optional" validate:"required"`
+}
+
+// AddToPendingReq 添加到待新建请求
+type AddToPendingReq {
+	BusinessTable           string `json:"businessTable,optional" validate:"required"`
+	BusinessTableDescription string `json:"businessTableDescription,optional"`
+	TableField              string `json:"tableField,optional"`
+	CreateUserPhone         string `json:"createUserPhone,optional"`
+}
+
+// AcceptReq 采纳请求
+type AcceptReq {
+	Ids []string `json:"ids,optional" validate:"required"`
+}
+
+// CancelFieldReq 撤销请求
+type CancelFieldReq {
+	Ids []string `json:"ids,optional" validate:"required"`
+}
+
+// QueryTaskStateReq 任务状态查询请求
+type QueryTaskStateReq {
+	BusinessTableId []string `json:"businessTableId,optional" validate:"required"`
+	State           []string `json:"state,optional"`
+}
+
+// QueryProcessReq 进度查询请求
+type QueryProcessReq {
+	TaskId string `json:"taskId,optional" validate:"required"`
+}
+
+// ==================== 响应类型 ====================
+
+// TaskResp 任务响应
+type TaskResp {
+	Id               int64  `json:"id"`
+	TaskNo           string `json:"taskNo"`
+	Table            string `json:"table"`
+	TableDescription string `json:"tableDescription"`
+	TableField       string `json:"tableField"`
+	Status           int32  `json:"status"`
+	CreateTime       string `json:"createTime"`
+	CreateUser       string `json:"createUser"`
+	CreateUserPhone  string `json:"createUserPhone"`
+	Webhook          string `json:"webhook"`
+}
+
+// TaskDataListResp 任务列表响应
+type TaskDataListResp {
+	TotalCount int64     `json:"totalCount"`
+	Data       []TaskResp `json:"data"`
+}
+
+// TaskDetailResp 任务详情响应
+type TaskDetailResp {
+	Task    TaskResp              `json:"task"`
+	Results []TaskStdCreateResult `json:"results"`
+}
+
+// BusinessTableResp 业务表响应
+type BusinessTableResp {
+	Id               int64  `json:"id"`
+	TableName        string `json:"tableName"`
+	TableDescription string `json:"tableDescription"`
+	TableField       string `json:"tableField"`
+	Status           int32  `json:"status"`
+	CreateUser       string `json:"createUser"`
+	CreateTime       string `json:"createTime"`
+}
+
+// BusinessTableListResp 业务表列表响应
+type BusinessTableListResp {
+	TotalCount int64                `json:"totalCount"`
+	Data       []BusinessTableResp `json:"data"`
+}
+
+// FieldResp 字段响应
+type FieldResp {
+	Id               int64  `json:"id"`
+	FieldName        string `json:"fieldName"`
+	FieldDescription string `json:"fieldDescription"`
+	DataType         string `json:"dataType"`
+}
+
+// FieldListResp 字段列表响应
+type FieldListResp {
+	TotalCount int64      `json:"totalCount"`
+	Data       []FieldResp `json:"data"`
+}
+
+// TaskStdCreateResult 任务结果
+type TaskStdCreateResult {
+	Id                   int64  `json:"id"`
+	TaskId               int64  `json:"taskId"`
+	TableField           string `json:"tableField"`
+	TableFieldDescription string `json:"tableFieldDescription"`
+	StdRefFile           string `json:"stdRefFile"`
+	StdCode              string `json:"stdCode"`
+	RecStdCodes          string `json:"recStdCodes"`
+	StdChName            string `json:"stdChName"`
+	StdEnName            string `json:"stdEnName"`
+}
+
+// StdRecResp 标准推荐响应
+type StdRecResp {
+	Code        string       `json:"code"`
+	Description string       `json:"description"`
+	Data        []StdRecItem `json:"data"`
+}
+
+// StdRecItem 标准推荐项
+type StdRecItem {
+	StdCode   string  `json:"stdCode"`
+	StdName   string  `json:"stdName"`
+	MatchRate float64 `json:"matchRate"`
+}
+
+// TaskBaseResp 任务基础响应
+type TaskBaseResp {
+	Code        string `json:"code"`
+	Description string `json:"description"`
+}
+
+// ProcessResp 进度响应
+type ProcessResp {
+	FinishNumber int   `json:"finishNumber"`
+	TotalNumber  int   `json:"totalNumber"`
+}
+
+// BusinessTableStateVo 业务表状态
+type BusinessTableStateVo {
+	BusinessTableFieldId string `json:"businessTableFieldId"`
+	State                string `json:"state"`
+}
+
+// BusinessTableStateListResp 业务表状态列表响应
+type BusinessTableStateListResp {
+	TotalCount int64                    `json:"totalCount"`
+	Data       []BusinessTableStateVo   `json:"data"`
+}
+
+// ==================== 标准任务管理API ====================
+
+@server(
+	prefix: /api/standardization/v1/dataelement/task
+	group:  task
+	middleware: TokenCheck
+)
+service api {
+	@doc "未处理任务列表"
+	@handler GetUncompletedTasks
+	get /std-create/uncompleted (PageInfoWithKeyword) returns (TaskDataListResp)
+
+	@doc "已完成任务列表"
+	@handler GetCompletedTasks
+	get /std-create/completed (PageInfoWithKeyword) returns (TaskDataListResp)
+
+	@doc "任务详情"
+	@handler GetTaskById
+	get /std-create/completed/:id returns (TaskDetailResp)
+
+	@doc "标准关联暂存"
+	@handler StagingRelation
+	post /std-create/relation/staging (StagingRelationReq) returns (TaskBaseResp)
+
+	@doc "标准关联提交"
+	@handler SubmitRelation
+	post /std-create/publish/submit (StagingRelationReq) returns (TaskBaseResp)
+
+	@doc "添加至待新建"
+	@handler AddToPending
+	post /addToPending (AddToPendingReq) returns (TaskBaseResp)
+
+	@doc "业务表列表"
+	@handler GetBusinessTable
+	get /getBusinessTable (PageInfoWithKeyword) returns (BusinessTableListResp)
+
+	@doc "业务表字段列表"
+	@handler GetBusinessTableField
+	get /getBusinessTableField (PageInfo) returns (FieldListResp)
+
+	@doc "移除字段"
+	@handler DeleteField
+	delete /deleteBusinessTableField/:id returns (TaskBaseResp)
+
+	@doc "新建标准任务"
+	@handler CreateTask
+	post /createTask (CreateTaskReq) returns (TaskBaseResp)
+
+	@doc "撤销"
+	@handler CancelField
+	put /cancelBusinessTableField (CancelFieldReq) returns (TaskBaseResp)
+
+	@doc "任务关联业务表"
+	@handler GetTableFromTask
+	get /getBusinessTableFromTask (PageInfo) returns (BusinessTableListResp)
+
+	@doc "任务关联字段"
+	@handler GetFieldFromTask
+	get /getBusinessTableFieldFromTask (PageInfo) returns (FieldListResp)
+
+	@doc "提交选定数据元"
+	@handler SubmitDataElement
+	post /submitDataElement (SubmitDataElementReq) returns (TaskBaseResp)
+
+	@doc "完成任务"
+	@handler FinishTask
+	post /finishTask/:task_id returns (TaskBaseResp)
+
+	@doc "进度查询"
+	@handler QueryTaskProcess
+	post /queryTaskProcess returns (ProcessResp)
+
+	@doc "任务状态查询"
+	@handler QueryTaskState
+	post /queryTaskState returns (BusinessTableStateListResp)
+
+	@doc "修改字段说明"
+	@handler UpdateDescription
+	put /updateDescription (UpdateDescriptionReq) returns (TaskBaseResp)
+
+	@doc "采纳"
+	@handler Accept
+	put /accept (AcceptReq) returns (TaskBaseResp)
+
+	@doc "修改表名称"
+	@handler UpdateTableName
+	put /updateTableName (UpdateTableNameReq) returns (TaskBaseResp)
+
+	@doc "标准推荐（内部）"
+	@handler StdRec
+	post /std-rec/rec (StdRecReq) returns (StdRecResp)
+
+	@doc "标准创建（内部）"
+	@handler StdCreate
+	post /std-create (StdRecReq) returns (TaskBaseResp)
+
+	@doc "标准推荐（弹框）"
+	@handler StandRec
+	post /stand-rec/rec (StdRecReq) returns (StdRecResp)
+
+	@doc "编码规则推荐"
+	@handler RuleRec
+	post /rule-rec/rec (RuleRecReq) returns (StdRecResp)
+}

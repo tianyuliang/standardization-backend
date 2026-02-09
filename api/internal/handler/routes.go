@@ -10,6 +10,7 @@ import (
 	dict "github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/handler/dict"
 	rule "github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/handler/rule"
 	stdfile "github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/handler/stdfile"
+	task "github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/handler/task"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -409,5 +410,158 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithPrefix("/api/standardization/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.TokenCheck},
+			[]rest.Route{
+				{
+					// 采纳
+					Method:  http.MethodPut,
+					Path:    "/accept",
+					Handler: task.AcceptHandler(serverCtx),
+				},
+				{
+					// 添加至待新建
+					Method:  http.MethodPost,
+					Path:    "/addToPending",
+					Handler: task.AddToPendingHandler(serverCtx),
+				},
+				{
+					// 撤销
+					Method:  http.MethodPut,
+					Path:    "/cancelBusinessTableField",
+					Handler: task.CancelFieldHandler(serverCtx),
+				},
+				{
+					// 新建标准任务
+					Method:  http.MethodPost,
+					Path:    "/createTask",
+					Handler: task.CreateTaskHandler(serverCtx),
+				},
+				{
+					// 移除字段
+					Method:  http.MethodDelete,
+					Path:    "/deleteBusinessTableField/:id",
+					Handler: task.DeleteFieldHandler(serverCtx),
+				},
+				{
+					// 完成任务
+					Method:  http.MethodPost,
+					Path:    "/finishTask/:task_id",
+					Handler: task.FinishTaskHandler(serverCtx),
+				},
+				{
+					// 业务表列表
+					Method:  http.MethodGet,
+					Path:    "/getBusinessTable",
+					Handler: task.GetBusinessTableHandler(serverCtx),
+				},
+				{
+					// 业务表字段列表
+					Method:  http.MethodGet,
+					Path:    "/getBusinessTableField",
+					Handler: task.GetBusinessTableFieldHandler(serverCtx),
+				},
+				{
+					// 任务关联字段
+					Method:  http.MethodGet,
+					Path:    "/getBusinessTableFieldFromTask",
+					Handler: task.GetFieldFromTaskHandler(serverCtx),
+				},
+				{
+					// 任务关联业务表
+					Method:  http.MethodGet,
+					Path:    "/getBusinessTableFromTask",
+					Handler: task.GetTableFromTaskHandler(serverCtx),
+				},
+				{
+					// 进度查询
+					Method:  http.MethodPost,
+					Path:    "/queryTaskProcess",
+					Handler: task.QueryTaskProcessHandler(serverCtx),
+				},
+				{
+					// 任务状态查询
+					Method:  http.MethodPost,
+					Path:    "/queryTaskState",
+					Handler: task.QueryTaskStateHandler(serverCtx),
+				},
+				{
+					// 编码规则推荐
+					Method:  http.MethodPost,
+					Path:    "/rule-rec/rec",
+					Handler: task.RuleRecHandler(serverCtx),
+				},
+				{
+					// 标准推荐（弹框）
+					Method:  http.MethodPost,
+					Path:    "/stand-rec/rec",
+					Handler: task.StandRecHandler(serverCtx),
+				},
+				{
+					// 标准创建（内部）
+					Method:  http.MethodPost,
+					Path:    "/std-create",
+					Handler: task.StdCreateHandler(serverCtx),
+				},
+				{
+					// 已完成任务列表
+					Method:  http.MethodGet,
+					Path:    "/std-create/completed",
+					Handler: task.GetCompletedTasksHandler(serverCtx),
+				},
+				{
+					// 任务详情
+					Method:  http.MethodGet,
+					Path:    "/std-create/completed/:id",
+					Handler: task.GetTaskByIdHandler(serverCtx),
+				},
+				{
+					// 标准关联提交
+					Method:  http.MethodPost,
+					Path:    "/std-create/publish/submit",
+					Handler: task.SubmitRelationHandler(serverCtx),
+				},
+				{
+					// 标准关联暂存
+					Method:  http.MethodPost,
+					Path:    "/std-create/relation/staging",
+					Handler: task.StagingRelationHandler(serverCtx),
+				},
+				{
+					// 未处理任务列表
+					Method:  http.MethodGet,
+					Path:    "/std-create/uncompleted",
+					Handler: task.GetUncompletedTasksHandler(serverCtx),
+				},
+				{
+					// 标准推荐（内部）
+					Method:  http.MethodPost,
+					Path:    "/std-rec/rec",
+					Handler: task.StdRecHandler(serverCtx),
+				},
+				{
+					// 提交选定数据元
+					Method:  http.MethodPost,
+					Path:    "/submitDataElement",
+					Handler: task.SubmitDataElementHandler(serverCtx),
+				},
+				{
+					// 修改字段说明
+					Method:  http.MethodPut,
+					Path:    "/updateDescription",
+					Handler: task.UpdateDescriptionHandler(serverCtx),
+				},
+				{
+					// 修改表名称
+					Method:  http.MethodPut,
+					Path:    "/updateTableName",
+					Handler: task.UpdateTableNameHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/standardization/v1/dataelement/task"),
 	)
 }

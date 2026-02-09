@@ -14,20 +14,25 @@ import (
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/relation_file"
 	rulemodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/rule"
 	stdfilemodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/stdfile/stdfile"
+	taskmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/task/task"
+	poolmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/task/pool"
 	"github.com/zeromicro/go-zero/rest"
 )
 
 type ServiceContext struct {
-	Config                config.Config
-	db                    *sqlx.DB
-	RuleModel             rulemodel.RuleModel
-	CatalogModel          catalogmodel.CatalogModel
-	RelationRuleFileModel relation_file.RelationRuleFileModel
-	StdFileModel          stdfilemodel.StdFileModel
-	DictModel             dictmodel.DictModel
-	DictEnumModel         dictmodel.DictEnumModel
-	RelationDictFileModel dictmodel.RelationDictFileModel
-	TokenCheck            rest.Middleware
+	Config                   config.Config
+	db                       *sqlx.DB
+	RuleModel                rulemodel.RuleModel
+	CatalogModel             catalogmodel.CatalogModel
+	RelationRuleFileModel    relation_file.RelationRuleFileModel
+	StdFileModel             stdfilemodel.StdFileModel
+	DictModel                dictmodel.DictModel
+	DictEnumModel            dictmodel.DictEnumModel
+	RelationDictFileModel    dictmodel.RelationDictFileModel
+	TaskStdCreateModel       taskmodel.TaskStdCreateModel
+	TaskStdCreateResultModel taskmodel.TaskStdCreateResultModel
+	BusinessTablePoolModel   poolmodel.BusinessTablePoolModel
+	TokenCheck               rest.Middleware
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -46,15 +51,18 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	}
 
 	return &ServiceContext{
-		Config:                c,
-		db:                    db,
-		RuleModel:             rulemodel.NewRuleModel(conn),
-		CatalogModel:          catalogmodel.NewCatalogModel(conn),
-		RelationRuleFileModel: relation_file.NewRelationRuleFileModel(conn),
-		StdFileModel:          stdfilemodel.NewStdFileModel(conn),
-		DictModel:             dictmodel.NewDictModel(conn),
-		DictEnumModel:         dictmodel.NewDictEnumModel(conn),
-		RelationDictFileModel: dictmodel.NewRelationDictFileModel(conn),
-		TokenCheck:            middleware.NewTokenCheckMiddleware().Handle,
+		Config:                   c,
+		db:                       db,
+		RuleModel:                rulemodel.NewRuleModel(conn),
+		CatalogModel:             catalogmodel.NewCatalogModel(conn),
+		RelationRuleFileModel:    relation_file.NewRelationRuleFileModel(conn),
+		StdFileModel:             stdfilemodel.NewStdFileModel(conn),
+		DictModel:                dictmodel.NewDictModel(conn),
+		DictEnumModel:            dictmodel.NewDictEnumModel(conn),
+		RelationDictFileModel:    dictmodel.NewRelationDictFileModel(conn),
+		TaskStdCreateModel:       taskmodel.NewTaskStdCreateModel(conn),
+		TaskStdCreateResultModel: taskmodel.NewTaskStdCreateResultModel(conn),
+		BusinessTablePoolModel:   poolmodel.NewBusinessTablePoolModel(conn),
+		TokenCheck:               middleware.NewTokenCheckMiddleware().Handle,
 	}
 }
