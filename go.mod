@@ -4,6 +4,7 @@ go 1.24.11
 
 require (
 	github.com/jinguoxing/idrm-go-base v0.2.1
+	github.com/sony/sonyflake v1.3.0
 	github.com/zeromicro/go-zero v1.9.4
 )
 

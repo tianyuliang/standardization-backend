@@ -58,17 +58,6 @@ type UpdateRuleStateReq {
     Reason string `json:"reason,optional"`
 }
 
-// RemoveCatalogReq 目录移动请求
-type RemoveCatalogReq {
-    Ids       []int64 `json:"ids"`
-    CatalogId int64   `json:"catalogId"`
-}
-
-// QueryByIdsReq 批量ID查询请求
-type QueryByIdsReq {
-    Ids []int64 `json:"ids"`
-}
-
 // QueryByStdFileCatalogReq 按标准文件目录查询请求
 type QueryByStdFileCatalogReq {
     CatalogId int64 `form:"catalogId,optional"`
@@ -80,13 +69,6 @@ type QueryByStdFileCatalogReq {
 type PageQuery {
     Offset int `form:"offset,default=1,range=[1:]"`
     Limit  int `form:"limit,default=10,range=[0:2000]"`
-}
-
-// QueryDataExistsReq 检查数据是否存在请求
-type QueryDataExistsReq {
-    FilterId     int64  `form:"filterId,optional"` // 排除的规则ID
-    Name         string `form:"name"`
-    DepartmentIds string `form:"departmentIds,optional"`
 }
 
 // DataExistsResp 数据存在响应

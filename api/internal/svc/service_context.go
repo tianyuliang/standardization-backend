@@ -10,6 +10,7 @@ import (
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/config"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/middleware"
 	catalogmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/catalog/catalog"
+	dictmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/dict/dict"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/relation_file"
 	rulemodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/rule"
 	stdfilemodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/stdfile/stdfile"
@@ -23,6 +24,9 @@ type ServiceContext struct {
 	CatalogModel          catalogmodel.CatalogModel
 	RelationRuleFileModel relation_file.RelationRuleFileModel
 	StdFileModel          stdfilemodel.StdFileModel
+	DictModel             dictmodel.DictModel
+	DictEnumModel         dictmodel.DictEnumModel
+	RelationDictFileModel dictmodel.RelationDictFileModel
 	TokenCheck            rest.Middleware
 }
 
@@ -48,6 +52,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		CatalogModel:          catalogmodel.NewCatalogModel(conn),
 		RelationRuleFileModel: relation_file.NewRelationRuleFileModel(conn),
 		StdFileModel:          stdfilemodel.NewStdFileModel(conn),
+		DictModel:             dictmodel.NewDictModel(conn),
+		DictEnumModel:         dictmodel.NewDictEnumModel(conn),
+		RelationDictFileModel: dictmodel.NewRelationDictFileModel(conn),
 		TokenCheck:            middleware.NewTokenCheckMiddleware().Handle,
 	}
 }

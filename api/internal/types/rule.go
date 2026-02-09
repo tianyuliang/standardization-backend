@@ -24,15 +24,6 @@ type DataElementListResp struct {
 	TotalCount int64             `json:"total_count"`
 }
 
-type DataExistsResp struct {
-	Exists bool `json:"exists"`
-}
-
-type PageQuery struct {
-	Offset int `form:"offset,default=1,range=[1:]"`
-	Limit  int `form:"limit,default=10,range=[0:2000]"`
-}
-
 type QueryByStdFileCatalogReq struct {
 	CatalogId int64 `form:"catalogId,optional"`
 	Offset    int   `form:"offset,default=1,range=[1:]"`

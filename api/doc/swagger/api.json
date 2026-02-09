@@ -559,6 +559,1568 @@
         }
       }
     },
+    "/api/standardization/v1/dataelement/dict": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "码表列表查询",
+        "operationId": "dictListDict",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "keyword",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "catalogId",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "orgType",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "enum": [
+              "enable",
+              "disable"
+            ],
+            "type": "string",
+            "name": "state",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "department_id",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "name": "offset",
+            "in": "query",
+            "required": true
+          },
+          {
+            "maximum": 2000,
+            "minimum": 0,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query",
+            "required": true
+          },
+          {
+            "enum": [
+              "update_time",
+              "create_time"
+            ],
+            "type": "string",
+            "default": "update_time",
+            "name": "sort",
+            "in": "query",
+            "required": true
+          },
+          {
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string",
+            "default": "desc",
+            "name": "direction",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "code",
+                      "chName",
+                      "enName",
+                      "description",
+                      "orgType",
+                      "version",
+                      "state",
+                      "usedFlag",
+                      "catalogId",
+                      "catalogName",
+                      "enums",
+                      "departmentId",
+                      "departmentName",
+                      "departmentPathNames",
+                      "createTime",
+                      "createUser",
+                      "updateTime",
+                      "updateUser"
+                    ],
+                    "properties": {
+                      "catalogId": {
+                        "type": "integer"
+                      },
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "chName": {
+                        "type": "string"
+                      },
+                      "code": {
+                        "type": "integer"
+                      },
+                      "createTime": {
+                        "type": "string"
+                      },
+                      "createUser": {
+                        "type": "string"
+                      },
+                      "departmentId": {
+                        "type": "string"
+                      },
+                      "departmentName": {
+                        "type": "string"
+                      },
+                      "departmentPathNames": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "enName": {
+                        "type": "string"
+                      },
+                      "enums": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "code",
+                            "value"
+                          ],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "value": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "orgType": {
+                        "type": "integer"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "updateTime": {
+                        "type": "string"
+                      },
+                      "updateUser": {
+                        "type": "string"
+                      },
+                      "usedFlag": {
+                        "type": "boolean"
+                      },
+                      "version": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "totalCount": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "新增码表",
+        "operationId": "dictCreateDict",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "chName",
+                "enName",
+                "orgType",
+                "catalogId",
+                "enums"
+              ],
+              "properties": {
+                "catalogId": {
+                  "type": "integer"
+                },
+                "chName": {
+                  "type": "string"
+                },
+                "departmentIds": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "enName": {
+                  "type": "string"
+                },
+                "enums": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "code",
+                      "value"
+                    ],
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "stdFiles": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "catalogId": {
+                  "type": "integer"
+                },
+                "catalogName": {
+                  "type": "string"
+                },
+                "chName": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "integer"
+                },
+                "createTime": {
+                  "type": "string"
+                },
+                "createUser": {
+                  "type": "string"
+                },
+                "departmentId": {
+                  "type": "string"
+                },
+                "departmentName": {
+                  "type": "string"
+                },
+                "departmentPathNames": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "enName": {
+                  "type": "string"
+                },
+                "enums": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "code",
+                      "value"
+                    ],
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "updateTime": {
+                  "type": "string"
+                },
+                "updateUser": {
+                  "type": "string"
+                },
+                "usedFlag": {
+                  "type": "boolean"
+                },
+                "version": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/dataelement/dict/batch/{ids}": {
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "批量删除码表",
+        "operationId": "dictBatchDeleteDict",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/dataelement/dict/code/{code}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "码表详情（按Code）",
+        "operationId": "dictGetDictByCode",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "catalogId": {
+                  "type": "integer"
+                },
+                "catalogName": {
+                  "type": "string"
+                },
+                "chName": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "integer"
+                },
+                "createTime": {
+                  "type": "string"
+                },
+                "createUser": {
+                  "type": "string"
+                },
+                "departmentId": {
+                  "type": "string"
+                },
+                "departmentName": {
+                  "type": "string"
+                },
+                "departmentPathNames": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "enName": {
+                  "type": "string"
+                },
+                "enums": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "code",
+                      "value"
+                    ],
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "updateTime": {
+                  "type": "string"
+                },
+                "updateUser": {
+                  "type": "string"
+                },
+                "usedFlag": {
+                  "type": "boolean"
+                },
+                "version": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/dataelement/dict/dataelement/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "查询引用码表的数据元",
+        "operationId": "dictQueryDictByDataElement",
+        "parameters": [
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "name": "offset",
+            "in": "query",
+            "required": true
+          },
+          {
+            "maximum": 2000,
+            "minimum": 0,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array"
+                },
+                "totalCount": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/dataelement/dict/enum": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "码值分页查询",
+        "operationId": "dictListDictEnum",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "dict_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "keyword",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "name": "offset",
+            "in": "query",
+            "required": true
+          },
+          {
+            "maximum": 2000,
+            "minimum": 0,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "code",
+                      "value"
+                    ],
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "totalCount": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/dataelement/dict/enum/getList": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "码值列表查询（不分页）",
+        "operationId": "dictGetDictEnumList",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "dict_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "value"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "integer"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              },
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/dataelement/dict/queryByStdFile": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "按文件查询码表",
+        "operationId": "dictQueryDictByStdFile",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "file_id",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "keyword",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "org_type",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "enum": [
+              "enable",
+              "disable"
+            ],
+            "type": "string",
+            "name": "state",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "department_id",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "name": "offset",
+            "in": "query",
+            "required": true
+          },
+          {
+            "maximum": 2000,
+            "minimum": 0,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "code",
+                      "chName",
+                      "enName",
+                      "description",
+                      "orgType",
+                      "version",
+                      "state",
+                      "usedFlag",
+                      "catalogId",
+                      "catalogName",
+                      "enums",
+                      "departmentId",
+                      "departmentName",
+                      "departmentPathNames",
+                      "createTime",
+                      "createUser",
+                      "updateTime",
+                      "updateUser"
+                    ],
+                    "properties": {
+                      "catalogId": {
+                        "type": "integer"
+                      },
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "chName": {
+                        "type": "string"
+                      },
+                      "code": {
+                        "type": "integer"
+                      },
+                      "createTime": {
+                        "type": "string"
+                      },
+                      "createUser": {
+                        "type": "string"
+                      },
+                      "departmentId": {
+                        "type": "string"
+                      },
+                      "departmentName": {
+                        "type": "string"
+                      },
+                      "departmentPathNames": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "enName": {
+                        "type": "string"
+                      },
+                      "enums": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "code",
+                            "value"
+                          ],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "value": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "orgType": {
+                        "type": "integer"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "updateTime": {
+                        "type": "string"
+                      },
+                      "updateUser": {
+                        "type": "string"
+                      },
+                      "usedFlag": {
+                        "type": "boolean"
+                      },
+                      "version": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "totalCount": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/dataelement/dict/queryByStdFileCatalog": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "按文件目录查询码表",
+        "operationId": "dictQueryDictByStdFileCatalog",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "catalog_id",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "keyword",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "org_type",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "enum": [
+              "enable",
+              "disable"
+            ],
+            "type": "string",
+            "name": "state",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "name": "offset",
+            "in": "query",
+            "required": true
+          },
+          {
+            "maximum": 2000,
+            "minimum": 0,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "code",
+                      "chName",
+                      "enName",
+                      "description",
+                      "orgType",
+                      "version",
+                      "state",
+                      "usedFlag",
+                      "catalogId",
+                      "catalogName",
+                      "enums",
+                      "departmentId",
+                      "departmentName",
+                      "departmentPathNames",
+                      "createTime",
+                      "createUser",
+                      "updateTime",
+                      "updateUser"
+                    ],
+                    "properties": {
+                      "catalogId": {
+                        "type": "integer"
+                      },
+                      "catalogName": {
+                        "type": "string"
+                      },
+                      "chName": {
+                        "type": "string"
+                      },
+                      "code": {
+                        "type": "integer"
+                      },
+                      "createTime": {
+                        "type": "string"
+                      },
+                      "createUser": {
+                        "type": "string"
+                      },
+                      "departmentId": {
+                        "type": "string"
+                      },
+                      "departmentName": {
+                        "type": "string"
+                      },
+                      "departmentPathNames": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "enName": {
+                        "type": "string"
+                      },
+                      "enums": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "code",
+                            "value"
+                          ],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "integer"
+                            },
+                            "value": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "orgType": {
+                        "type": "integer"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "updateTime": {
+                        "type": "string"
+                      },
+                      "updateUser": {
+                        "type": "string"
+                      },
+                      "usedFlag": {
+                        "type": "boolean"
+                      },
+                      "version": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "totalCount": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/dataelement/dict/queryDataExists": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "查询数据是否存在",
+        "operationId": "dictQueryDictDataExists",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "filter_id",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "org_type",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "ch_name",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "en_name",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "string",
+            "name": "departmentIds",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "exists": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/dataelement/dict/relation/stdfile/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "查询关联标准文件",
+        "operationId": "dictQueryDictRelationStdfile",
+        "parameters": [
+          {
+            "minimum": 1,
+            "type": "integer",
+            "default": 1,
+            "name": "offset",
+            "in": "query",
+            "required": true
+          },
+          {
+            "maximum": 2000,
+            "minimum": 0,
+            "type": "integer",
+            "default": 10,
+            "name": "limit",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array"
+                },
+                "totalCount": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/dataelement/dict/relation/{id}": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "添加关联关系",
+        "operationId": "dictAddDictRelation",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "stdFiles": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/dataelement/dict/state/{id}": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "启用/停用码表",
+        "operationId": "dictUpdateDictState",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "state"
+              ],
+              "properties": {
+                "reason": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string",
+                  "enum": [
+                    "enable",
+                    "disable"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standardization/v1/dataelement/dict/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "码表详情（按ID）",
+        "operationId": "dictGetDict",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "catalogId": {
+                  "type": "integer"
+                },
+                "catalogName": {
+                  "type": "string"
+                },
+                "chName": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "integer"
+                },
+                "createTime": {
+                  "type": "string"
+                },
+                "createUser": {
+                  "type": "string"
+                },
+                "departmentId": {
+                  "type": "string"
+                },
+                "departmentName": {
+                  "type": "string"
+                },
+                "departmentPathNames": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "enName": {
+                  "type": "string"
+                },
+                "enums": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "code",
+                      "value"
+                    ],
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "updateTime": {
+                  "type": "string"
+                },
+                "updateUser": {
+                  "type": "string"
+                },
+                "usedFlag": {
+                  "type": "boolean"
+                },
+                "version": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "修改码表",
+        "operationId": "dictUpdateDict",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "chName",
+                "enName",
+                "orgType",
+                "catalogId",
+                "enums"
+              ],
+              "properties": {
+                "catalogId": {
+                  "type": "integer"
+                },
+                "chName": {
+                  "type": "string"
+                },
+                "departmentIds": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "enName": {
+                  "type": "string"
+                },
+                "enums": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "code",
+                      "value"
+                    ],
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "stdFiles": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "catalogId": {
+                  "type": "integer"
+                },
+                "catalogName": {
+                  "type": "string"
+                },
+                "chName": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "integer"
+                },
+                "createTime": {
+                  "type": "string"
+                },
+                "createUser": {
+                  "type": "string"
+                },
+                "departmentId": {
+                  "type": "string"
+                },
+                "departmentName": {
+                  "type": "string"
+                },
+                "departmentPathNames": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "enName": {
+                  "type": "string"
+                },
+                "enums": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "code",
+                      "value"
+                    ],
+                    "properties": {
+                      "code": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "integer"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "orgType": {
+                  "type": "integer"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "updateTime": {
+                  "type": "string"
+                },
+                "updateUser": {
+                  "type": "string"
+                },
+                "usedFlag": {
+                  "type": "boolean"
+                },
+                "version": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "删除码表",
+        "operationId": "dictDeleteDict",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/standardization/v1/rule": {
       "get": {
         "produces": [
@@ -3788,7 +5350,7 @@
       }
     }
   },
-  "x-date": "2026-02-06 16:03:08",
+  "x-date": "2026-02-09 09:06:44",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",

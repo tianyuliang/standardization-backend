@@ -3,10 +3,6 @@
 
 package types
 
-// ============================================
-// 共享类型 - 跨模块引用
-// ============================================
-
 type CatalogWithFileResp struct {
 	Id           int64                  `json:"id"`
 	CatalogName  string                 `json:"catalogName"`
@@ -26,6 +22,10 @@ type DataElementResp struct {
 	RuleName string `json:"ruleName"`
 }
 
+type DataExistsResp struct {
+	Exists bool `json:"exists"`
+}
+
 type EmptyResp struct {
 }
 
@@ -37,10 +37,6 @@ type FileCountVo struct {
 
 type HealthResp struct {
 	Status string `json:"status"`
-}
-
-type IdReq struct {
-	Id int64 `path:"id"`
 }
 
 type IdsReq struct {
@@ -65,6 +61,11 @@ type PageInfo struct {
 type PageInfoWithKeyword struct {
 	PageInfo
 	KeywordInfo
+}
+
+type PageQuery struct {
+	Offset int `form:"offset,default=1,range=[1:]"`
+	Limit  int `form:"limit,default=10,range=[0:2000]"`
 }
 
 type PageResp struct {
