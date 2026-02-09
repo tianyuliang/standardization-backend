@@ -1,0 +1,823 @@
+openapi: 3.0.0
+info:
+  title: 码表管理 API
+  version: 1.0.0
+  description: 从 Java 迁移的码表管理接口，16个API端点
+
+servers:
+  - url: /api/standardization/v1/dataelement
+    description: API基路径
+
+tags:
+  - name: open
+    description: 外部可访问的API（带TokenCheck中间件）
+  - name: internal
+    description: 内部API（无认证中间件）
+
+paths:
+  /dict:
+    get:
+      tags: [open]
+      summary: 码表列表查询
+      operationId: listDict
+      parameters:
+        - name: catalog_id
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: org_type
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: state
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [enable, disable]
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            default: update_time
+        - name: direction
+          in: query
+          required: false
+          schema:
+            type: string
+            default: desc
+        - name: department_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictDataListResp'
+
+    post:
+      tags: [open]
+      summary: 新增码表
+      operationId: createDict
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDictReq'
+      responses:
+        '200':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictVo'
+
+  /dict/{id}:
+    get:
+      tags: [open]
+      summary: 码表详情（按ID）
+      operationId: getDict
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictVo'
+
+    put:
+      tags: [open]
+      summary: 修改码表
+      operationId: updateDict
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDictReq'
+      responses:
+        '200':
+          description: 修改成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictVo'
+
+    delete:
+      tags: [internal]
+      summary: 删除码表
+      operationId: deleteDict
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 删除成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResp'
+
+  /dict/code/{code}:
+    get:
+      tags: [open]
+      summary: 码表详情（按Code）
+      operationId: getDictByCode
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictVo'
+
+  /dict/state/{id}:
+    put:
+      tags: [open]
+      summary: 启用/停用码表
+      operationId: updateDictState
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDictStateReq'
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResp'
+
+  /dict/batch/{ids}:
+    delete:
+      tags: [internal]
+      summary: 批量删除码表
+      operationId: batchDeleteDict
+      parameters:
+        - name: ids
+          in: path
+          required: true
+          schema:
+            type: string
+          description: 多个ID用英文逗号分隔
+      responses:
+        '200':
+          description: 删除成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResp'
+
+  /dict/enum:
+    get:
+      tags: [internal]
+      summary: 码值分页查询
+      operationId: listDictEnum
+      parameters:
+        - name: dict_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictEnumDataListResp'
+
+  /dict/enum/getList:
+    get:
+      tags: [internal]
+      summary: 码值列表查询（不分页）
+      operationId: getDictEnumList
+      parameters:
+        - name: dict_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DictEnumVo'
+
+  /dict/dataelement/{id}:
+    get:
+      tags: [internal]
+      summary: 查询引用码表的数据元
+      operationId: queryDictByDataElement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElementDataListResp'
+
+  /dict/queryByStdFileCatalog:
+    get:
+      tags: [internal]
+      summary: 按文件目录查询码表
+      operationId: queryDictByStdFileCatalog
+      parameters:
+        - name: catalog_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: org_type
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: state
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [enable, disable]
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictDataListResp'
+
+  /dict/queryByStdFile:
+    get:
+      tags: [internal]
+      summary: 按文件查询码表
+      operationId: queryDictByStdFile
+      parameters:
+        - name: file_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: org_type
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: state
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [enable, disable]
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: department_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DictDataListResp'
+
+  /dict/relation/stdfile/{id}:
+    get:
+      tags: [internal]
+      summary: 查询关联标准文件
+      operationId: queryDictRelationStdFile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StdFileDataListResp'
+
+  /dict/relation/{id}:
+    put:
+      tags: [internal]
+      summary: 添加关联关系
+      operationId: addDictRelation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddDictRelationReq'
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResp'
+
+  /dict/queryDataExists:
+    get:
+      tags: [internal]
+      summary: 查询数据是否存在
+      operationId: queryDictDataExists
+      parameters:
+        - name: filter_id
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: org_type
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: ch_name
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: en_name
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: departmentIds
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataExistsResp'
+
+components:
+  schemas:
+    CreateDictReq:
+      type: object
+      required:
+        - chName
+        - enName
+        - orgType
+        - catalogId
+        - enums
+      properties:
+        chName:
+          type: string
+          maxLength: 128
+          description: 中文名称
+        enName:
+          type: string
+          maxLength: 128
+          description: 英文名称
+        description:
+          type: string
+          maxLength: 300
+          description: 业务含义
+        orgType:
+          type: integer
+          format: int32
+          description: 标准分类：0-99
+        catalogId:
+          type: integer
+          format: int64
+          description: 目录ID
+        enums:
+          type: array
+          items:
+            $ref: '#/components/schemas/DictEnumVo'
+          description: 码值列表
+        stdFiles:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: 关联标准文件ID列表
+        departmentIds:
+          type: string
+          description: 部门ID
+
+    UpdateDictReq:
+      type: object
+      required:
+        - chName
+        - enName
+        - orgType
+        - catalogId
+        - enums
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 码表ID
+        chName:
+          type: string
+          maxLength: 128
+          description: 中文名称
+        enName:
+          type: string
+          maxLength: 128
+          description: 英文名称
+        description:
+          type: string
+          maxLength: 300
+          description: 业务含义
+        orgType:
+          type: integer
+          format: int32
+          description: 标准分类：0-99
+        catalogId:
+          type: integer
+          format: int64
+          description: 目录ID
+        enums:
+          type: array
+          items:
+            $ref: '#/components/schemas/DictEnumVo'
+          description: 码值列表
+        stdFiles:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: 关联标准文件ID列表
+        departmentIds:
+          type: string
+          description: 部门ID
+
+    UpdateDictStateReq:
+      type: object
+      required:
+        - state
+      properties:
+        state:
+          type: string
+          enum: [enable, disable]
+          description: 目标状态
+        reason:
+          type: string
+          description: 停用原因
+
+    AddDictRelationReq:
+      type: object
+      properties:
+        stdFiles:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: 关联标准文件ID列表
+
+    DictVo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 码表ID
+        code:
+          type: integer
+          format: int64
+          description: 码表编码
+        chName:
+          type: string
+          description: 中文名称
+        enName:
+          type: string
+          description: 英文名称
+        description:
+          type: string
+          description: 业务含义
+        orgType:
+          type: integer
+          format: int32
+          description: 标准分类
+        version:
+          type: integer
+          format: int32
+          description: 版本号
+        state:
+          type: string
+          description: 状态：enable/disable
+        usedFlag:
+          type: boolean
+          description: 是否被引用
+        catalogId:
+          type: integer
+          format: int64
+          description: 目录ID
+        catalogName:
+          type: string
+          description: 目录名称
+        enums:
+          type: array
+          items:
+            $ref: '#/components/schemas/DictEnumVo'
+          description: 码值列表
+        departmentId:
+          type: string
+          description: 部门ID
+        departmentName:
+          type: string
+          description: 部门名称
+        departmentPathNames:
+          type: string
+          description: 部门路径名称
+        createTime:
+          type: string
+          description: 创建时间
+        createUser:
+          type: string
+          description: 创建用户
+        updateTime:
+          type: string
+          description: 修改时间
+        updateUser:
+          type: string
+          description: 修改用户
+
+    DictEnumVo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 码值ID
+        code:
+          type: string
+          description: 码值
+        value:
+          type: string
+          description: 码值描述
+
+    DictDataListResp:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          format: int64
+          description: 总数
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DictVo'
+
+    DictEnumDataListResp:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          format: int64
+          description: 总数
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DictEnumVo'
+
+    BaseResp:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 响应码
+        description:
+          type: string
+          description: 响应描述
+
+    DataExistsResp:
+      type: object
+      properties:
+        exists:
+          type: boolean
+          description: 数据是否存在
+
+    DataElementDataListResp:
+      type: object
+      description: 数据元列表响应（Mock）
+      properties:
+        totalCount:
+          type: integer
+          format: int64
+        data:
+          type: array
+          items:
+            type: object
+
+    StdFileDataListResp:
+      type: object
+      description: 标准文件列表响应（Mock）
+      properties:
+        totalCount:
+          type: integer
+          format: int64
+        data:
+          type: array
+          items:
+            type: object
+
+  parameters:
+    CatalogId:
+      name: catalog_id
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int64
+      description: 目录ID
+
+    Keyword:
+      name: keyword
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 搜索关键字
+
+    OrgType:
+      name: org_type
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+      description: 标准分类
+
+    State:
+      name: state
+      in: query
+      required: false
+      schema:
+        type: string
+        enum: [enable, disable]
+      description: 状态

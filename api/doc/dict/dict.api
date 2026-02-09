@@ -1,0 +1,256 @@
+syntax = "v1"
+
+info (
+    title:   "码表管理"
+    desc:    "码表管理模块 - 支持码表及码值的完整管理功能"
+    version: "v1"
+)
+
+// ============================================
+// 导入基础类型
+// ============================================
+import "../base.api"
+
+// ============================================
+// 请求类型定义
+// ============================================
+
+// DictEnumVo 码值信息
+type DictEnumVo {
+    Id    int64  `json:"id,optional"`
+    Code  string `json:"code"`
+    Value string `json:"value"`
+}
+
+// CreateDictReq 新增码表请求
+type CreateDictReq {
+    ChName        string       `json:"chName"`
+    EnName        string       `json:"enName"`
+    Description   string       `json:"description,optional"`
+    OrgType       int32        `json:"orgType"`
+    CatalogId     int64        `json:"catalogId"`
+    Enums         []DictEnumVo `json:"enums"`
+    StdFiles      []int64      `json:"stdFiles,optional"`
+    DepartmentIds string       `json:"departmentIds,optional"`
+}
+
+// UpdateDictReq 修改码表请求
+type UpdateDictReq {
+    ChName        string       `json:"chName"`
+    EnName        string       `json:"enName"`
+    Description   string       `json:"description,optional"`
+    OrgType       int32        `json:"orgType"`
+    CatalogId     int64        `json:"catalogId"`
+    Enums         []DictEnumVo `json:"enums"`
+    StdFiles      []int64      `json:"stdFiles,optional"`
+    DepartmentIds string       `json:"departmentIds,optional"`
+}
+
+// DictListQuery 码表列表查询
+type DictListQuery {
+    Keyword      string `form:"keyword,optional"`
+    CatalogId    int64  `form:"catalogId,optional"`
+    OrgType      int32  `form:"orgType,optional"`
+    State        string `form:"state,optional,options=enable|disable"`
+    DepartmentId string `form:"department_id,optional"`
+    Offset       int    `form:"offset,default=1,range=[1:]"`
+    Limit        int    `form:"limit,default=10,range=[0:2000]"`
+    Sort         string `form:"sort,default=update_time,options=update_time|create_time"`
+    Direction    string `form:"direction,default=desc,options=asc|desc"`
+}
+
+// UpdateDictStateReq 更新码表状态请求
+type UpdateDictStateReq {
+    State  string `json:"state,options=enable|disable"`
+    Reason string `json:"reason,optional"`
+}
+
+// DictEnumListQuery 码值分页查询
+type DictEnumListQuery {
+    DictId  int64  `form:"dict_id"`
+    Keyword string `form:"keyword,optional"`
+    Offset  int    `form:"offset,default=1,range=[1:]"`
+    Limit   int    `form:"limit,default=10,range=[0:2000]"`
+}
+
+// DictEnumGetListReq 码值列表查询（不分页）
+type DictEnumGetListReq {
+    DictId int64 `form:"dict_id"`
+}
+
+// QueryDictByStdFileCatalogReq 按标准文件目录查询码表请求
+type QueryDictByStdFileCatalogReq {
+    CatalogId int64  `form:"catalog_id,optional"`
+    Keyword   string `form:"keyword,optional"`
+    OrgType   int32  `form:"org_type,optional"`
+    State     string `form:"state,optional,options=enable|disable"`
+    Offset    int    `form:"offset,default=1,range=[1:]"`
+    Limit     int    `form:"limit,default=10,range=[0:2000]"`
+}
+
+// QueryDictByStdFileReq 按标准文件查询码表请求
+type QueryDictByStdFileReq {
+    FileId       int64  `form:"file_id,optional"`
+    Keyword      string `form:"keyword,optional"`
+    OrgType      int32  `form:"org_type,optional"`
+    State        string `form:"state,optional,options=enable|disable"`
+    DepartmentId string `form:"department_id,optional"`
+    Offset       int    `form:"offset,default=1,range=[1:]"`
+    Limit        int    `form:"limit,default=10,range=[0:2000]"`
+}
+
+// AddDictRelationReq 添加关联关系请求
+type AddDictRelationReq {
+    StdFiles []int64 `json:"stdFiles,optional"`
+}
+
+// QueryDictDataExistsReq 查询数据是否存在请求
+type QueryDictDataExistsReq {
+    FilterId      int64  `form:"filter_id,optional"`
+    OrgType       int32  `form:"org_type"`
+    ChName        string `form:"ch_name,optional"`
+    EnName        string `form:"en_name,optional"`
+    DepartmentIds string `form:"departmentIds,optional"`
+}
+
+// ============================================
+// 响应类型定义
+// ============================================
+
+// DictVo 码表详情响应
+type DictVo {
+    Id                  int64        `json:"id"`
+    Code                int64        `json:"code"`
+    ChName              string       `json:"chName"`
+    EnName              string       `json:"enName"`
+    Description         string       `json:"description"`
+    OrgType             int32        `json:"orgType"`
+    Version             int32        `json:"version"`
+    State               string       `json:"state"`
+    UsedFlag            bool         `json:"usedFlag"`
+    CatalogId           int64        `json:"catalogId"`
+    CatalogName         string       `json:"catalogName"`
+    Enums               []DictEnumVo `json:"enums"`
+    DepartmentId        string       `json:"departmentId"`
+    DepartmentName      string       `json:"departmentName"`
+    DepartmentPathNames string       `json:"departmentPathNames"`
+    CreateTime          string       `json:"createTime"`
+    CreateUser          string       `json:"createUser"`
+    UpdateTime          string       `json:"updateTime"`
+    UpdateUser          string       `json:"updateUser"`
+}
+
+// DictDataListResp 码表列表响应
+type DictDataListResp {
+    Data       []DictVo `json:"data"`
+    TotalCount int64    `json:"totalCount"`
+}
+
+// DictEnumDataListResp 码值列表响应
+type DictEnumDataListResp {
+    Data       []DictEnumVo `json:"data"`
+    TotalCount int64        `json:"totalCount"`
+}
+
+// DictBaseResp 基础响应（dict专用，避免与其他模块冲突）
+type DictBaseResp {
+    Code        string `json:"code"`
+    Description string `json:"description"`
+}
+
+// DictDataElementDataListResp 数据元列表响应（Mock）
+type DictDataElementDataListResp {
+    Data       []interface{} `json:"data"`
+    TotalCount int64         `json:"totalCount"`
+}
+
+// DictStdFileDataListResp 标准文件列表响应（Mock）
+type DictStdFileDataListResp {
+    Data       []interface{} `json:"data"`
+    TotalCount int64         `json:"totalCount"`
+}
+
+// ============================================
+// API 端点定义 - 外部API（带TokenCheck中间件）
+// ============================================
+
+@server (
+    prefix:     /api/standardization/v1/dataelement
+    group:      dict
+    middleware: TokenCheck
+)
+service api {
+    @doc "新增码表"
+    @handler createDict
+    post /dict (CreateDictReq) returns (DictVo)
+
+    @doc "修改码表"
+    @handler updateDict
+    put /dict/:id (UpdateDictReq) returns (DictVo)
+
+    @doc "码表列表查询"
+    @handler listDict
+    get /dict (DictListQuery) returns (DictDataListResp)
+
+    @doc "码表详情（按ID）"
+    @handler getDict
+    get /dict/:id (IdReq) returns (DictVo)
+
+    @doc "码表详情（按Code）"
+    @handler getDictByCode
+    get /dict/code/:code (IdReq) returns (DictVo)
+
+    @doc "启用/停用码表"
+    @handler updateDictState
+    put /dict/state/:id (UpdateDictStateReq) returns (DictBaseResp)
+}
+
+// ============================================
+// API 端点定义 - 内部API（无认证中间件）
+// ============================================
+
+@server (
+    prefix: /api/standardization/v1/dataelement
+    group:  dict
+)
+service api {
+    @doc "删除码表"
+    @handler deleteDict
+    delete /dict/:id (IdReq) returns (DictBaseResp)
+
+    @doc "批量删除码表"
+    @handler batchDeleteDict
+    delete /dict/batch/:ids (IdReq) returns (DictBaseResp)
+
+    @doc "码值分页查询"
+    @handler listDictEnum
+    get /dict/enum (DictEnumListQuery) returns (DictEnumDataListResp)
+
+    @doc "码值列表查询（不分页）"
+    @handler getDictEnumList
+    get /dict/enum/getList (DictEnumGetListReq) returns ([]DictEnumVo)
+
+    @doc "查询引用码表的数据元"
+    @handler queryDictByDataElement
+    get /dict/dataelement/:id (PageQuery) returns (DictDataElementDataListResp)
+
+    @doc "按文件目录查询码表"
+    @handler queryDictByStdFileCatalog
+    get /dict/queryByStdFileCatalog (QueryDictByStdFileCatalogReq) returns (DictDataListResp)
+
+    @doc "按文件查询码表"
+    @handler queryDictByStdFile
+    get /dict/queryByStdFile (QueryDictByStdFileReq) returns (DictDataListResp)
+
+    @doc "查询关联标准文件"
+    @handler queryDictRelationStdfile
+    get /dict/relation/stdfile/:id (PageQuery) returns (DictStdFileDataListResp)
+
+    @doc "添加关联关系"
+    @handler addDictRelation
+    put /dict/relation/:id (AddDictRelationReq) returns (DictBaseResp)
+
+    @doc "查询数据是否存在"
+    @handler queryDictDataExists
+    get /dict/queryDataExists (QueryDictDataExistsReq) returns (DataExistsResp)
+}
