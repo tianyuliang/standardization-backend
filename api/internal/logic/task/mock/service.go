@@ -5,104 +5,20 @@
 
 package mock
 
-import (
-	"context"
-
-	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
-	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/types"
-)
-
-// ============================================
-// AfService Mock
+// 本模块的 mock 函数已迁移到上层共享服务
+// import "github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/logic/mock"
 //
-// 替换目标: afService.getTaskDetailDto(taskId)
-// ============================================
-
-// GetTaskDetailDto 获取任务详情
-// MOCK: 模拟获取任务详情
-// 替换目标: afService.getTaskDetailDto(taskId)
-func GetTaskDetailDto(ctx context.Context, svcCtx *svc.ServiceContext, taskId string) (*types.TaskDetailResp, error) {
-	// MOCK: 默认返回nil
-	// TODO: 调用 AfService RPC 获取任务详情
-	// TaskDetailDto taskDetailDto = afService.getTaskDetailDto(taskId);
-	// return taskDetailDto;
-	return nil, nil
-}
+// 可直接使用以下共享函数:
+//   - mock.GetDataElementInfo()
+//   - mock.GetDataElementDetailVo()
+//   - mock.CallStdRecService()
+//   - mock.CallRuleRecService()
+//   - mock.GetTaskDetailDto()
+//   - mock.SendTaskCallback()
+//   - mock.GenerateTaskId()
+//   - mock.GenerateInt64Id()
 
 // ============================================
-// IDataElementInfoService Mock
-//
-// 替换目标: dataElementInfoService.getById(dataElementId)
+// Task 特有的 Mock 服务
+// 如需添加仅 task 模块使用的 mock 函数，在此处添加
 // ============================================
-
-// GetDataElementInfo 获取数据元信息
-// MOCK: 模拟获取数据元信息
-// 替换目标: dataElementInfoService.getById(dataElementId)
-func GetDataElementInfo(ctx context.Context, svcCtx *svc.ServiceContext, dataElementId int64) (*types.DataElementInfo, error) {
-	// MOCK: 默认返回nil
-	// TODO: 调用 DataElement RPC 获取数据元信息
-	// DataElementInfo dataElementInfo = dataElementInfoService.getById(dataElementId);
-	// return dataElementInfo;
-	return nil, nil
-}
-
-// GetDataElementDetailVo 获取数据元详情
-// MOCK: 模拟获取数据元详情
-// 替换目标: dataElementInfoService.getDetailVo(dataElementId)
-func GetDataElementDetailVo(ctx context.Context, svcCtx *svc.ServiceContext, dataElementId int64) (*types.DataElementDetailVo, error) {
-	// MOCK: 默认返回nil
-	// TODO: 调用 DataElement RPC 获取数据元详情
-	// DataElementDetailVo detailVo = dataElementInfoService.getDetailVo(dataElementId);
-	// return detailVo;
-	return nil, nil
-}
-
-// ============================================
-// 推荐服务 Mock
-//
-// 替换目标: 调用外部推荐服务API
-// ============================================
-
-// CallStdRecService 调用标准推荐服务
-// MOCK: 模拟标准推荐服务
-// 替换目标: HTTP POST to 推荐服务
-func CallStdRecService(ctx context.Context, svcCtx *svc.ServiceContext, req *types.StdRecReq) (*types.StdRecResp, error) {
-	// MOCK: 默认返回空结果
-	// TODO: 实现HTTP调用推荐服务
-	// HttpClient.post(recommendationServiceUrl + "/std-rec/rec", req)
-	return &types.StdRecResp{
-		Code:        "0",
-		Description: "成功",
-		Data:        []types.StdRecItem{},
-	}, nil
-}
-
-// CallRuleRecService 调用规则推荐服务
-// MOCK: 模拟规则推荐服务
-// 替换目标: HTTP POST to 推荐服务
-func CallRuleRecService(ctx context.Context, svcCtx *svc.ServiceContext, req *types.RuleRecReq) (*types.StdRecResp, error) {
-	// MOCK: 默认返回空结果
-	// TODO: 实现HTTP调用规则推荐服务
-	// HttpClient.post(recommendationServiceUrl + "/rule-rec/rec", req)
-	return &types.StdRecResp{
-		Code:        "0",
-		Description: "成功",
-		Data:        []types.StdRecItem{},
-	}, nil
-}
-
-// ============================================
-// Webhook Mock
-//
-// 替换目标: 发送任务完成回调
-// ============================================
-
-// SendTaskCallback 发送任务完成回调
-// MOCK: 模拟发送webhook回调
-// 替换目标: HTTP POST to webhook URL
-func SendTaskCallback(ctx context.Context, svcCtx *svc.ServiceContext, webhook string, taskId string) error {
-	// MOCK: 默认成功
-	// TODO: 实现HTTP POST回调
-	// HttpClient.post(webhook, callbackData)
-	return nil
-}

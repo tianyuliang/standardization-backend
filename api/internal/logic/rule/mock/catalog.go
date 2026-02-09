@@ -9,69 +9,49 @@ package mock
 import (
 	"context"
 
+	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/logic/mock"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/svc"
 )
 
 // ============================================
-// Catalog RPC Mock
+// Catalog RPC Mock - 模块特定封装
 //
+// 本文件封装共享 mock 服务，保持与 rule 模块的兼容性
 // 替换目标: iDeCatalogInfoService.*()
 // ============================================
 
 // CatalogCheckExist 校验目录是否存在
-// MOCK: 模拟目录校验，默认返回存在
 // 替换目标: iDeCatalogInfoService.checkCatalogIsExist(catalogId, CatalogTypeEnum.ValueRule)
 func CatalogCheckExist(ctx context.Context, svcCtx *svc.ServiceContext, catalogId int64) bool {
-	// MOCK: 默认返回目录存在
-	// TODO: 调用 Catalog RPC 校验
-	// boolean exist = iDeCatalogInfoService.checkCatalogIsExist(catalogId, CatalogTypeEnum.ValueRule);
-	// return exist
-	return true
+	exists, _, _ := mock.CheckCatalogExist(ctx, catalogId)
+	return exists
 }
 
 // CatalogGetCatalogName 获取目录名称
-// MOCK: 模拟获取目录名称，返回默认格式
 // 替换目标: iDeCatalogInfoService.getById(catalogId).getCatalogName()
 func CatalogGetCatalogName(ctx context.Context, svcCtx *svc.ServiceContext, catalogId int64) string {
-	// MOCK: 返回格式化的目录名称
-	// TODO: 调用 Catalog RPC 获取目录名称
-	// DeCatalogInfo catalog = iDeCatalogInfoService.getById(catalogId);
-	// return catalog == null ? "" : catalog.getCatalogName()
-	if catalogId == 33 {
-		return "全部目录"
-	}
-	return ""
+	name, _ := mock.GetCatalogName(ctx, catalogId)
+	return name
 }
 
 // CatalogGetChildIds 获取子目录ID列表（递归）
-// MOCK: 模拟获取子目录，返回自身
 // 替换目标: iDeCatalogInfoService.getIDList(catalogId)
 func CatalogGetChildIds(ctx context.Context, svcCtx *svc.ServiceContext, catalogId int64) []int64 {
-	// MOCK: 返回自身
-	// TODO: 调用 Catalog RPC 递归获取子目录列表
-	// List<Long> catalogIds = iDeCatalogInfoService.getIDList(catalogId);
-	// return catalogIds
-	return []int64{catalogId}
+	ids, _ := mock.GetChildCatalogIds(ctx, catalogId)
+	return ids
 }
 
 // CatalogIsStdFileCatalog 校验是否为标准文件目录
-// MOCK: 模拟目录类型校验，默认返回 true
 // 替换目标: catalog.getType().equals(CatalogTypeEnum.File)
 func CatalogIsStdFileCatalog(ctx context.Context, svcCtx *svc.ServiceContext, catalogId int64) bool {
-	// MOCK: 默认返回是标准文件目录
-	// TODO: 调用 Catalog RPC 校验目录类型
-	// DeCatalogInfo catalog = iDeCatalogInfoService.getById(catalogId);
-	// return catalog != null && catalog.getType().equals(CatalogTypeEnum.File);
-	return true
+	// 对于 rule 模块，检查是否为文件目录
+	exists, _ := mock.IsDataElementCatalog(ctx, catalogId)
+	return exists
 }
 
 // CatalogIsRootCatalog 校验是否为根目录
-// MOCK: 模拟根目录校验，默认返回 false
 // 替换目标: catalog.isRootPath()
 func CatalogIsRootCatalog(ctx context.Context, svcCtx *svc.ServiceContext, catalogId int64) bool {
-	// MOCK: 默认不是根目录
-	// TODO: 调用 Catalog RPC 判断是否为根目录
-	// DeCatalogInfo catalog = iDeCatalogInfoService.getById(catalogId);
-	// return catalog != null && catalog.isRootPath();
+	// 默认不是根目录
 	return false
 }

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/logic/dataelement/mock"
+	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/logic/mock"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/types"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/dataelement/dataelement"
 )
