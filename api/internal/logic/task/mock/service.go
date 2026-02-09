@@ -21,7 +21,7 @@ import (
 // GetTaskDetailDto 获取任务详情
 // MOCK: 模拟获取任务详情
 // 替换目标: afService.getTaskDetailDto(taskId)
-func GetTaskDetailDto(ctx context.Context, svcCtx *svc.ServiceContext, taskId string) (*types.TaskDetailDto, error) {
+func GetTaskDetailDto(ctx context.Context, svcCtx *svc.ServiceContext, taskId string) (*types.TaskDetailResp, error) {
 	// MOCK: 默认返回nil
 	// TODO: 调用 AfService RPC 获取任务详情
 	// TaskDetailDto taskDetailDto = afService.getTaskDetailDto(taskId);
