@@ -16,6 +16,7 @@ import "rule/rule.api"
 import "catalog/catalog.api"
 import "stdfile/stdfile.api"
 import "dict/dict.api"
+import "dataelement/dataelement.api"
 import "task/task.api"
 
 // 定义 service 名称为 "api"

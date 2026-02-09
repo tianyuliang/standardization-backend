@@ -1,0 +1,321 @@
+syntax = "v1"
+
+import "../base.api"
+
+// ==================== 请求类型 ====================
+
+// CreateDataElementReq 创建数据元请求
+type CreateDataElementReq {
+	NameEn        string  `json:"nameEn,optional" validate:"required"`
+	NameCn        string  `json:"nameCn,optional" validate:"required"`
+	Synonym       string  `json:"synonym,optional"`
+	StdType       int32   `json:"stdType,optional" validate:"required"`
+	DataType      int32   `json:"dataType,optional" validate:"required"`
+	DataLength    int32   `json:"dataLength,optional"`
+	DataPrecision int32   `json:"dataPrecision,optional"`
+	DictCode      string  `json:"dictCode,optional"`
+	RuleId        int64   `json:"ruleId,optional"`
+	RelationType  string  `json:"relationType,optional" validate:"required"`
+	CatalogId     int64   `json:"catalogId,optional" validate:"required"`
+	LabelId       int64   `json:"labelId,optional"`
+	Description   string  `json:"description,optional"`
+	DepartmentIds string  `json:"departmentIds,optional"`
+	ThirdDeptId   string  `json:"thirdDeptId,optional"`
+	StdFiles      []int64 `json:"stdFiles,optional"`
+}
+
+// UpdateDataElementReq 修改数据元请求
+type UpdateDataElementReq {
+	Id            int64   `json:"id,optional" validate:"required"`
+	NameEn        string  `json:"nameEn,optional"`
+	NameCn        string  `json:"nameCn,optional"`
+	Synonym       string  `json:"synonym,optional"`
+	StdType       int32   `json:"stdType,optional"`
+	DataType      int32   `json:"dataType,optional"`
+	DataLength    int32   `json:"dataLength,optional"`
+	DataPrecision int32   `json:"dataPrecision,optional"`
+	DictCode      string  `json:"dictCode,optional"`
+	RuleId        int64   `json:"ruleId,optional"`
+	RelationType  string  `json:"relationType,optional"`
+	CatalogId     int64   `json:"catalogId,optional"`
+	LabelId       int64   `json:"labelId,optional"`
+	Description   string  `json:"description,optional"`
+	DepartmentIds string  `json:"departmentIds,optional"`
+	ThirdDeptId   string  `json:"thirdDeptId,optional"`
+	StdFiles      []int64 `json:"stdFiles,optional"`
+}
+
+// DataElementListReq 数据元列表查询请求
+type DataElementListReq {
+	Offset        int32  `form:"offset,default=1,range=[1:]"`
+	Limit         int32  `form:"limit,default=10,range=[0:2000]"`
+	Direction     string `form:"direction,default=desc,options=asc|desc"`
+	Sort          string `form:"sort,default=created_at,options=created_at|updated_at"`
+	Keyword       string `form:"keyword,optional"`
+	CatalogId     int64  `form:"catalogId,optional"`
+	State         string `form:"state,optional,options=enable|disable"`
+	StdType       int32  `form:"stdType,optional"`
+	DataType      int32  `form:"dataType,optional"`
+	RelationType  string `form:"relationType,optional,options=no|codeTable|codeRule"`
+	DepartmentIds string `form:"departmentIds,optional"`
+}
+
+// DataElementDetailReq 数据元详情请求
+type DataElementDetailReq {
+	Type  int32  `form:"type,optional" validate:"required"` // 1=按ID查询, 2=按Code查询
+	Value int64  `form:"value,optional" validate:"required"`
+}
+
+// UpdateStateReq 更新状态请求
+type UpdateStateReq {
+	State  string `json:"state,optional" validate:"required,options=enable|disable"`
+	Reason string `json:"reason,optional"`
+}
+
+// DataElementQueryByFileCatalogReq 按文件目录查询请求
+type DataElementQueryByFileCatalogReq {
+	Offset    int32 `form:"offset,default=1,range=[1:]"`
+	Limit     int32 `form:"limit,default=10,range=[0:2000]"`
+	Direction string `form:"direction,default=desc,options=asc|desc"`
+	Sort      string `form:"sort,default=created_at,options=created_at|updated_at"`
+	CatalogId int64 `form:"catalogId,optional" validate:"required"` // -1表示未关联文件的数据元
+}
+
+// QueryByStdFileReq 按标准文件查询请求
+type QueryByStdFileReq {
+	Offset    int32 `form:"offset,default=1,range=[1:]"`
+	Limit     int32 `form:"limit,default=10,range=[0:2000]"`
+	Direction string `form:"direction,default=desc,options=asc|desc"`
+	Sort      string `form:"sort,default=created_at,options=created_at|updated_at"`
+	StdFileId int64 `form:"stdFileId,optional" validate:"required"`
+}
+
+// QueryStdFilePageReq 查询关联标准文件分页请求
+type QueryStdFilePageReq {
+	Offset    int32 `form:"offset,default=1,range=[1:]"`
+	Limit     int32 `form:"limit,default=10,range=[0:2000]"`
+	Direction string `form:"direction,default=desc,options=asc|desc"`
+	Sort      string `form:"sort,default=created_at,options=created_at|updated_at"`
+}
+
+// IsRepeatReq 检查名称重复请求
+type IsRepeatReq {
+	NameCn string `form:"nameCn,optional"`
+	NameEn string `form:"nameEn,optional"`
+	StdType int32 `form:"stdType,optional"`
+	Id int64 `form:"id,optional"` // 排除的数据元ID（用于修改时排除自身）
+}
+
+// ExportDataElementReq 导出数据元请求
+type ExportDataElementReq {
+	CatalogId int64   `json:"catalogId,optional"`
+	State     string  `json:"state,optional,options=enable|disable"`
+	Ids       []int64 `json:"ids,optional"`
+}
+
+// ImportDataElementReq 导入数据元请求
+type ImportDataElementReq {
+	CatalogId int64  `form:"catalogId,optional" validate:"required"`
+}
+
+// GetPageByRuleIdReq 按规则ID分页查询请求
+type GetPageByRuleIdReq {
+	RuleId int64  `json:"ruleId,optional" validate:"required"`
+	Offset int32  `json:"offset,optional,default=1"`
+	Limit  int32  `json:"limit,optional,default=10"`
+}
+
+// ==================== 响应类型 ====================
+
+// DataElementVo 数据元视图对象
+type DataElementVo {
+	Id             int64  `json:"id"`
+	Code           int64  `json:"code"`
+	NameEn         string `json:"nameEn"`
+	NameCn         string `json:"nameCn"`
+	Synonym        string `json:"synonym"`
+	StdType        int32  `json:"stdType"`
+	DataType       int32  `json:"dataType"`
+	DataLength     int32  `json:"dataLength"`
+	DataPrecision  int32  `json:"dataPrecision"`
+	DictCode       string `json:"dictCode"`
+	RuleId         int64  `json:"ruleId"`
+	RelationType   string `json:"relationType"`
+	CatalogId      int64  `json:"catalogId"`
+	LabelId        int64  `json:"labelId"`
+	Description    string `json:"description"`
+	Version        int32  `json:"version"`
+	State          string `json:"state"`
+	DepartmentIds  string `json:"departmentIds"`
+	ThirdDeptId    string `json:"thirdDeptId"`
+	DisableReason  string `json:"disableReason"`
+	CreateUser     string `json:"createUser"`
+	CreateTime     string `json:"createTime"`
+	UpdateTime     string `json:"updateTime"`
+}
+
+// DataElementDetailVo 数据元详情视图对象
+type DataElementDetailVo {
+	Id             int64       `json:"id"`
+	Code           int64       `json:"code"`
+	NameEn         string      `json:"nameEn"`
+	NameCn         string      `json:"nameCn"`
+	Synonym        string      `json:"synonym"`
+	StdType        int32       `json:"stdType"`
+	DataType       int32       `json:"dataType"`
+	DataLength     int32       `json:"dataLength"`
+	DataPrecision  int32       `json:"dataPrecision"`
+	DictCode       string      `json:"dictCode"`
+	RuleId         int64       `json:"ruleId"`
+	RelationType   string      `json:"relationType"`
+	CatalogId      int64       `json:"catalogId"`
+	LabelId        int64       `json:"labelId"`
+	Description    string      `json:"description"`
+	Version        int32       `json:"version"`
+	State          string      `json:"state"`
+	DepartmentIds  string      `json:"departmentIds"`
+	ThirdDeptId    string      `json:"thirdDeptId"`
+	DisableReason  string      `json:"disableReason"`
+	CreateUser     string      `json:"createUser"`
+	CreateTime     string      `json:"createTime"`
+	UpdateTime     string      `json:"updateTime"`
+	CatalogName    string      `json:"catalogName"`
+	DepartmentPath string      `json:"departmentPath"`
+	ValueRange     string      `json:"valueRange"`
+	DictName       string      `json:"dictName"`
+	RuleName       string      `json:"ruleName"`
+	StdFiles       []StdFileVo `json:"stdFiles"`
+}
+
+// StdFileVo 标准文件视图对象
+type StdFileVo {
+	Id         int64  `json:"id"`
+	FileName   string `json:"fileName"`
+	FileNo     string `json:"fileNo"`
+	PublishDate string `json:"publishDate"`
+}
+
+// DataElementListVo 数据元列表视图对象
+type DataElementListVo {
+	TotalCount int64           `json:"totalCount"`
+	Entries    []DataElementVo `json:"entries"`
+}
+
+// StdFileListVo 标准文件列表视图对象
+type StdFileListVo {
+	TotalCount int64       `json:"totalCount"`
+	Entries    []StdFileVo `json:"entries"`
+}
+
+// ImportResultVo 导入结果视图对象
+type ImportResultVo {
+	SuccessCount int32              `json:"successCount"`
+	FailCount    int32              `json:"failCount"`
+	Errors       []ImportErrorItemVo `json:"errors"`
+}
+
+// ImportErrorItemVo 导入错误项视图对象
+type ImportErrorItemVo {
+	Row     int32  `json:"row"`
+	Message string `json:"message"`
+}
+
+// ExportVo 导出视图对象
+type ExportVo {
+	DownloadUrl string `json:"downloadUrl"`
+	FileName    string `json:"fileName"`
+}
+
+// IsRepeatVo 检查重复视图对象
+type IsRepeatVo {
+	Result bool `json:"result"`
+}
+
+// ==================== 数据元管理API ====================
+
+@server(
+	prefix: /v1/dataelement
+	group:  dataelement
+	middleware: TokenCheck
+)
+service api {
+	@doc "创建数据元"
+	@handler CreateDataElement
+	post / (CreateDataElementReq) returns (DataElementDetailVo)
+
+	@doc "分页查询数据元"
+	@handler ListDataElement
+	get / (DataElementListReq) returns (DataElementListVo)
+
+	@doc "查看数据元详情"
+	@handler GetDataElementDetail
+	get /detail (DataElementDetailReq) returns (DataElementDetailVo)
+
+	@doc "编辑数据元"
+	@handler UpdateDataElement
+	put /:id (UpdateDataElementReq) returns (DataElementDetailVo)
+
+	@doc "删除数据元"
+	@handler DeleteDataElement
+	delete /:ids returns (EmptyResp)
+
+	@doc "启用/停用数据元"
+	@handler UpdateState
+	put /state/:ids (UpdateStateReq) returns (EmptyResp)
+
+	@doc "批量移动数据元到指定目录"
+	@handler RemoveCatalog
+	post /catalog/remove (RemoveCatalogReq) returns (EmptyResp)
+
+	@doc "删除数据元标签"
+	@handler DeleteLabel
+	delete /label/:id returns (EmptyResp)
+
+	@doc "按标准文件目录查询数据元"
+	@handler QueryByStdFileCatalog
+	get /query/byStdFileCatalog (DataElementQueryByFileCatalogReq) returns (DataElementListVo)
+
+	@doc "按标准文件查询数据元"
+	@handler QueryByStdFile
+	get /query/byStdFile (QueryByStdFileReq) returns (DataElementListVo)
+
+	@doc "查询数据元关联的标准文件"
+	@handler QueryStdFile
+	get /query/stdFile/:id (QueryStdFilePageReq) returns (StdFileListVo)
+
+	@doc "检查名称重复"
+	@handler IsRepeat
+	get /query/isRepeat (IsRepeatReq) returns (IsRepeatVo)
+
+	@doc "批量导入数据元"
+	@handler ImportDataElement
+	post /import (ImportDataElementReq) returns (ImportResultVo)
+
+	@doc "导出数据元"
+	@handler ExportDataElement
+	post /export (ExportDataElementReq) returns (ExportVo)
+}
+
+// ==================== 内部API（无认证）====================
+
+@server(
+	prefix: /v1/dataelement
+	group:  dataelement
+)
+service api {
+	@doc "内部分页查询数据元"
+	@handler ListDataElementInternal
+	get /internal/list (PageInfoWithKeyword) returns (DataElementListVo)
+
+	@doc "内部查看数据元详情"
+	@handler GetDataElementInternal
+	get /internal/get/:id (IdReq) returns (DataElementDetailVo)
+
+	@doc "内部批量查询数据元"
+	@handler QueryByIdsInternal
+	post /internal/queryByIds (QueryByIdsReq) returns (DataElementListVo)
+
+	@doc "按规则ID分页查询数据元"
+	@handler GetPageByRuleId
+	post /internal/getDataElementPageByRuleId (GetPageByRuleIdReq) returns (DataElementListVo)
+}

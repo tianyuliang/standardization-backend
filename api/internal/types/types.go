@@ -36,37 +36,38 @@ type DataElementInfo struct {
 	StdEnName string `json:"stdEnName,optional"`
 }
 
-// DataElementDetailVo 数据元详情
-type DataElementDetailVo struct {
-	Id          int64  `json:"id,optional"`
-	NameCn      string `json:"nameCn,optional"`
-	NameEn      string `json:"nameEn,optional"`
-	StdCode     string `json:"stdCode,optional"`
-	StdTypeName string `json:"stdTypeName,optional"`
-	DataTypeName string `json:"dataTypeName,optional"`
-	DataLength  *int   `json:"dataLength,optional"`
-	DataPrecision *int  `json:"dataPrecision,optional"`
-	StdType     int32  `json:"stdType,optional"`
-	DataType    int32  `json:"dataType,optional"`
-	ChName      string `json:"chName,optional"`
-	RuleName    string `json:"ruleName,optional"`
-}
-
-// TaskDetailDto 任务详情
-type TaskDetailDto struct {
-	TaskId   string `json:"taskId,optional"`
-	TaskNo   string `json:"taskNo,optional"`
-	OrgType  string `json:"org_type,optional"`
-	Status   int32  `json:"status,optional"`
-	Webhook  string `json:"webhook,optional"`
-}
-
 type DataElementResp struct {
 	Id       int64  `json:"id"`
 	Name     string `json:"name"`
 	Code     string `json:"code"`
 	RuleId   int64  `json:"ruleId"`
 	RuleName string `json:"ruleName"`
+}
+
+type DataElementVo struct {
+	Id            int64  `json:"id"`
+	Code          int64  `json:"code"`
+	NameEn        string `json:"nameEn"`
+	NameCn        string `json:"nameCn"`
+	Synonym       string `json:"synonym"`
+	StdType       int32  `json:"stdType"`
+	DataType      int32  `json:"dataType"`
+	DataLength    int32  `json:"dataLength"`
+	DataPrecision int32  `json:"dataPrecision"`
+	DictCode      string `json:"dictCode"`
+	RuleId        int64  `json:"ruleId"`
+	RelationType  string `json:"relationType"`
+	CatalogId     int64  `json:"catalogId"`
+	LabelId       int64  `json:"labelId"`
+	Description   string `json:"description"`
+	Version       int32  `json:"version"`
+	State         string `json:"state"`
+	DepartmentIds string `json:"departmentIds"`
+	ThirdDeptId   string `json:"thirdDeptId"`
+	DisableReason string `json:"disableReason"`
+	CreateUser    string `json:"createUser"`
+	CreateTime    string `json:"createTime"`
+	UpdateTime    string `json:"updateTime"`
 }
 
 type DataExistsResp struct {
@@ -99,8 +100,17 @@ type HealthResp struct {
 	Status string `json:"status"`
 }
 
+type IdReq struct {
+	Id int64 `path:"id"`
+}
+
 type IdsReq struct {
 	Ids []int64 `json:"ids"`
+}
+
+type ImportErrorItemVo struct {
+	Row     int32  `json:"row"`
+	Message string `json:"message"`
 }
 
 type KeywordInfo struct {
@@ -110,6 +120,11 @@ type KeywordInfo struct {
 type PageBaseInfo struct {
 	Offset int `form:"offset,default=1,range=[1:]"`     // 页码，默认1
 	Limit  int `form:"limit,default=10,range=[0:2000]"` // 每页大小，默认10，0表示不分页
+}
+
+type PageInfoWithKeyword struct {
+	PageInfo
+	KeywordInfo
 }
 
 type PageQuery struct {
@@ -160,6 +175,13 @@ type StdFileResp struct {
 	Name        string `json:"name"`
 	CatalogId   int64  `json:"catalogId"`
 	CatalogName string `json:"catalogName"`
+}
+
+type StdFileVo struct {
+	Id          int64  `json:"id"`
+	FileName    string `json:"fileName"`
+	FileNo      string `json:"fileNo"`
+	PublishDate string `json:"publishDate"`
 }
 
 type StdRecItem struct {

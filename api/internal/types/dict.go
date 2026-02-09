@@ -94,10 +94,6 @@ type DictVo struct {
 	UpdateUser          string       `json:"updateUser"`
 }
 
-type IdReq struct {
-	Id int64 `path:"id"`
-}
-
 type QueryDictByStdFileCatalogReq struct {
 	CatalogId int64  `form:"catalog_id,optional"`
 	Keyword   string `form:"keyword,optional"`

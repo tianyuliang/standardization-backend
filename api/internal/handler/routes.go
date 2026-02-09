@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	catalog "github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/handler/catalog"
+	dataelement "github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/handler/dataelement"
 	dict "github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/handler/dict"
 	rule "github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/handler/rule"
 	stdfile "github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/handler/stdfile"
@@ -68,6 +69,129 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithPrefix("/api/standardization/v1"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.TokenCheck},
+			[]rest.Route{
+				{
+					// 创建数据元
+					Method:  http.MethodPost,
+					Path:    "/",
+					Handler: dataelement.CreateDataElementHandler(serverCtx),
+				},
+				{
+					// 分页查询数据元
+					Method:  http.MethodGet,
+					Path:    "/",
+					Handler: dataelement.ListDataElementHandler(serverCtx),
+				},
+				{
+					// 编辑数据元
+					Method:  http.MethodPut,
+					Path:    "/:id",
+					Handler: dataelement.UpdateDataElementHandler(serverCtx),
+				},
+				{
+					// 删除数据元
+					Method:  http.MethodDelete,
+					Path:    "/:ids",
+					Handler: dataelement.DeleteDataElementHandler(serverCtx),
+				},
+				{
+					// 批量移动数据元到指定目录
+					Method:  http.MethodPost,
+					Path:    "/catalog/remove",
+					Handler: dataelement.RemoveCatalogHandler(serverCtx),
+				},
+				{
+					// 查看数据元详情
+					Method:  http.MethodGet,
+					Path:    "/detail",
+					Handler: dataelement.GetDataElementDetailHandler(serverCtx),
+				},
+				{
+					// 导出数据元
+					Method:  http.MethodPost,
+					Path:    "/export",
+					Handler: dataelement.ExportDataElementHandler(serverCtx),
+				},
+				{
+					// 批量导入数据元
+					Method:  http.MethodPost,
+					Path:    "/import",
+					Handler: dataelement.ImportDataElementHandler(serverCtx),
+				},
+				{
+					// 删除数据元标签
+					Method:  http.MethodDelete,
+					Path:    "/label/:id",
+					Handler: dataelement.DeleteLabelHandler(serverCtx),
+				},
+				{
+					// 按标准文件查询数据元
+					Method:  http.MethodGet,
+					Path:    "/query/byStdFile",
+					Handler: dataelement.QueryByStdFileHandler(serverCtx),
+				},
+				{
+					// 按标准文件目录查询数据元
+					Method:  http.MethodGet,
+					Path:    "/query/byStdFileCatalog",
+					Handler: dataelement.QueryByStdFileCatalogHandler(serverCtx),
+				},
+				{
+					// 检查名称重复
+					Method:  http.MethodGet,
+					Path:    "/query/isRepeat",
+					Handler: dataelement.IsRepeatHandler(serverCtx),
+				},
+				{
+					// 查询数据元关联的标准文件
+					Method:  http.MethodGet,
+					Path:    "/query/stdFile/:id",
+					Handler: dataelement.QueryStdFileHandler(serverCtx),
+				},
+				{
+					// 启用/停用数据元
+					Method:  http.MethodPut,
+					Path:    "/state/:ids",
+					Handler: dataelement.UpdateStateHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/v1/dataelement"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 内部查看数据元详情
+				Method:  http.MethodGet,
+				Path:    "/internal/get/:id",
+				Handler: dataelement.GetDataElementInternalHandler(serverCtx),
+			},
+			{
+				// 按规则ID分页查询数据元
+				Method:  http.MethodPost,
+				Path:    "/internal/getDataElementPageByRuleId",
+				Handler: dataelement.GetPageByRuleIdHandler(serverCtx),
+			},
+			{
+				// 内部分页查询数据元
+				Method:  http.MethodGet,
+				Path:    "/internal/list",
+				Handler: dataelement.ListDataElementInternalHandler(serverCtx),
+			},
+			{
+				// 内部批量查询数据元
+				Method:  http.MethodPost,
+				Path:    "/internal/queryByIds",
+				Handler: dataelement.QueryByIdsInternalHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/v1/dataelement"),
 	)
 
 	server.AddRoutes(

@@ -45,11 +45,6 @@ type PageInfo struct {
 	Sort      string `form:"sort,default=created_at,options=created_at|updated_at"` // 排序字段
 }
 
-type PageInfoWithKeyword struct {
-	PageInfo
-	KeywordInfo
-}
-
 type ProcessResp struct {
 	FinishNumber int `json:"finishNumber"`
 	TotalNumber  int `json:"totalNumber"`

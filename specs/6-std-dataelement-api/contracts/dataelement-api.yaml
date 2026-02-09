@@ -1,0 +1,928 @@
+openapi: 3.0.0
+info:
+  title: 数据元管理 API
+  version: 1.0.0
+  description: 从 Java 迁移的数据元管理接口，19个API端点
+
+servers:
+  - url: /api/standardization/v1/dataelement
+    description: API基路径
+
+tags:
+  - name: CRUD
+    description: 数据元基础增删改查接口
+  - name: Query
+    description: 数据元查询接口
+  - name: State Management
+    description: 状态管理接口
+  - name: Relations
+    description: 关联查询接口
+  - name: Import/Export
+    description: 导入导出接口
+  - name: Internal
+    description: 内部接口（无认证）
+
+paths:
+  /:
+    post:
+      tags: [CRUD]
+      summary: 新增数据元
+      description: 创建新的数据元记录
+      operationId: createDataElement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDataElementReq'
+      responses:
+        '200':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElementResp'
+
+    put:
+      tags: [CRUD]
+      summary: 修改数据元
+      description: 修改数据元信息
+      operationId: updateDataElement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDataElementReq'
+      responses:
+        '200':
+          description: 修改成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElementResp'
+
+  /{id}:
+    get:
+      tags: [CRUD]
+      summary: 数据元详情
+      description: 根据ID查询数据元详情
+      operationId: getDataElement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: 数据元ID
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElementDetailResp'
+
+  /{ids}:
+    delete:
+      tags: [CRUD]
+      summary: 删除数据元
+      description: 批量删除数据元（物理删除）
+      operationId: deleteDataElement
+      parameters:
+        - name: ids
+          in: path
+          required: true
+          schema:
+            type: string
+          description: 数据元ID列表（逗号分隔）
+      responses:
+        '200':
+          description: 删除成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResp'
+
+  /queryByIds:
+    post:
+      tags: [Query]
+      summary: 批量查询数据元
+      description: 根据ID列表批量查询数据元
+      operationId: queryByIds
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryByIdsReq'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElementListResp'
+
+  /queryByStdFileCatalog:
+    get:
+      tags: [Query]
+      summary: 按文件目录查询数据元
+      description: 根据标准文件目录查询关联的数据元列表
+      operationId: queryByStdFileCatalog
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+        - name: catalogId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: 文件目录ID（-1表示未关联文件的数据元）
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElementPageResp'
+
+  /queryByStdFile:
+    get:
+      tags: [Query]
+      summary: 按标准文件查询数据元
+      description: 根据标准文件ID查询关联的数据元列表
+      operationId: queryByStdFile
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+        - name: stdFileId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: 标准文件ID
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElementPageResp'
+
+  /isRepeat:
+    get:
+      tags: [Query]
+      summary: 检查名称重复
+      description: 检查中英文名称是否重复
+      operationId: checkNameRepeat
+      parameters:
+        - name: nameCn
+          in: query
+          schema:
+            type: string
+          description: 中文名称
+        - name: nameEn
+          in: query
+          schema:
+            type: string
+          description: 英文名称
+        - name: stdType
+          in: query
+          schema:
+            type: integer
+          description: 标准分类
+        - name: id
+          in: query
+          schema:
+            type: integer
+            format: int64
+          description: 排除的数据元ID（用于修改时排除自身）
+      responses:
+        '200':
+          description: 检查成功
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  /state/{id}:
+    put:
+      tags: [State Management]
+      summary: 启用/停用数据元
+      description: 更新数据元状态（启用/停用）
+      operationId: updateState
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: 数据元ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStateReq'
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResp'
+
+  /catalog/remove:
+    post:
+      tags: [State Management]
+      summary: 批量移动数据元目录
+      description: 批量移动数据元到指定目录
+      operationId: removeCatalog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemoveCatalogReq'
+      responses:
+        '200':
+          description: 移动成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResp'
+
+  /label/{id}:
+    delete:
+      tags: [State Management]
+      summary: 删除数据元标签
+      description: 清空数据元的标签ID
+      operationId: deleteLabel
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: 数据元ID
+      responses:
+        '200':
+          description: 删除成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResp'
+
+  /relation/stdfile/{id}:
+    get:
+      tags: [Relations]
+      summary: 查询数据元关联的标准文件
+      description: 分页查询数据元关联的标准文件列表
+      operationId: getStdFilesByDataElement
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: 数据元ID
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StdFilePageResp'
+
+  /import:
+    post:
+      tags: [Import/Export]
+      summary: Excel导入数据元
+      description: 批量导入数据元（最多5000条）
+      operationId: importDataElements
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Excel文件
+      responses:
+        '200':
+          description: 导入成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResultResp'
+
+  /export:
+    post:
+      tags: [Import/Export]
+      summary: Excel导出数据元
+      description: 按条件导出数据元到Excel
+      operationId: exportDataElements
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportReq'
+      responses:
+        '200':
+          description: 导出成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExportResp'
+
+  /internal/list:
+    get:
+      tags: [Internal]
+      summary: 内部接口-数据元列表
+      description: 内部接口，分页查询数据元列表（无认证）
+      operationId: listInternal
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Keyword'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElementPageResp'
+
+  /internal/get/{id}:
+    get:
+      tags: [Internal]
+      summary: 内部接口-数据元详情
+      description: 内部接口，根据ID查询数据元详情（无认证）
+      operationId: getInternal
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: 数据元ID
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElementDetailResp'
+
+  /internal/queryByIds:
+    post:
+      tags: [Internal]
+      summary: 内部接口-批量查询
+      description: 内部接口，批量查询数据元（无认证）
+      operationId: queryByIdsInternal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryByIdsReq'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElementListResp'
+
+  /internal/getDataElementPageByRuleId:
+    post:
+      tags: [Internal]
+      summary: 内部接口-按规则ID分页查询
+      description: 内部接口，根据编码规则ID分页查询关联的数据元（无认证）
+      operationId: getPageByRuleId
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetPageByRuleIdReq'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataElementPageResp'
+
+components:
+  parameters:
+    Offset:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+      description: 分页页码
+
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 10
+        minimum: 0
+        maximum: 2000
+      description: 每页大小
+
+    Keyword:
+      name: keyword
+      in: query
+      schema:
+        type: string
+      description: 搜索关键字
+
+  schemas:
+    CreateDataElementReq:
+      type: object
+      required:
+        - nameEn
+        - nameCn
+        - stdType
+        - dataType
+        - catalogId
+        - relationType
+      properties:
+        nameEn:
+          type: string
+          maxLength: 128
+          description: 英文名称（必填，英文_-组成）
+          pattern: '^[a-zA-Z_-]+$'
+        nameCn:
+          type: string
+          maxLength: 128
+          description: 中文名称（必填，同stdType下唯一）
+        synonym:
+          type: string
+          maxLength: 300
+          description: 同义词（逗号分隔）
+        stdType:
+          type: integer
+          minimum: 0
+          maximum: 99
+          description: 标准分类（0-99枚举值）
+        dataType:
+          type: integer
+          minimum: 0
+          maximum: 10
+          description: 数据类型（0-10枚举值）
+        dataLength:
+          type: integer
+          description: 数据长度
+        dataPrecision:
+          type: integer
+          description: 数据精度
+        dictCode:
+          type: string
+          description: 关联码表编码（relationType=codeTable时必填）
+        ruleId:
+          type: integer
+          format: int64
+          description: 关联编码规则ID（relationType=codeRule时必填）
+        relationType:
+          type: string
+          enum: [no, codeTable, codeRule]
+          description: 关联类型
+        catalogId:
+          type: integer
+          format: int64
+          description: 目录ID
+        labelId:
+          type: integer
+          format: int64
+          description: 数据分级标签ID
+        description:
+          type: string
+          maxLength: 300
+          description: 说明
+        departmentIds:
+          type: string
+          description: 部门ID
+        thirdDeptId:
+          type: string
+          format: uuid
+          description: 第三方部门ID
+        stdFiles:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: 关联文件ID数组
+
+    UpdateDataElementReq:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 数据元ID
+        nameEn:
+          type: string
+          maxLength: 128
+          description: 英文名称
+        nameCn:
+          type: string
+          maxLength: 128
+          description: 中文名称
+        synonym:
+          type: string
+          maxLength: 300
+          description: 同义词
+        stdType:
+          type: integer
+          description: 标准分类
+        dataType:
+          type: integer
+          description: 数据类型
+        dataLength:
+          type: integer
+          description: 数据长度
+        dataPrecision:
+          type: integer
+          description: 数据精度
+        dictCode:
+          type: string
+          description: 关联码表编码
+        ruleId:
+          type: integer
+          format: int64
+          description: 关联编码规则ID
+        relationType:
+          type: string
+          enum: [no, codeTable, codeRule]
+          description: 关联类型
+        catalogId:
+          type: integer
+          format: int64
+          description: 目录ID
+        labelId:
+          type: integer
+          format: int64
+          description: 数据分级标签ID
+        description:
+          type: string
+          maxLength: 300
+          description: 说明
+        departmentIds:
+          type: string
+          description: 部门ID
+        thirdDeptId:
+          type: string
+          description: 第三方部门ID
+        stdFiles:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: 关联文件ID数组
+
+    QueryByIdsReq:
+      type: object
+      required:
+        - ids
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: 数据元ID列表
+
+    UpdateStateReq:
+      type: object
+      required:
+        - state
+      properties:
+        state:
+          type: string
+          enum: [enable, disable]
+          description: 状态（enable=启用, disable=停用）
+        reason:
+          type: string
+          maxLength: 800
+          description: 停用原因（state=disable时必填）
+
+    RemoveCatalogReq:
+      type: object
+      required:
+        - ids
+        - catalogId
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: 数据元ID列表
+        catalogId:
+          type: integer
+          format: int64
+          description: 目标目录ID
+
+    ExportReq:
+      type: object
+      properties:
+        catalogId:
+          type: integer
+          format: int64
+          description: 目录ID
+        state:
+          type: string
+          enum: [enable, disable]
+          description: 状态筛选
+        ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: 数据元ID列表（优先级高于catalogId和state）
+
+    GetPageByRuleIdReq:
+      type: object
+      required:
+        - ruleId
+      properties:
+        ruleId:
+          type: integer
+          format: int64
+          description: 编码规则ID
+        offset:
+          type: integer
+          default: 1
+          description: 分页页码
+        limit:
+          type: integer
+          default: 10
+          description: 每页大小
+
+    BaseResp:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 响应码
+          example: "0"
+        description:
+          type: string
+          description: 响应描述
+          example: "操作成功"
+
+    DataElementResp:
+      allOf:
+        - $ref: '#/components/schemas/BaseResp'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/DataElement'
+
+    DataElementDetailResp:
+      allOf:
+        - $ref: '#/components/schemas/BaseResp'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/DataElementDetail'
+
+    DataElementListResp:
+      allOf:
+        - $ref: '#/components/schemas/BaseResp'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/DataElement'
+
+    DataElementPageResp:
+      allOf:
+        - $ref: '#/components/schemas/BaseResp'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                entries:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/DataElement'
+                totalCount:
+                  type: integer
+                  format: int64
+                  description: 总记录数
+
+    DataElement:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 数据元ID
+        code:
+          type: integer
+          format: int64
+          description: 关联标识（等于id）
+        nameEn:
+          type: string
+          description: 英文名称
+        nameCn:
+          type: string
+          description: 中文名称
+        synonym:
+          type: string
+          description: 同义词
+        stdType:
+          type: integer
+          description: 标准分类
+        dataType:
+          type: integer
+          description: 数据类型
+        dataLength:
+          type: integer
+          description: 数据长度
+        dataPrecision:
+          type: integer
+          description: 数据精度
+        dictCode:
+          type: string
+          description: 关联码表编码
+        ruleId:
+          type: integer
+          format: int64
+          description: 关联编码规则ID
+        relationType:
+          type: string
+          description: 关联类型
+        catalogId:
+          type: integer
+          format: int64
+          description: 目录ID
+        labelId:
+          type: integer
+          format: int64
+          description: 数据分级标签ID
+        description:
+          type: string
+          description: 说明
+        version:
+          type: integer
+          description: 版本号
+        state:
+          type: string
+          enum: [enable, disable]
+          description: 状态
+        departmentIds:
+          type: string
+          description: 部门ID
+        thirdDeptId:
+          type: string
+          description: 第三方部门ID
+        createdAt:
+          type: string
+          format: date-time
+          description: 创建时间
+        updatedAt:
+          type: string
+          format: date-time
+          description: 更新时间
+
+    DataElementDetail:
+      allOf:
+        - $ref: '#/components/schemas/DataElement'
+        - type: object
+          properties:
+            catalogName:
+              type: string
+              description: 目录名称
+            departmentPath:
+              type: string
+              description: 部门路径
+            valueRange:
+              type: string
+              description: 值域
+            dictName:
+              type: string
+              description: 码表名称
+            ruleName:
+              type: string
+              description: 规则名称
+            stdFiles:
+              type: array
+              items:
+                $ref: '#/components/schemas/StdFileInfo'
+              description: 关联的标准文件列表
+
+    StdFileInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 文件ID
+        fileName:
+          type: string
+          description: 文件名称
+
+    StdFilePageResp:
+      allOf:
+        - $ref: '#/components/schemas/BaseResp'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                entries:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/StdFileDetail'
+                totalCount:
+                  type: integer
+                  format: int64
+                  description: 总记录数
+
+    StdFileDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 文件ID
+        fileName:
+          type: string
+          description: 文件名称
+        fileNo:
+          type: string
+          description: 文件编号
+        publishDate:
+          type: string
+          format: date
+          description: 发布日期
+
+    ImportResultResp:
+      allOf:
+        - $ref: '#/components/schemas/BaseResp'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                successCount:
+                  type: integer
+                  description: 成功导入数量
+                failCount:
+                  type: integer
+                  description: 失败数量
+                errors:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      row:
+                        type: integer
+                        description: 行号
+                      message:
+                        type: string
+                        description: 错误信息
+                  description: 错误列表
+
+    ExportResp:
+      allOf:
+        - $ref: '#/components/schemas/BaseResp'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                downloadUrl:
+                  type: string
+                  description: 下载链接
+                fileName:
+                  type: string
+                  description: 文件名

@@ -10,6 +10,8 @@ import (
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/config"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/api/internal/middleware"
 	catalogmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/catalog/catalog"
+	dataelementmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/dataelement/dataelement"
+	relationmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/dataelement/relation"
 	dictmodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/dict/dict"
 	"github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/relation_file"
 	rulemodel "github.com/kweaver-ai/dsg/services/apps/standardization-backend/model/rule/rule"
@@ -29,6 +31,8 @@ type ServiceContext struct {
 	DictModel                dictmodel.DictModel
 	DictEnumModel            dictmodel.DictEnumModel
 	RelationDictFileModel    dictmodel.RelationDictFileModel
+	DataElementModel         dataelementmodel.DataElementModel
+	RelationDeFileModel      relationmodel.RelationDeFileModel
 	TaskStdCreateModel       taskmodel.TaskStdCreateModel
 	TaskStdCreateResultModel taskmodel.TaskStdCreateResultModel
 	BusinessTablePoolModel   poolmodel.BusinessTablePoolModel
@@ -60,6 +64,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		DictModel:                dictmodel.NewDictModel(conn),
 		DictEnumModel:            dictmodel.NewDictEnumModel(conn),
 		RelationDictFileModel:    dictmodel.NewRelationDictFileModel(conn),
+		DataElementModel:         dataelementmodel.NewDataElementModel(conn),
+		RelationDeFileModel:      relationmodel.NewRelationDeFileModel(conn),
 		TaskStdCreateModel:       taskmodel.NewTaskStdCreateModel(conn),
 		TaskStdCreateResultModel: taskmodel.NewTaskStdCreateResultModel(conn),
 		BusinessTablePoolModel:   poolmodel.NewBusinessTablePoolModel(conn),
