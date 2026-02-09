@@ -29,14 +29,14 @@ goctl api go -api api/doc/api.api -dir api/ --style=go_zero --type-group
 
 | 阶段 | 描述 | 任务数 | 预计工作量 | 状态 |
 |------|------|--------|------------|------|
-| Phase 0 | 基础设施 | 6 | 1天 | ✅ 100% |
+| Phase 0 | 基础设施 | 7 | 1天 | ✅ 100% |
 | Phase 1 | 任务查询管理 (4接口) | 10 | 2天 | ✅ 100% (Logic完成) |
 | Phase 2 | 任务创建与完成 (5接口) | 12 | 2.5天 | ✅ 100% (Logic完成) |
 | Phase 3 | 业务表管理 (7接口) | 16 | 3天 | ✅ 100% (Logic完成) |
 | Phase 4 | 推荐服务 (4接口) | 10 | 2天 | ✅ 100% (Logic完成) |
 | Phase 5 | 数据元操作 (4接口) | 10 | 1.5天 | ✅ 100% (Logic完成) |
-| Phase 6 | 收尾工作 | 4 | 0.5天 | ⏳ 待开始 |
-| **总计** | | **68** | **约13天** | **约90%** |
+| Phase 6 | 收尾工作 | 12 | 1天 | ✅ 100% (文档完成) |
+| **总计** | | **77** | **约13天** | **约95%** |
 
 ---
 
@@ -458,14 +458,48 @@ goctl api go -api api/doc/api.api -dir api/ --style=go_zero --type-group
   go test ./... -v
   ```
 
-### 6.3 文档更新
+### 6.3 文档更新 ✅ 已完成
 
-- [ ] T068 更新 Swagger 文档
-  ```bash
-  make swagger
-  ```
+- [x] T068 创建 `specs/5-std-task-api/research.md`
+  - [x] 技术决策和迁移策略
+  - [x] 混合ID类型策略文档化
+  - [x] Mock服务模式说明
 
-- [x] T069 验证所有24个API端点已注册
+- [x] T069 创建 `specs/5-std-task-api/data-model.md`
+  - [x] TaskStdCreate 实体定义
+  - [x] TaskStdCreateResult 实体定义
+  - [x] BusinessTablePool 实体定义
+  - [x] Go Struct 映射
+
+- [x] T070 创建 `specs/5-std-task-api/quickstart.md`
+  - [x] 开发环境准备
+  - [x] API 测试示例
+  - [x] 常见问题解答
+
+- [x] T071 创建 `specs/5-std-task-api/IMPLEMENTATION.md`
+  - [x] 24个接口实现状态
+  - [x] 文件结构说明
+  - [x] Mock 服务管理
+  - [x] 错误码规范
+  - [x] 业务校验规则
+
+- [x] T072 创建 `specs/5-std-task-api/ANALYSIS.md`
+  - [x] 需求覆盖率分析
+  - [x] API 端点覆盖率
+  - [x] 风险评估
+  - [x] 建议
+
+- [x] T073 创建 `specs/5-std-task-api/REMEDIATION.md`
+  - [x] Mock 服务替换计划
+  - [x] Webhook 失败处理策略
+  - [x] 测试用例编写计划
+
+- [x] T074 创建 `specs/5-std-task-api/contracts/task-api.yaml`
+  - [x] OpenAPI 3.0 规范
+  - [x] 24个端点完整定义
+  - [x] 请求/响应 Schema
+
+- [x] T075 验证所有24个API端点已注册
 
 ### 6.4 兼容性验证
 
@@ -592,3 +626,4 @@ Test{Function}_{Scenario}_{ExpectedResult}
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-02-09 | 初始版本 |
+| 1.1 | 2026-02-09 | 添加文档任务 (T068-T075)，更新 Phase 6 状态 |

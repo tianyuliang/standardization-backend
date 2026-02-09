@@ -1,0 +1,982 @@
+openapi: 3.0.0
+info:
+  title: 标准任务管理 API
+  version: 1.0.0
+  description: 从 Java 迁移的标准任务管理接口，24个API端点
+
+servers:
+  - url: /api/standardization/v1/dataelement/task
+    description: API基路径
+
+tags:
+  - name: Task Management
+    description: 任务管理相关接口
+  - name: Standard Association
+    description: 标准关联相关接口
+  - name: Business Table
+    description: 业务表管理相关接口
+  - name: Recommendation
+    description: 推荐服务相关接口
+
+paths:
+  /std-create/uncompleted:
+    get:
+      tags: [Task Management]
+      summary: 未处理任务列表
+      description: 查询所有状态为待处理或处理中的标准创建任务
+      operationId: getUncompletedTasks
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Keyword'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Direction'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDataListResp'
+
+  /std-create/completed:
+    get:
+      tags: [Task Management]
+      summary: 已完成任务列表
+      description: 查询所有状态为已提交的标准创建任务
+      operationId: getCompletedTasks
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Keyword'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Direction'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDataListResp'
+
+  /std-create/completed/{id}:
+    get:
+      tags: [Task Management]
+      summary: 任务详情
+      description: 根据任务ID查询任务详情及关联的标准创建结果
+      operationId: getTaskById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: 任务ID
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDetailResp'
+
+  /createTask:
+    post:
+      tags: [Task Management]
+      summary: 创建标准任务
+      description: 将业务表字段关联到任务，状态变更为处理中
+      operationId: createTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskReq'
+      responses:
+        '200':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskBaseResp'
+
+  /finishTask/{task_id}:
+    post:
+      tags: [Task Management]
+      summary: 完成任务
+      description: 验证所有字段都关联数据元后，批量更新状态为已完成
+      operationId: finishTask
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: 任务ID (36位UUID)
+      responses:
+        '200':
+          description: 完成成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskBaseResp'
+
+  /queryTaskProcess:
+    post:
+      tags: [Task Management]
+      summary: 进度查询
+      description: 查询任务的总字段数和已完成关联的字段数
+      operationId: queryTaskProcess
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryProcessReq'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessResp'
+
+  /queryTaskState:
+    post:
+      tags: [Task Management]
+      summary: 任务状态查询
+      description: 根据业务表ID和状态查询业务表字段状态
+      operationId: queryTaskState
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryTaskStateReq'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessTableStateListResp'
+
+  /std-create/relation/staging:
+    post:
+      tags: [Standard Association]
+      summary: 标准关联暂存
+      description: 暂存标准关联关系
+      operationId: stagingRelation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StagingRelationReq'
+      responses:
+        '200':
+          description: 暂存成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskBaseResp'
+
+  /std-create/publish/submit:
+    post:
+      tags: [Standard Association]
+      summary: 标准关联提交
+      description: 提交标准关联关系
+      operationId: submitRelation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StagingRelationReq'
+      responses:
+        '200':
+          description: 提交成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskBaseResp'
+
+  /submitDataElement:
+    post:
+      tags: [Standard Association]
+      summary: 提交选定数据元
+      description: 提交业务表字段关联的数据元
+      operationId: submitDataElement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitDataElementReq'
+      responses:
+        '200':
+          description: 提交成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskBaseResp'
+
+  /addToPending:
+    post:
+      tags: [Business Table]
+      summary: 添加至待新建
+      description: 添加业务表字段到标准创建池
+      operationId: addToPending
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddToPendingReq'
+      responses:
+        '200':
+          description: 添加成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskBaseResp'
+
+  /getBusinessTable:
+    get:
+      tags: [Business Table]
+      summary: 业务表列表
+      description: 查询业务表列表
+      operationId: getBusinessTable
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Keyword'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessTableListResp'
+
+  /getBusinessTableField:
+    get:
+      tags: [Business Table]
+      summary: 业务表字段列表
+      description: 查询业务表字段列表
+      operationId: getBusinessTableField
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldListResp'
+
+  /getBusinessTableFromTask:
+    get:
+      tags: [Business Table]
+      summary: 任务关联业务表
+      description: 查询任务关联的业务表列表
+      operationId: getTableFromTask
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessTableListResp'
+
+  /getBusinessTableFieldFromTask:
+    get:
+      tags: [Business Table]
+      summary: 任务关联字段
+      description: 查询任务关联的字段列表
+      operationId: getFieldFromTask
+      parameters:
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldListResp'
+
+  /deleteBusinessTableField/{id}:
+    delete:
+      tags: [Business Table]
+      summary: 移除字段
+      description: 从标准创建池移除业务表字段
+      operationId: deleteField
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: 字段ID
+      responses:
+        '200':
+          description: 移除成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskBaseResp'
+
+  /updateDescription:
+    put:
+      tags: [Business Table]
+      summary: 修改字段说明
+      description: 修改业务表字段的说明
+      operationId: updateDescription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDescriptionReq'
+      responses:
+        '200':
+          description: 修改成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskBaseResp'
+
+  /updateTableName:
+    put:
+      tags: [Business Table]
+      summary: 修改表名称
+      description: 修改业务表名称
+      operationId: updateTableName
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTableNameReq'
+      responses:
+        '200':
+          description: 修改成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskBaseResp'
+
+  /cancelBusinessTableField:
+    put:
+      tags: [Business Table]
+      summary: 撤销
+      description: 批量撤销业务表字段的任务关联，清空任务ID
+      operationId: cancelField
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelFieldReq'
+      responses:
+        '200':
+          description: 撤销成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskBaseResp'
+
+  /accept:
+    put:
+      tags: [Business Table]
+      summary: 采纳
+      description: 批量采纳业务表字段关联的标准，状态变更为已采纳
+      operationId: accept
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcceptReq'
+      responses:
+        '200':
+          description: 采纳成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskBaseResp'
+
+  /std-rec/rec:
+    post:
+      tags: [Recommendation]
+      summary: 标准推荐（内部）
+      description: 根据字段信息推荐标准
+      operationId: stdRec
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StdRecReq'
+      responses:
+        '200':
+          description: 推荐成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StdRecResp'
+
+  /std-create:
+    post:
+      tags: [Recommendation]
+      summary: 标准创建（内部）
+      description: 标准创建接口
+      operationId: stdCreate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StdRecReq'
+      responses:
+        '200':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskBaseResp'
+
+  /stand-rec/rec:
+    post:
+      tags: [Recommendation]
+      summary: 标准推荐（弹框）
+      description: 弹框形式的标准推荐
+      operationId: standRec
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StdRecReq'
+      responses:
+        '200':
+          description: 推荐成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StdRecResp'
+
+  /rule-rec/rec:
+    post:
+      tags: [Recommendation]
+      summary: 编码规则推荐
+      description: 根据字段信息推荐编码规则
+      operationId: ruleRec
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RuleRecReq'
+      responses:
+        '200':
+          description: 推荐成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StdRecResp'
+
+components:
+  parameters:
+    Offset:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+      description: 分页页码
+
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 10
+        minimum: 0
+        maximum: 2000
+      description: 每页大小
+
+    Keyword:
+      name: keyword
+      in: query
+      schema:
+        type: string
+      description: 搜索关键字
+
+    Sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        default: created_at
+        enum: [created_at, updated_at]
+      description: 排序字段
+
+    Direction:
+      name: direction
+      in: query
+      schema:
+        type: string
+        default: desc
+        enum: [asc, desc]
+      description: 排序方向
+
+  schemas:
+    CreateTaskReq:
+      type: object
+      required:
+        - taskId
+        - ids
+      properties:
+        taskId:
+          type: string
+          format: uuid
+          description: 任务ID (36位UUID v7)
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: 业务表字段ID列表 (36位UUID)
+          example: ["550e8400-e29b-41d4-a716-446655440001"]
+        webhook:
+          type: string
+          description: 回调地址
+          example: "http://example.com/webhook"
+
+    QueryProcessReq:
+      type: object
+      required:
+        - taskId
+      properties:
+        taskId:
+          type: string
+          format: uuid
+          description: 任务ID (36位UUID)
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
+    ProcessResp:
+      type: object
+      properties:
+        finishNumber:
+          type: integer
+          description: 已完成关联的字段数
+        totalNumber:
+          type: integer
+          description: 总字段数
+
+    QueryTaskStateReq:
+      type: object
+      required:
+        - businessTableId
+      properties:
+        businessTableId:
+          type: array
+          items:
+            type: string
+          description: 业务表ID列表
+        state:
+          type: array
+          items:
+            type: string
+            enum: [pending, processing, completed, adopted, cancelled]
+          description: 状态列表
+
+    StagingRelationReq:
+      type: object
+      required:
+        - taskId
+        - businessTable
+      properties:
+        taskId:
+          type: integer
+          format: int64
+          description: 任务ID
+        businessTable:
+          type: string
+          description: 业务表名称
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldInfo'
+          description: 字段信息列表
+
+    FieldInfo:
+      type: object
+      required:
+        - fieldName
+      properties:
+        fieldName:
+          type: string
+          description: 字段名称
+        fieldDescription:
+          type: string
+          description: 字段描述
+        dataType:
+          type: string
+          description: 数据类型
+
+    SubmitDataElementReq:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: 业务表字段ID (36位UUID)
+        dataElementId:
+          type: string
+          description: 数据元ID
+
+    AddToPendingReq:
+      type: object
+      required:
+        - businessTable
+        - createUserPhone
+      properties:
+        businessTable:
+          type: string
+          description: 业务表名称
+        businessTableDescription:
+          type: string
+          description: 业务表描述
+        tableField:
+          type: string
+          description: 表字段
+        createUserPhone:
+          type: string
+          description: 创建人电话
+
+    AcceptReq:
+      type: object
+      required:
+        - ids
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+          description: 业务表字段ID列表
+
+    CancelFieldReq:
+      type: object
+      required:
+        - ids
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+          description: 业务表字段ID列表
+
+    UpdateDescriptionReq:
+      type: object
+      required:
+        - fieldId
+      properties:
+        fieldId:
+          type: integer
+          format: int64
+          description: 字段ID
+        fieldDescription:
+          type: string
+          description: 字段描述
+
+    UpdateTableNameReq:
+      type: object
+      required:
+        - tableId
+        - tableName
+      properties:
+        tableId:
+          type: integer
+          format: int64
+          description: 表ID
+        tableName:
+          type: string
+          description: 表名称
+
+    StdRecReq:
+      type: object
+      required:
+        - taskId
+        - businessTable
+        - tableField
+      properties:
+        taskId:
+          type: integer
+          format: int64
+          description: 任务ID
+        businessTable:
+          type: string
+          description: 业务表名称
+        tableField:
+          type: string
+          description: 表字段
+        tableFieldDescription:
+          type: string
+          description: 表字段描述
+
+    RuleRecReq:
+      type: object
+      required:
+        - businessTable
+        - tableField
+      properties:
+        businessTable:
+          type: string
+          description: 业务表名称
+        tableField:
+          type: string
+          description: 表字段
+        tableFieldDescription:
+          type: string
+          description: 表字段描述
+        dataType:
+          type: string
+          description: 数据类型
+
+    TaskBaseResp:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 响应码
+          example: "0"
+        description:
+          type: string
+          description: 响应描述
+          example: "操作成功"
+
+    TaskDataListResp:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          format: int64
+          description: 总记录数
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskResp'
+
+    TaskResp:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 任务ID
+        taskNo:
+          type: string
+          description: 任务编号
+        table:
+          type: string
+          description: 业务表
+        tableDescription:
+          type: string
+          description: 业务表描述
+        tableField:
+          type: string
+          description: 表字段
+        status:
+          type: integer
+          description: 状态
+          enum: [0, 1, 2]
+        createTime:
+          type: string
+          format: date-time
+          description: 创建时间
+        createUser:
+          type: string
+          description: 创建人
+        createUserPhone:
+          type: string
+          description: 创建人电话
+        webhook:
+          type: string
+          description: 回调地址
+
+    TaskDetailResp:
+      type: object
+      properties:
+        task:
+          $ref: '#/components/schemas/TaskResp'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskStdCreateResult'
+
+    TaskStdCreateResult:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 结果ID
+        taskId:
+          type: integer
+          format: int64
+          description: 任务ID
+        tableField:
+          type: string
+          description: 表字段
+        tableFieldDescription:
+          type: string
+          description: 表字段描述
+        stdRefFile:
+          type: string
+          description: 标准参考文件
+        stdCode:
+          type: string
+          description: 标准编码
+        recStdCodes:
+          type: string
+          description: 推荐标准编码
+        stdChName:
+          type: string
+          description: 标准中文名
+        stdEnName:
+          type: string
+          description: 标准英文名
+
+    BusinessTableListResp:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          format: int64
+          description: 总记录数
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessTableResp'
+
+    BusinessTableResp:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID
+        tableName:
+          type: string
+          description: 表名称
+        tableDescription:
+          type: string
+          description: 表描述
+        tableField:
+          type: string
+          description: 表字段
+        status:
+          type: integer
+          description: 状态
+          enum: [0, 1, 2, 3, 4]
+        createUser:
+          type: string
+          description: 创建人
+        createTime:
+          type: string
+          format: date-time
+          description: 创建时间
+
+    FieldListResp:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          format: int64
+          description: 总记录数
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldResp'
+
+    FieldResp:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 字段ID
+        fieldName:
+          type: string
+          description: 字段名称
+        fieldDescription:
+          type: string
+          description: 字段描述
+        dataType:
+          type: string
+          description: 数据类型
+
+    BusinessTableStateListResp:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          format: int64
+          description: 总记录数
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessTableStateVo'
+
+    BusinessTableStateVo:
+      type: object
+      properties:
+        businessTableFieldId:
+          type: string
+          description: 业务表字段ID
+        state:
+          type: string
+          description: 状态
+          enum: [pending, processing, completed, adopted, cancelled]
+
+    StdRecResp:
+      type: object
+      properties:
+        code:
+          type: string
+          description: 响应码
+        description:
+          type: string
+          description: 响应描述
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/StdRecItem'
+
+    StdRecItem:
+      type: object
+      properties:
+        stdCode:
+          type: string
+          description: 标准编码
+        stdName:
+          type: string
+          description: 标准名称
+        matchRate:
+          type: number
+          format: double
+          description: 匹配率
