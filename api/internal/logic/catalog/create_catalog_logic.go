@@ -41,33 +41,31 @@ func (l *CreateCatalogLogic) CreateCatalog(req *types.CreateCatalogReq) (resp *t
 		return nil, err
 	}
 
-	// Step 1.2: 校验目录类型
-	// 对应 Java: DeCatalogInfoServiceImpl.checkType()
-	if err := CheckType(req.Type); err != nil {
-		return nil, err
+	// Step 1.2: 校验父目录存在（parentId必填，对应Java中不能为null）
+	// 对应 Java: DeCatalogInfoServiceImpl.checkPost() - parentId校验
+	if req.ParentId == 0 {
+		return nil, baseerrorx.NewWithMsg(errorx.ErrCodeCatalogMissingParam, "父目录ID不能为空")
 	}
 
-	// Step 1.3: 校验父目录存在
-	// 对应 Java: DeCatalogInfoServiceImpl.checkParent()
-	var parent *catalogmodel.Catalog
-	if req.ParentId != 0 {
-		parent, err = l.svcCtx.CatalogModel.FindOne(l.ctx, req.ParentId)
-		if err != nil {
-			logx.WithContext(l.ctx).Errorf("CreateCatalog FindOne parent failed: %v", err)
-			return nil, errorx.CatalogParentNotExist()
-		}
+	parent, err := l.svcCtx.CatalogModel.FindOne(l.ctx, req.ParentId)
+	if err != nil {
+		logx.WithContext(l.ctx).Errorf("CreateCatalog FindOne parent failed: %v", err)
+		return nil, errorx.CatalogParentNotExist()
+	}
 
-		// Step 1.4: 校验父目录类型与当前类型一致
-		// 对应 Java: DeCatalogInfoServiceImpl.checkTypeMatch()
-		if parent.Type != req.Type {
-			return nil, errorx.CatalogTypeMismatch()
-		}
+	// Step 1.3: 校验父目录类型（如果有传入type）
+	// 对应 Java: DeCatalogInfoServiceImpl.checkPost() - 类型一致性校验
+	// 注意：Java中创建时type会自动继承父目录，不需要客户端传递
+	// Go中如果客户端传递了type，需要校验是否与父目录一致
+	if req.Type != 0 && parent.Type != req.Type {
+		return nil, errorx.CatalogTypeMismatch()
+	}
 
-		// Step 1.5: 校验目录级别不超限
-		// 对应 Java: DeCatalogInfoServiceImpl.checkLevel()
-		if parent.Level >= 255 {
-			return nil, errorx.CatalogLevelOutOfRange()
-		}
+	// Step 1.4: 校验目录级别不超限
+	// 对应 Java: DeCatalogInfoServiceImpl.checkPost() - level校验
+	// Java: parent.level >= 255 时报错（新目录level会是256）
+	if parent.Level >= 255 {
+		return nil, errorx.CatalogLevelOutOfRange()
 	}
 
 	// Step 1.6: 校验同级目录名称不重复
@@ -89,13 +87,8 @@ func (l *CreateCatalogLogic) CreateCatalog(req *types.CreateCatalogReq) (resp *t
 
 	// Step 2.1: 计算目录级别和类型
 	// 对应 Java: 继承父目录的type，level=父目录level+1
-	level := int32(1) // 默认为根目录级别
-	catalogType := req.Type
-
-	if parent != nil {
-		level = parent.Level + 1
-		catalogType = parent.Type // 继承父目录类型
-	}
+	level := parent.Level + 1
+	catalogType := parent.Type // 自动继承父目录类型
 
 	// Step 2.2: 构建目录模型
 	now := time.Now()
